@@ -48,7 +48,7 @@ begin
                 values (pidItem, pdescription,pEfficacite,  pGenreArme); 
 
 /*--Trigger--*/
-rop trigger CTRLInserItem; 
+drop trigger CTRLInserItem; 
 DELIMITER |; 
 CREATE TRIGGER CTRLInserItem BEFORE INSERT  ON Items 
 FOR EACH ROW 
@@ -140,7 +140,7 @@ CREATE PROCEDURE payerPanier(
 BEGIN
     DECLARE vNbLignes INT DEFAULT 0;
 
-    /* 1) Vérifier qu'il y a bien quelque chose à payer */
+    /*  Vérifier qu'il y a bien quelque chose à payer */
     SELECT COUNT(*) INTO vNbLignes
       FROM Paniers
      WHERE idJoueur = pIdJoueur;
@@ -293,7 +293,7 @@ BEGIN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Alias déjà utilisé.';
     END IF;
 
-    /* 3) Unicité courriel */
+    /*courriel est unique? */
     SELECT COUNT(*) INTO vCount FROM Joueurs WHERE courriel = vCourriel;
     IF vCount > 0 THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Courriel déjà utilisé.';
