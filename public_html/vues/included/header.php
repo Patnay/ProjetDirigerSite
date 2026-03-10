@@ -7,7 +7,7 @@
 
     <nav class="main-nav">
         <a href="enigme.php">Énigme</a>
-        <a href="apropos.php">À propos</a>
+        <a href="aPropos.php">À propos</a>
     </nav>
 
     <div class="header-right">
