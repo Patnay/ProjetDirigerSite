@@ -480,9 +480,3 @@ gap:15px;
 }
 
 }
-.submit{
-  size: 30px;
-  font-family: "Lucida Console", monospace;
-  background-image: linear-gradient(to bottom left, teal, lime);
-  color: whitesmoke;
-}
