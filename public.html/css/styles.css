@@ -289,3 +289,9 @@ color:#dddddd;
 font-size:0.9rem;
 margin-bottom:10px;
 }
+.inscrire{
+  size: 30px;
+  font-family: "Lucida Console", monospace;
+  background-image: linear-gradient(to bottom left, teal, lime);
+  color: whitesmoke;
+}
