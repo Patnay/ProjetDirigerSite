@@ -74,22 +74,22 @@
       <form action="inscription.php", method="POST">
         <fieldset>
         <label for="alias">Alias:</label>
-        <input name="alias" id="alias" value="<?= htmlspecialchars($alias)?>" required>
+        <input name="alias" id="alias" required>
         <br>
         <label for="mp1">Mot de passe:</label>
-        <input type="password" name="mp1" id="mp1" value="<?= htmlspecialchars($mp1)?>" required>
+        <input type="password" name="mp1" id="mp1" required>
         <br>
         <label for="mp2">Répéter le mot de passe:</label>
-        <input type="password" name="mp2" id="mp2" value="<?= htmlspecialchars($mp2)?>" required>
+        <input type="password" name="mp2" id="mp2" required>
         <br>
         <label for="nom">Nom:</label>
-        <input name="nom" id="nom" value="<?= htmlspecialchars($nom)?>" required>
+        <input name="nom" id="nom" required>
         <br>
         <label for="prenom">Prenom:</label>
-        <input name="prenom" id="prenom" value="<?= htmlspecialchars($prenom)?>" required>
+        <input name="prenom" id="prenom" required>
         <br>
         <label for="courriel">Courriel:</label>
-        <input name="courriel" id="courriel" value="<?= htmlspecialchars($courriel)?>" required>
+        <input name="courriel" id="courriel" required>
         <br>
         <button type="submit">S'inscrire</button>
         </fieldset>
