@@ -13,7 +13,14 @@
     </header>
     <main class="shop-container">
       <h1>Profil</h1>
-
+      <aside class="filters">
+        <div class="filter-block">
+          <h2 id="alias">Le profil</h2>
+          <div class="product-image">
+          <img src="images/<?php echo $profile['image']; ?>" alt="">
+          </div>
+        </div>
+      </aside>
     </main>
   </div>
 </body>

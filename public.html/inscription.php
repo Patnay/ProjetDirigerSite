@@ -1,18 +1,18 @@
 <?php
-/*
+require_once "scripts/php/bd/connectionBd.php";
   session_start();
-  $pseudo = $_SESSION['pseudo'];
+  $alias = $_SESSION['pseudo'];
 
-  $pseudo = trim($_POST['pseudo'] ?? '');
+  $alias = trim($_POST['pseudo'] ?? '');
   $mp1 = $_POST['mp1'] ?? '';
   $mp2 = $_POST['mp2'] ?? '';
-  $nom = trim($_POST['negociable'] ?? '');
-  $prenom = trim($_POST['image'] ?? '');
+  $nom = trim($_POST['nom'] ?? '');
+  $prenom = trim($_POST['prenom'] ?? '');
   $courriel = trim($_POST['courriel'] ?? '');
-  $admin = isset($_POST['admin']) ? 'admin' : 'usager';
+  $typeJoueur = trim($_POST['typeJoueur'] ?? '');
   $erreurs = [];
 
-  if(strlen($pseudo) < 2 || strlen($pseudo) > 25){
+  if(strlen($alias) < 2 || strlen($alias) > 25){
     $erreurs[] = "Votre pseudo doit contenir entre 2 et 25 caratères.";
   }
 
@@ -45,8 +45,8 @@
   if(!($erreurs)){
     $hash = password_hash($mp1, PASSWORD_DEFAULT);
 
-    $stmt = $pdo ->prepare("INSERT into usager(pseudo, mdp, nom, prenom, courriel, role) values(?, ?, ?, ?, ?, ?)");
-    $stmt -> execute([$pseudo, $hash, $nom, $prenom, $courriel, $admin]);
+    $stmt = $pdo ->prepare("INSERT into Joueurs(alias, prenom, nom, age, type, courriel, motDePasse) values(?, ?, ?, ?, ?, ?)");
+    $stmt -> execute([$alias, $prenom, $nom, $prenom, $age, $typeJoueur, $courriel, $hash]);
 
     $confirmation = "https://app.mailjet.com/signup?lang=fr_FR";
     mail($courriel, 
@@ -54,7 +54,6 @@
           "Veuillez confirmer votre compte en cliquant sur: $confirmation");
     echo "Un courriel a été envoyé pour confirmer votre compte.";
   }
-    */
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -74,7 +73,7 @@
       <form action="inscription.php", method="POST">
         <fieldset>
         <label for="alias">Alias:</label>
-        <input name="alias" id="alias" required>
+        <input name="alias" id="alias" required value="<?= htmlspecialchars($alias)?>">
         <br>
         <label for="mp1">Mot de passe:</label>
         <input type="password" name="mp1" id="mp1" required>
