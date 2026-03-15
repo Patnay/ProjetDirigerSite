@@ -1,9 +1,9 @@
 <?php
 require_once "scripts/php/bd/connectionBd.php";
   session_start();
-  $alias = $_SESSION['pseudo'];
+  $alias = $_SESSION['alias'];
 
-  $alias = trim($_POST['pseudo'] ?? '');
+  $alias = trim($_POST['alias'] ?? '');
   $mp1 = $_POST['mp1'] ?? '';
   $mp2 = $_POST['mp2'] ?? '';
   $nom = trim($_POST['nom'] ?? '');
@@ -36,10 +36,10 @@ require_once "scripts/php/bd/connectionBd.php";
     $erreurs[] = "Votre courriel n'est pas valide.";
   }
 
-  $stmt = $pdo -> prepare("SELECT * FROM usager where pseudo = ? ");
+  $stmt = $pdo -> prepare("SELECT * FROM Joueurs where alias = ? ");
   $stmt -> execute([$pseudo]);
   if($stmt -> fetch()){
-    $erreurs[] ="Ce pseudo existe déjà.";
+    $erreurs[] ="Cet alias existe déjà.";
   }
   
   if(!($erreurs)){
@@ -76,24 +76,25 @@ require_once "scripts/php/bd/connectionBd.php";
         <input name="alias" id="alias" required value="<?= htmlspecialchars($alias)?>">
         <br>
         <label for="mp1">Mot de passe:</label>
-        <input type="password" name="mp1" id="mp1" required>
+        <input type="password" name="mp1" id="mp1" required value="<?= htmlspecialchars($mp1)?>">
         <br>
         <label for="mp2">Répéter le mot de passe:</label>
-        <input type="password" name="mp2" id="mp2" required>
+        <input type="password" name="mp2" id="mp2" required value="<?= htmlspecialchars($mp2)?>">
         <br>
         <label for="nom">Nom:</label>
-        <input name="nom" id="nom" required>
+        <input name="nom" id="nom" required value="<?= htmlspecialchars($nom)?>">
         <br>
         <label for="prenom">Prenom:</label>
-        <input name="prenom" id="prenom" required>
+        <input name="prenom" id="prenom" required value="<?= htmlspecialchars($prenom)?>">
         <br>
         <label for="courriel">Courriel:</label>
-        <input name="courriel" id="courriel" required>
+        <input name="courriel" id="courriel" required value="<?= htmlspecialchars($courriel)?>">
         <br>
         <button type="submit">S'inscrire</button>
         </fieldset>
         <br>
       </form>
+      <a href></a>
     </main>
   </div>
 </body>
