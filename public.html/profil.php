@@ -38,14 +38,13 @@ require_once "scripts/php/bd/connectionBd.php";
       <h1>Profil</h1>
       <aside class="filters">
         <div class="filter-block">
-          <h2 id="alias">Le profil</h2>
           <div class="product-image">
           <img src=<?php echo $profile['image']; ?> alt="">
           </div>
         </div>
       </aside>
       <div>
-        <button onclick="window.location.href = 'inventaire.php';"></button>
+        <a href="inventaire.php" class="icon-link" id="inventaire">📦</a>
       </div>
       <div class="shop-container">
          <form action="connection.php", method="POST">

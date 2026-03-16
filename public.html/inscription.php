@@ -1,7 +1,11 @@
+<!--$mage = isset($_POST['mage']) ? 'mage' : 'non-mage';
+
+<label for="mage">Est-ce que vous êtes un mage?: </label>
+        <input type="checkbox" name="mage" ></label>
+        <br>-->
 <?php
 require_once "scripts/php/bd/connectionBd.php";
   session_start();
-  $alias = $_SESSION['alias'];
 
   $alias = trim($_POST['alias'] ?? '');
   $mp1 = $_POST['mp1'] ?? '';
@@ -9,7 +13,6 @@ require_once "scripts/php/bd/connectionBd.php";
   $nom = trim($_POST['nom'] ?? '');
   $prenom = trim($_POST['prenom'] ?? '');
   $courriel = trim($_POST['courriel'] ?? '');
-  $typeJoueur = trim($_POST['typeJoueur'] ?? '');
   $erreurs = [];
 
   if(strlen($alias) < 2 || strlen($alias) > 25){
@@ -21,7 +24,7 @@ require_once "scripts/php/bd/connectionBd.php";
   }
 
   if($mp1 != $mp2){
-    $erreurs[] = "Les mot de passe ne sont pas pareil.";
+    $erreurs[] = "Les mots de passe ne sont pas pareil.";
   }
 
   if(strlen($nom) < 2 || strlen($nom) > 50){
@@ -45,8 +48,8 @@ require_once "scripts/php/bd/connectionBd.php";
   if(!($erreurs)){
     $hash = password_hash($mp1, PASSWORD_DEFAULT);
 
-    $stmt = $pdo ->prepare("INSERT into Joueurs(alias, prenom, nom, age, type, courriel, motDePasse) values(?, ?, ?, ?, ?, ?)");
-    $stmt -> execute([$alias, $prenom, $nom, $prenom, $age, $typeJoueur, $courriel, $hash]);
+    $stmt = $pdo ->prepare("INSERT into Joueurs(alias, prenom, nom, age, courriel, motDePasse) values(?, ?, ?, ?, ?, ?, ?)");
+    $stmt -> execute([$alias, $prenom, $nom, $prenom, $courriel, $hash]);
 
     $confirmation = "https://app.mailjet.com/signup?lang=fr_FR";
     mail($courriel, 
