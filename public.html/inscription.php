@@ -37,7 +37,7 @@ require_once "scripts/php/bd/connectionBd.php";
   }
 
   $stmt = $pdo -> prepare("SELECT * FROM Joueurs where alias = ? ");
-  $stmt -> execute([$pseudo]);
+  $stmt -> execute([$alias]);
   if($stmt -> fetch()){
     $erreurs[] ="Cet alias existe déjà.";
   }

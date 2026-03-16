@@ -8,8 +8,6 @@ require_once "scripts/php/bd/connectionBd.php";
         if(@$_SERVER['REQUEST_METHOD'] === 'POST'){
             $alias = $_POST['alias'] ?? '';
             $mp = $_POST['mp'] ?? '';
-
-
           if($alias=== ''|| $mp === ''){
             $message = "Veuillez remplir tous les champs.";
           }
@@ -53,13 +51,13 @@ require_once "scripts/php/bd/connectionBd.php";
          <form action="connection.php", method="POST">
         <fieldset>
             <br>
-            <legend>Veuillez vous connecter: </legend>
+            <legend>Mofifier vos infos de connexion: </legend>
             <label for="alias">Pseudo:</label>
-            <input type="text" id="alias" name="alias" required>
+            <input type="text" id="alias" name="alias" required value="<?= htmlspecialchars($alias)?>">
             <br>
             <br>
             <label for="mp">Mot de passe:</label>
-            <input type="password" id="mp" name="mp" required>
+            <input type="password" id="mp" name="mp" required required value="<?= htmlspecialchars($mp)?>">
             <br>
             <br>
         <button type="submit">Enregistrer les modifications.</button>
