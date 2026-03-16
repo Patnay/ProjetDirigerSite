@@ -1,6 +1,5 @@
 <?php
 require_once "scripts/php/bd/connectionBd.php";
-$produits = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <?php 
  session_start();
@@ -10,6 +9,7 @@ INNER JOIN Inventaires ON Inventaires.idItem = Items.idItem
 INNER JOIN Joueurs ON Joueurs.idJoueur = Inventaires.idJoueur
 WHERE Joueurs.alias = alias = ? values(?)";
 $stmt = $pdo->query($sql);
+$produits = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $stmt->execute([$alias]);
 ?>
 <!DOCTYPE html>

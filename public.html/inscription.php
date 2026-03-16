@@ -97,7 +97,7 @@ require_once "scripts/php/bd/connectionBd.php";
         </fieldset>
         <br>
       </form>
-      <a href></a>
+      <button href="connexion.php">Déjà connecté? Connectez-vous</a>
     </main>
   </div>
 </body>
