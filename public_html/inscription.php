@@ -39,13 +39,14 @@ require_once "init.php";
   }
   
   if(!($erreurs)){
-    $hash = password_hash($mp1, PASSWORD_DEFAULT);
+    //$hash = password_hash($mp1, PASSWORD_DEFAULT); -> Il est hasher dans la procedure
 
-    $stmt = $pdo ->prepare("CALL creeCompte(?,?,?,?,?)");
-    $stmt -> execute([$alias, $prenom, $nom, $courriel, $hash]);
+    $stmt = $pdo ->prepare("CALL creeCompte(?,?,?,?,?".$output.")");
+    $stmt -> execute([$alias, $prenom, $nom, $courriel, $mp1]);
     $stmt -> closeCursor();
-    header("Location: boutique.php");
-     exit;
+    echo($output);
+    // header("Location: boutique.php");
+    //  exit;
   }
 ?>
 <!DOCTYPE html>

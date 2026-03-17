@@ -3,7 +3,7 @@
  Derniere modification : 17 mars 2026
  Expemple d'utilisation :call creeCompte('Patnay','Patrice','Paul','jrcppaul@gmail.com','getManmanw_01', @idUSer);
  Explication -> param1 => alias| param2 => prenom | param3 => nom| param4 => email | param5 => mdp(non hasher)| param 6 => idJoueur
-                La fonction prend les parametre et mes les autre colonne par defaut et RETOURN un idJoueur pour le autoConnect
+                La fonction prend les parametre et mes les autre colonne par DEFAUT et RETOURNE un idJoueur pour le autoConnect (en php)
 */
 DROP PROCEDURE IF EXISTS creeCompte;
 DELIMITER |

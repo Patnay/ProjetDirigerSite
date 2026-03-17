@@ -60,20 +60,23 @@ end |
  Exemple : TO DO
 */
 
-/*Armure*/
+/*Armure
+Exmple : call ajouterArmure('Armure des Tenebres',10,10,'pathImg.jpeg','Fer demoniaque', 'XL');
+*/
+
 drop procedure if exists ajouterArmure; 
 delimiter | 
-create  procedure ajouterArme( 
+create  procedure ajouterArmure( 
     in pNom varchar(50), 
     in pQuantite int, 
     in pPrix int, 
-    in pPhoto varchar(100), 
-    in pDescription varchar(500), 
-    in pEfficacite varchar(30), 
-    in pGenreArme varchar(45)) 
+    in pPhoto varchar(100),
+    in pMatiere VARCHAR(45),
+    in pTaille VARRCHAR(45)
+) 
      
 begin 
-    declare pTypeItem char(1) default 'A'; 
+    declare pTypeItem char(1) default 'R'; 
     declare pidItem int; 
   start transaction; 
    insert into Items (nom, quantiteStock, prix, photo,typeItem)  
@@ -81,9 +84,31 @@ begin
  
                 select LAST_INSERT_ID() into pidItem; 
  
-    insert into Armes (idItem, description,efficacite, genre)  
-                values (pidItem, pdescription,pEfficacite,  pGenreArme); 
+    insert into Armures (idItem, matiere, taille)  
+                values (pidItem,pMatiere,pTaille); 
 			commit;
 end |
-/*Type*/
+
 /*Potion*/
+DROP PROCEDURE IF EXISTS ajouterPotion
+DELIMITER |
+CREATE PROCEDURE ajouterPotion(
+    in pNom varchar(50), 
+    in pQuantite int, 
+    in pPrix int, 
+    in pPhoto varchar(100),
+    IN pEffet VARCHAR(45),
+    IN pDuree INT
+)
+BEGIN
+    DECLARE pTypeItem Char(1) DEFAULT 'P'
+    DECLARE pIdItem;
+    START TRANSACTION;
+        INSERT INTO Items(nom,quantiteStock,prix,photo,typeItem)
+            VALUES(pNom,pQuantite,pPrix,pPhoto,pTypeItem);
+
+            SELECT LAST_INSERT_ID() INTO pIdItem;
+        INSET INTO Potion(idItem,effet,duree)
+            VALUES(pIdItem,pEffet,pDuree)
+    COMMIT;
+END |
