@@ -8,6 +8,5 @@
 <body>
     <h1>Page de protection</h1>
     <a href="vues/"></a>
-    <?php include("scripts\php\bd\connectionBd.php") ?>
 </body>
 </html>

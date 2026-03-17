@@ -3,13 +3,13 @@
 $bourseHeader = 0;
 
 if (isset($_SESSION["idJoueur"]) && isset($pdo)) {
-    $sqlHeader = "SELECT bourse FROM Joueurs WHERE idJoueur = :idJoueur";
+    $sqlHeader = "SELECT nbOr FROM Joueurs WHERE idJoueur = :idJoueur";
     $stmtHeader = $pdo->prepare($sqlHeader);
     $stmtHeader->execute([":idJoueur" => $_SESSION["idJoueur"]]);
     $joueurHeader = $stmtHeader->fetch(PDO::FETCH_ASSOC);
 
     if ($joueurHeader) {
-        $bourseHeader = (int)$joueurHeader["bourse"];
+        $bourseHeader = (int)$joueurHeader["nbOr"];
     }
 }
 ?>

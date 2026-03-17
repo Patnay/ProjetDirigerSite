@@ -19,7 +19,7 @@
             <h2>Présentation du jeu</h2>
             <p>
                 Cette page a pour objectif de regrouper les règles du jeu,
-                les noms des développeurs, les notes de mise à jour
+                les noms des développeurs, les notes de xmise à jour
                 ainsi que quelques informations intéressantes pour l’utilisateur.
             </p>
         </div>

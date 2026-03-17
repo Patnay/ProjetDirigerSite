@@ -108,8 +108,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <div class="profile-box">
                 <p><strong>Pseudo :</strong> <?= htmlspecialchars($joueur["alias"] ?? "") ?></p>
                 <p><strong>Courriel :</strong> <?= htmlspecialchars($joueur["courriel"] ?? "") ?></p>
-                <p><strong>Bourse :</strong> <?= (int)($joueur["bourse"] ?? 0) ?> pièces</p>
-                <p><strong>Points :</strong> <?= (int)($joueur["points"] ?? 0) ?></p>
+                <p><strong>Or:</strong> <?= (int)($joueur["nbOr"] ?? 0) ?> pièces</p>
+                <p><strong>Argent:</strong> <?= (int)($joueur["nbArgent"] ?? 0) ?> pièces</p>
+                <p><strong>Bronze:</strong> <?= (int)($joueur["nbBronze"] ?? 0) ?> pièces</p>
+                <p><strong>Points :</strong> <?= (int)($joueur["ptVie"] ?? 0) ?></p>
 
                 <div class="profile-inventory-link">
                     <a href="inventaire.php" class="icon-link" title="Inventaire">📦</a>
@@ -149,6 +151,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 <button type="submit" class="filter-btn">
                     Enregistrer les modifications
                 </button>
+                <a  href="scripts/php/deconnect.php">Deconnecter</a>
             </form>
         </div>
 

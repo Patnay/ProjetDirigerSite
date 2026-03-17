@@ -28,7 +28,7 @@ BEGIN
 	DECLARE vNbArgent   INT DEFAULT 1000;
 	DECLARE vNbBronze    INT DEFAULT 1000;
 
-    DECLARE vPoints    INT DEFAULT 0;
+    DECLARE vPtVie    INT DEFAULT 0;
 	DECLARE vImg VARCHAR(255) DEFAULT '../image/imageDefaut.jpg';
 
     /* Trim pour s'assurer d'enlever les espace avant et apres*/
@@ -82,11 +82,11 @@ BEGIN
     START TRANSACTION;
         INSERT INTO Joueurs (
             alias, prenom, nom, estMage, courriel, motDePasse,
-            estAdmin, points,img , nbOr,nbArgent,nbBronze
+            estAdmin, ptVie,img , nbOr,nbArgent,nbBronze
         ) VALUES (
             vAlias, pPrenom, pNom
 			, vEstMage, vCourriel, vHash,
-            vEstAdmin, vPoints, vImg,
+            vEstAdmin, vPtVie, vImg,
             vNbOr,vNbArgent,vNbBronze
         );
 

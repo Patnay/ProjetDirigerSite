@@ -9,8 +9,8 @@ DELIMITER |
 
 CREATE PROCEDURE ajouterPanier(
     IN pIdJoueur   INT,
-    IN pIdItem     INT,
-    IN pQuantite   INT)
+    IN pIdItem     INT
+    )
 BEGIN
     DECLARE vExisteJoueur INT DEFAULT 0;
     DECLARE vExisteItem   INT DEFAULT 0;
@@ -50,8 +50,8 @@ BEGIN
         /* essaie d'insert un item dans le panier 
         mais si il exite deja il vas augmenter la quantier a la place*/
         INSERT INTO Paniers (idJoueur, idItem, quantitePanier)
-        VALUES (pIdJoueur, pIdItem, pQuantite)
-        ON DUPLICATE KEY UPDATE quantitePanier = quantitePanier + VALUES(quantitePanier);
+        VALUES (pIdJoueur, pIdItem, 1)
+        ON DUPLICATE KEY UPDATE quantitePanier = 1 + VALUES(quantitePanier);
 		/*https://dev.mysql.com/doc/refman/8.4/en/insert.html Consultee le 10 mars 2025*/
 	COMMIT;
 END

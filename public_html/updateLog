@@ -1,0 +1,7 @@
+-Patrice 17 mars 2026
+J'ai mit les scripts MySql dans le main
+Creation de compte fonction
+TO-Do:
+Deconnection/ set $_SESSION[infos]
+ajouterPanier
+pagePanier

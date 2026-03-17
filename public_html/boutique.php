@@ -1,5 +1,6 @@
 <?php
-require_once "init.php";
+ session_start();
+require_once("scripts/php/bd/connectionBd.php");
 
 /* =========================
    RÉCUPÉRATION DES FILTRES
@@ -274,7 +275,7 @@ Detail
 
 <?php if($produit['quantiteStock'] > 0): ?>
 
-<a class="add-link" href="ajouter_panier.php?id=<?= $produit['idItem'] ?>">
+<a class="add-link" href="scripts/php/ajouterPanier.php?id=<?= $produit['idItem'] ?>">
 Ajouter
 </a>
 
