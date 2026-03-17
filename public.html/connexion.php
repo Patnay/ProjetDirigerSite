@@ -36,12 +36,12 @@
 <body class="shop-page">
   <div class="connect-container">
     <header>
-      <?php include "include/header.php" ?>
+      <?php include "header.php" ?>
     </header>
     <main>
       <h1>Connexion</h1>
       <?php if($message): ?><p style="color:red"><?= htmlspecialchars($message)?></p><?php endif; ?>
-      <form action="connection.php", method="POST">
+      <form action="connexion.php", method="POST">
         <fieldset>
             <br>
             <legend>Veuillez vous connecter: </legend>
@@ -58,12 +58,6 @@
         <br>
       </form>
     </main>
-    <aside>
-     <?php include "include/aside.php"?>
-    </aside>
-    <footer>
-      <?php include "include/footer.php" ?>
-    </footer>
   </div>
 </body>
 </html>
