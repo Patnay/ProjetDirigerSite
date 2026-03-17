@@ -67,7 +67,7 @@ session_start();
     <header>
       <?php include "header.php" ?>
     </header>
-    <main class="shop-container">
+    <main class="connect-container">
       <h1>Se créer un compte</h1>
       <form action="inscription.php", method="POST">
         <fieldset>

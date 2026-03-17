@@ -34,7 +34,7 @@
   <title>Connexion</title>
 </head>
 <body class="shop-page">
-  <div class="shop-container">
+  <div class="connect-container">
     <header>
       <?php include "include/header.php" ?>
     </header>
