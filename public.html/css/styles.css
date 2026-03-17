@@ -542,13 +542,16 @@ gap:15px;
     color: #ff6b6b;
     font-weight: bold;
 }
-.connect-container{
-max-width: 1100px;
+.connect-page {
+    padding: 30px;
+}
+
+.connect-container {
+    max-width: 600px;
     margin: 0 auto;
     background-color: #002c8c;
     border: 3px solid #0c1f63;
     padding: 30px;
-
-flex-direction: column;
-
+    border-radius: 10px;
+    flex-direction: column;
 }

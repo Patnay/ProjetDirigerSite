@@ -43,14 +43,11 @@ require_once "scripts/php/bd/connectionBd.php";
           </div>
         </div>
       </aside>
-      <div>
-        <a href="inventaire.php" class="icon-link" id="inventaire">📦</a>
-      </div>
       <div class="shop-container">
          <form action="connection.php", method="POST">
         <fieldset>
             <br>
-            <legend>Mofifier vos infos de connexion: </legend>
+            <legend>Modifier vos infos de connexion: </legend>
             <label for="alias">Pseudo:</label>
             <input type="text" id="alias" name="alias" required value="<?= htmlspecialchars($alias)?>">
             <br>
@@ -63,6 +60,9 @@ require_once "scripts/php/bd/connectionBd.php";
         </fieldset>
         <br>
       </form>
+      </div>
+      <div>
+        <a href="inventaire.php" class="icon-link" id="inventaire">📦</a>
       </div>
     </main>
   </div>

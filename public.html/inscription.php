@@ -52,6 +52,8 @@ session_start();
           "Confirmation du compte",
           "Veuillez confirmer votre compte en cliquant sur: $confirmation");
     echo "Un courriel a été envoyé pour confirmer votre compte.";
+    header("Location: boutique.php");
+     exit;
   }
 ?>
 <!DOCTYPE html>
@@ -67,7 +69,7 @@ session_start();
     <header>
       <?php include "header.php" ?>
     </header>
-    <main class="connect-container">
+    <main class="shop-container">
       <h1>Se créer un compte</h1>
       <form action="inscription.php", method="POST">
         <fieldset>
