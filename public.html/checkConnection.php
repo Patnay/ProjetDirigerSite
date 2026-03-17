@@ -1,5 +1,5 @@
 <?php
 if(!($_SESSION['connecte'])){
-    header('Location: erreurConnection.php');
+    header('Location: inscription.php');
 }
 ?>

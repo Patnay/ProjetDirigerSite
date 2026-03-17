@@ -1,5 +1,21 @@
-<header class="site-header">
+<?php
 
+$bourseHeader = 0;
+
+if (isset($_SESSION["idJoueur"]) && isset($pdo)) {
+    $sqlHeader = "SELECT bourse FROM Joueurs WHERE idJoueur = :idJoueur";
+    $stmtHeader = $pdo->prepare($sqlHeader);
+    $stmtHeader->execute([":idJoueur" => $_SESSION["idJoueur"]]);
+    $joueurHeader = $stmtHeader->fetch(PDO::FETCH_ASSOC);
+
+    if ($joueurHeader) {
+        $bourseHeader = (int)$joueurHeader["bourse"];
+    }
+}
+?>
+
+<header class="site-header">
+    <link rel="icon" type="favicon"href="favicon.ico"/>
     <div class="header-left">
         <a href="boutique.php" class="logo-link">
             <div class="logo">BFGD</div>
@@ -16,9 +32,7 @@
     <div class="header-right">
 
         <div class="currency-group">
-            <div class="currency gold">🟡 </div>
-            <div class="currency silver">⚪ </div>
-            <div class="currency copper">🟤 </div>
+            <div class="currency gold">🪙 <span><?= $bourseHeader ?></span></div>
         </div>
 
         <div class="plus-menu-container">
@@ -32,7 +46,7 @@
         </div>
 
         <a href="panier.php" class="icon-link" title="Panier">🛒</a>
-        <a href="profil.php" class="icon-link" title="Profil">👤</a>
+        <a href="<?= isset($_SESSION['idJoueur']) ? 'profil.php' : 'connexion.php' ?>" class="icon-link" title="<?= isset($_SESSION['idJoueur']) ? 'Profil' : 'Se connecter' ?>">👤</a>
     </div>
 
 </header>

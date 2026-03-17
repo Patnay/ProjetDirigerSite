@@ -1,8 +1,8 @@
 <?php
-require_once "scripts/php/bd/connectionBd.php";
+ session_start();
+require_once "init.php";
 ?>
 <?php 
- session_start();
  $alias = $_SESSION['alias'];
  $sql = "SELECT Inventaires.idItem, Items.nom, Items.photo, FROM Items 
 INNER JOIN Inventaires ON Inventaires.idItem = Items.idItem

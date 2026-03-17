@@ -1,8 +1,5 @@
-<?php 
-require_once "scripts/php/bd/connectionBd.php";
-session_start();
-?>
 <?php
+require_once "init.php";
   $alias = trim($_POST['alias'] ?? '');
   $mp1 = $_POST['mp1'] ?? '';
   $mp2 = $_POST['mp2'] ?? '';
@@ -44,14 +41,9 @@ session_start();
   if(!($erreurs)){
     $hash = password_hash($mp1, PASSWORD_DEFAULT);
 
-    $stmt = $pdo ->prepare("INSERT into Joueurs(alias, prenom, nom, courriel, motDePasse) values(?, ?, ?, ?, ?)");
+    $stmt = $pdo ->prepare("CALL creeCompte(?,?,?,?,?)");
     $stmt -> execute([$alias, $prenom, $nom, $courriel, $hash]);
-
-    $confirmation = "https://app.mailjet.com/signup?lang=fr_FR";
-    mail($courriel, 
-          "Confirmation du compte",
-          "Veuillez confirmer votre compte en cliquant sur: $confirmation");
-    echo "Un courriel a été envoyé pour confirmer votre compte.";
+    $stmt -> closeCursor();
     header("Location: boutique.php");
      exit;
   }
@@ -95,13 +87,14 @@ session_start();
         </fieldset>
         <br>
       </form>
-      <button class="connect" href="connexion.php">Déjà connecté? Connectez-vous</a>
+      <button class="connect" onclick="window.location.href = 'connexion.php'">Déjà connecté? Connectez-vous</button>
     </main>
   </div>
 </body>
 </html>
-<!--$mage = isset($_POST['mage']) ? 'mage' : 'non-mage';
 
-<label for="mage">Est-ce que vous êtes un mage?: </label>
-        <input type="checkbox" name="mage" ></label>
-        <br>-->
+    <!--$confirmation = "https://app.mailjet.com/signup?lang=fr_FR";
+    mail($courriel, 
+          "Confirmation du compte",
+          "Veuillez confirmer votre compte en cliquant sur: $confirmation");
+    echo "Un courriel a été envoyé pour confirmer votre compte."; -->

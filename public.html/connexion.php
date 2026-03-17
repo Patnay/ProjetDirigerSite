@@ -1,63 +1,96 @@
 <?php
-  session_start();
+session_start();
+require_once "init.php";
 
-  $message='';
-        if(@$_SERVER['REQUEST_METHOD'] === 'POST'){
-            $alias = $_POST['pseudo'] ?? '';
-            $mp = $_POST['mp'] ?? '';
+$message = '';
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $alias = trim($_POST['pseudo'] ?? '');
+    $motDePasse = $_POST['mp'] ?? '';
 
-          if($pseudo=== ''|| $mp === ''){
-            $message = "Veuillez remplir tous les champs.";
-          }
-          else{
-            $stmt = $pdo -> prepare("SELECT * FROM Joueurs WHERE alias = ?");
-            $stmt -> execute([$alias]);
-            $user = $stmt -> fetch();
-            if($user && password_verify($mp, $user['mp'])){
-              $_SESSION['connecte'] = true;
-              $_SESSION['alias'] = $user['alias'];
-              header('Location: boutique.php');
-              exit;
+    if ($alias === '' || $motDePasse === '') {
+        $message = "Veuillez remplir tous les champs.";
+    } else {
+        $stmt = $pdo->prepare("SELECT * FROM Joueurs WHERE alias = ?");
+        $stmt->execute([$alias]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($user) {
+            $hashSaisi = hash('sha256', $motDePasse);
+            $hashBd = $user['motDePasse'] ?? '';
+
+            if ($hashBd !== '' && hash_equals($hashBd, $hashSaisi)) {
+                $_SESSION['connecte'] = true;
+                $_SESSION['idJoueur'] = $user['idJoueur'];
+                $_SESSION['alias'] = $user['alias'];
+
+                header('Location: boutique.php');
+                exit;
+            } else {
+                $message = "L'utilisateur ou le mot de passe est incorrect.";
             }
-            else{
-              $message = "L'utilisateur ou le mot de passe est incorrect.";
-            }
-          }
+        } else {
+            $message = "L'utilisateur ou le mot de passe est incorrect.";
         }
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <link href="css/styles.css" rel="stylesheet"/>
-  <title>Connexion</title>
+    <meta charset="UTF-8">
+    <title>Connexion</title>
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body class="shop-page">
-  <div class="connect-container">
-    <header>
-      <?php include "header.php" ?>
-    </header>
+
+<?php include "header.php"; ?>
+
+<div class="connect-container">
     <main>
-      <h1>Connexion</h1>
-      <?php if($message): ?><p style="color:red"><?= htmlspecialchars($message)?></p><?php endif; ?>
-      <form action="connexion.php", method="POST">
-        <fieldset>
-            <br>
-            <legend>Veuillez vous connecter: </legend>
-            <label for="pseudo">Pseudo:</label>
-            <input type="text" id="pseudo" name="pseudo" required>
-            <br>
-            <br>
-            <label for="mp">Mot de passe:</label>
-            <input type="password" id="mp" name="mp" required>
-            <br>
-            <br>
-        <button type="submit">Se connecter</button>
-        </fieldset>
+        <h1>Connexion</h1>
+
+        <?php if ($message !== ''): ?>
+            <p class="message-erreur"><?= htmlspecialchars($message) ?></p>
+        <?php endif; ?>
+
+        <form action="connexion.php" method="POST">
+            <fieldset>
+                <legend>Veuillez vous connecter :</legend>
+
+                <label for="pseudo">Pseudo :</label>
+                <input
+                    type="text"
+                    id="pseudo"
+                    name="pseudo"
+                    value="<?= htmlspecialchars($_POST['pseudo'] ?? '') ?>"
+                    required
+                >
+
+                <br><br>
+
+                <label for="mp">Mot de passe :</label>
+                <input
+                    type="password"
+                    id="mp"
+                    name="mp"
+                    required
+                >
+
+                <br><br>
+
+                <button type="submit" class="connect">Se connecter</button>
+            </fieldset>
+        </form>
+
         <br>
-      </form>
+
+        <p>
+            Pas encore de compte ?
+            <a href="inscription.php">Créer un compte</a>
+        </p>
     </main>
-  </div>
+</div>
+
 </body>
 </html>

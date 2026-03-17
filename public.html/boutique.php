@@ -1,5 +1,5 @@
 <?php
-require_once "scripts/php/bd/connectionBd.php";
+require_once "init.php";
 
 /* =========================
    RÉCUPÉRATION DES FILTRES
