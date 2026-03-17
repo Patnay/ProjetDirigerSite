@@ -1,12 +1,8 @@
-<!--$mage = isset($_POST['mage']) ? 'mage' : 'non-mage';
-
-<label for="mage">Est-ce que vous êtes un mage?: </label>
-        <input type="checkbox" name="mage" ></label>
-        <br>-->
-<?php
+<?php 
 require_once "scripts/php/bd/connectionBd.php";
-  session_start();
-
+session_start();
+?>
+<?php
   $alias = trim($_POST['alias'] ?? '');
   $mp1 = $_POST['mp1'] ?? '';
   $mp2 = $_POST['mp2'] ?? '';
@@ -48,8 +44,8 @@ require_once "scripts/php/bd/connectionBd.php";
   if(!($erreurs)){
     $hash = password_hash($mp1, PASSWORD_DEFAULT);
 
-    $stmt = $pdo ->prepare("INSERT into Joueurs(alias, prenom, nom, age, courriel, motDePasse) values(?, ?, ?, ?, ?, ?, ?)");
-    $stmt -> execute([$alias, $prenom, $nom, $prenom, $courriel, $hash]);
+    $stmt = $pdo ->prepare("INSERT into Joueurs(alias, prenom, nom, courriel, motDePasse) values(?, ?, ?, ?, ?, ?, ?)");
+    $stmt -> execute([$alias, $prenom, $nom, $courriel, $hash]);
 
     $confirmation = "https://app.mailjet.com/signup?lang=fr_FR";
     mail($courriel, 
@@ -97,8 +93,13 @@ require_once "scripts/php/bd/connectionBd.php";
         </fieldset>
         <br>
       </form>
-      <button href="connexion.php">Déjà connecté? Connectez-vous</a>
+      <button class="connect" href="connexion.php">Déjà connecté? Connectez-vous</a>
     </main>
   </div>
 </body>
 </html>
+<!--$mage = isset($_POST['mage']) ? 'mage' : 'non-mage';
+
+<label for="mage">Est-ce que vous êtes un mage?: </label>
+        <input type="checkbox" name="mage" ></label>
+        <br>-->
