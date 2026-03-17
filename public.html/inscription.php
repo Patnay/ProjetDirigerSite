@@ -44,7 +44,7 @@ session_start();
   if(!($erreurs)){
     $hash = password_hash($mp1, PASSWORD_DEFAULT);
 
-    $stmt = $pdo ->prepare("INSERT into Joueurs(alias, prenom, nom, courriel, motDePasse) values(?, ?, ?, ?, ?, ?, ?)");
+    $stmt = $pdo ->prepare("INSERT into Joueurs(alias, prenom, nom, courriel, motDePasse) values(?, ?, ?, ?, ?)");
     $stmt -> execute([$alias, $prenom, $nom, $courriel, $hash]);
 
     $confirmation = "https://app.mailjet.com/signup?lang=fr_FR";
