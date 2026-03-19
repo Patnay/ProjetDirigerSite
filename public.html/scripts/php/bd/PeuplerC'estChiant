@@ -1,0 +1,113 @@
+use dbdarquest6;
+
+#pour les armes (pNom, pQuantite, pPrix, pPhoto, pDescription, pEfficacite, pGenreArme)
+#pour les sorts (pNom, pQuantite, pPrix, pPhoto, pInstantane, prarete, ptype, pDescription, pPVie, pPDegat)
+
+# pour le inserts d'armes
+CALL ajouterArme(
+    'Moonlight Greatsword',
+    1,
+    50,
+    '../image/goatedWeapon.jpg',
+    'Une arme crée à partir de la Lune',
+    'Très élevée',
+    'g'
+);
+CALL ajouterArme(
+    'Rivers of blood',
+    69,
+    5,
+    '../image/riverOfBlood.jpg',
+    'Un katanna faite de sang d un grand nombre de villageois',
+    'Très élevée',
+    'k'
+);
+CALL ajouterArme(
+    'Jar Canon',
+    43,
+    8,
+    '../image/canon.jpg',
+    'Un canon portatif qui a été construit pour défendre un royaume déchu',
+    'Correct',
+    'c'
+);
+CALL ajouterArme(
+    'Sword of night and flame',
+    1,
+    55,
+    '../image/swordOfNightAndFlame.jpg',
+    'Une épée réprésentant le jour et la nuit',
+    'Légendaire',
+    'a'
+);
+# Pour les sort
+CALL ajouterSort(
+    'Star Light',
+    10,
+    70,
+    '../image/spam.jpg',
+    1,      -- estInstantane
+    10,      -- rareté (exemple)
+    't',     -- typeSort (exemple)
+    'Test description',
+    '20',
+    '10'
+);
+
+SHOW CREATE PROCEDURE ajouterSort;
+
+#pour les armures
+
+
+#pour les potions
+
+
+
+INSERT INTO Items(nom, quantiteStock, prix, photo, typeItem, estDisponible) VALUES ('Fire Giant Braid', 24, 3,'../image/fireGiant.jpg', 'f', '1');
+INSERT INTO Items(nom, quantiteStock, prix, photo, typeItem, estDisponible) VALUES ('Rennala Staff', 5, 10,'../image/rennalaStaff.jpg', 'b', '1');
+INSERT INTO Items(nom, quantiteStock, prix, photo, typeItem, estDisponible) VALUES ('Armure du général Radahn', 3, 5,'../image/radahnArmor.jpg', 'r', '1');
+INSERT INTO Items(nom, quantiteStock, prix, photo, typeItem, estDisponible) VALUES ('Star Light', 1, 7,'../image/spam.jpg', 't', '1');
+INSERT INTO Items(nom, quantiteStock, prix, photo, typeItem, estDisponible) VALUES ('Flask of Crimson Tears', 100, 1,'../image/potionRouge.jpg', 'p', '1');
+INSERT INTO Items(nom, quantiteStock, prix, photo, typeItem, estDisponible) VALUES ('Skin du Wylder', 1, 20,'../image/wylder.jpg', 'r', '1');
+
+select * FROM Items;
+select * FROM Armes;
+select * FROM Armures;
+DELETE FROM Armes;
+DELETE FROM Items;
+DELETE FROM Armures;
+
+DELETE FROM Items WHERE idItem = 30;
+
+
+# pour les inserts de catégorie
+INSERT INTO Categories(idCategorie, nomCategorie) VALUES ('s', 'skin');
+INSERT INTO Categories(idCategorie, nomCategorie) VALUES ('a', 'arme');
+INSERT INTO Categories(idCategorie, nomCategorie) VALUES ('r', 'armure');
+INSERT INTO Categories(idCategorie, nomCategorie) VALUES ('p', 'potion');
+INSERT INTO Categories(idCategorie, nomCategorie) VALUES ('t', 'sort');
+INSERT INTO Categories(idCategorie, nomCategorie) VALUES ('k', 'katanna');
+INSERT INTO Categories(idCategorie, nomCategorie) VALUES ('c', 'canon');
+INSERT INTO Categories(idCategorie, nomCategorie) VALUES ('g', 'greatsword');
+INSERT INTO Categories(idCategorie, nomCategorie) VALUES ('b', 'staff');
+INSERT INTO Categories(idCategorie, nomCategorie) VALUES ('f', 'fouet');
+
+
+#pour la table
+CREATE TABLE DemandesArgent (
+    idDemande INT AUTO_INCREMENT PRIMARY KEY,
+    idJoueur INT NOT NULL,
+    montant INT NOT NULL DEFAULT 10,
+    dateDemande DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (idJoueur) REFERENCES Joueurs(idJoueur)
+);
+DROP TABLE DemandesArgent;
+
+# créer un joueur
+INSERT INTO Joueurs(alias, prenom, nom, bourse, courriel, motDePasse) VALUES('AliasTest', 'PrenomTest', 'NomTest', 2, 'CourrielTest@gmail.com', SHA2('MdpTest1234',256));
+DELETE FROM Joueurs WHERE alias = 'AliasTest';
+
+select * from Joueurs;
+
+ALTER TABLE Joueurs DROP COLUMN age;
+# procedure stocké
