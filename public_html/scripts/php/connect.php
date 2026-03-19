@@ -4,5 +4,5 @@ $stmt->execute([$output]);
 $joueur = $stmt->fetch();
 $_SESSION["alias"] = $joueur["alias"];
 $_SESSION["idJoueur"] = $joueur["idJoueur"];
-//header("Location: profil.php");
+header("Location: profil.php");
 ?>

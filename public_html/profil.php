@@ -147,7 +147,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     name="mp"
                     placeholder="Laisser vide pour ne pas changer"
                 >
-
+                <?php 
+                // Pour le débugage mettre en commentaire pour la mise en production
+                echo("Le id Joueur est = :".$_SESSION["idJoueur"]);
+                ?>
                 <button type="submit" class="filter-btn">
                     Enregistrer les modifications
                 </button>

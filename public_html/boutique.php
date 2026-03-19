@@ -1,5 +1,5 @@
 <?php
- session_start();
+session_start();
 require_once("scripts/php/bd/connectionBd.php");
 
 /* =========================
@@ -7,19 +7,19 @@ require_once("scripts/php/bd/connectionBd.php");
 ========================= */
 
 $prixMin = isset($_GET["prixMin"]) && $_GET["prixMin"] !== ""
-    ? (float)$_GET["prixMin"]
+    ? (float) $_GET["prixMin"]
     : null;
 
 $prixMax = isset($_GET["prixMax"]) && $_GET["prixMax"] !== ""
-    ? (float)$_GET["prixMax"]
+    ? (float) $_GET["prixMax"]
     : null;
 
 $etoileMin = isset($_GET["etoileMin"]) && $_GET["etoileMin"] !== ""
-    ? (float)$_GET["etoileMin"]
+    ? (float) $_GET["etoileMin"]
     : null;
 
 $etoileMax = isset($_GET["etoileMax"]) && $_GET["etoileMax"] !== ""
-    ? (float)$_GET["etoileMax"]
+    ? (float) $_GET["etoileMax"]
     : null;
 
 /* =========================
@@ -119,195 +119,171 @@ $produits = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <html lang="fr">
 
 <head>
-<meta charset="UTF-8">
-<title>Boutique</title>
-<link rel="stylesheet" href="css/styles.css">
-<link rel="icon" type="favicon"href="favicon.ico"/>
+    <meta charset="UTF-8">
+    <title>Boutique</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" type="favicon" href="favicon.ico" />
 </head>
 
 <body>
 
-<?php include "header.php"; ?>
+    <?php include "header.php"; ?>
 
-<main class="shop-page">
+    <main class="shop-page">
 
-<div class="shop-container">
+        <div class="shop-container">
 
 
-<!-- =========================
+            <!-- =========================
      FILTRES
 ========================= -->
 
-<aside class="filters">
+            <aside class="filters">
 
-<h2>Filtrer la recherche</h2>
+                <h2>Filtrer la recherche</h2>
 
-<form method="get" action="boutique.php">
+                <form method="get" action="boutique.php">
 
-<div class="filter-block">
+                    <div class="filter-block">
 
-<label>Prix minimum</label>
+                        <label>Prix minimum</label>
 
-<input
-type="number"
-step="0.01"
-name="prixMin"
-placeholder="Min"
-value="<?= htmlspecialchars($_GET['prixMin'] ?? '') ?>"
->
+                        <input type="number" step="0.01" name="prixMin" placeholder="Min"
+                            value="<?= htmlspecialchars($_GET['prixMin'] ?? '') ?>">
 
-</div>
+                    </div>
 
-<div class="filter-block">
+                    <div class="filter-block">
 
-<label>Prix maximum</label>
+                        <label>Prix maximum</label>
 
-<input
-type="number"
-step="0.01"
-name="prixMax"
-placeholder="Max"
-value="<?= htmlspecialchars($_GET['prixMax'] ?? '') ?>"
->
+                        <input type="number" step="0.01" name="prixMax" placeholder="Max"
+                            value="<?= htmlspecialchars($_GET['prixMax'] ?? '') ?>">
 
-</div>
+                    </div>
 
-<div class="filter-block">
+                    <div class="filter-block">
 
-<label>Étoiles minimum</label>
+                        <label>Étoiles minimum</label>
 
-<input
-type="number"
-step="0.1"
-min="0"
-max="5"
-name="etoileMin"
-placeholder="Min"
-value="<?= htmlspecialchars($_GET['etoileMin'] ?? '') ?>"
->
+                        <input type="number" step="0.1" min="0" max="5" name="etoileMin" placeholder="Min"
+                            value="<?= htmlspecialchars($_GET['etoileMin'] ?? '') ?>">
 
-</div>
+                    </div>
 
-<div class="filter-block">
+                    <div class="filter-block">
 
-<label>Étoiles maximum</label>
+                        <label>Étoiles maximum</label>
 
-<input
-type="number"
-step="0.1"
-min="0"
-max="5"
-name="etoileMax"
-placeholder="Max"
-value="<?= htmlspecialchars($_GET['etoileMax'] ?? '') ?>"
->
+                        <input type="number" step="0.1" min="0" max="5" name="etoileMax" placeholder="Max"
+                            value="<?= htmlspecialchars($_GET['etoileMax'] ?? '') ?>">
 
-</div>
+                    </div>
 
-<div class="filter-buttons">
+                    <div class="filter-buttons">
 
-<button class="filter-btn" type="submit">
-Filtrer
-</button>
+                        <button class="filter-btn" type="submit">
+                            Filtrer
+                        </button>
 
-<a class="reset-btn" href="boutique.php">
-Réinitialiser
-</a>
+                        <a class="reset-btn" href="boutique.php">
+                            Réinitialiser
+                        </a>
 
-</div>
+                    </div>
 
-</form>
+                </form>
 
-</aside>
+            </aside>
 
 
-<!-- =========================
+            <!-- =========================
      PRODUITS
 ========================= -->
 
-<section class="products-grid">
+            <section class="products-grid">
 
-<?php if(count($produits) > 0): ?>
+                <?php if (count($produits) > 0): ?>
 
-<?php foreach($produits as $produit): ?>
+                    <?php foreach ($produits as $produit): ?>
 
-<div class="product-card">
+                        <div class="product-card">
 
-<div class="product-image">
+                            <div class="product-image">
 
-<img src="images/<?= htmlspecialchars($produit['photo']) ?>" alt="">
+                                <img src="images/<?= htmlspecialchars($produit['photo']) ?>" alt="">
 
-</div>
+                            </div>
 
-<h3><?= htmlspecialchars($produit['nom']) ?></h3>
+                            <h3><?= htmlspecialchars($produit['nom']) ?></h3>
 
-<p class="price">
+                            <p class="price">
 
-<?= number_format($produit['prix'],2) ?> $
+                                <?= number_format($produit['prix'], 2) ?> $
 
-</p>
+                            </p>
 
-<p class="stars">
+                            <p class="stars">
 
-⭐ <?= number_format($produit['etoile'],1) ?> / 5
+                                ⭐ <?= number_format($produit['etoile'], 1) ?> / 5
 
-</p>
+                            </p>
 
-<p class="stock">
+                            <p class="stock">
 
-<?php if($produit['quantiteStock'] > 0): ?>
+                                <?php if ($produit['quantiteStock'] > 0): ?>
 
-Stock : <?= $produit['quantiteStock'] ?>
+                                    Stock : <?= $produit['quantiteStock'] ?>
 
-<?php else: ?>
+                                <?php else: ?>
 
-Rupture de stock
+                                    Rupture de stock
 
-<?php endif; ?>
+                                <?php endif; ?>
 
-</p>
+                            </p>
 
-<div class="product-actions">
+                            <div class="product-actions">
 
-<a href="detail.php?id=<?= $produit['idItem'] ?>">
-Detail
-</a>
+                                <a href="detail.php?id=<?= $produit['idItem'] ?>">
+                                    Detail
+                                </a>
 
-<?php if($produit['quantiteStock'] > 0): ?>
+                                <?php if ($produit['quantiteStock'] > 0): ?>
 
-<a class="add-link" href="scripts/php/ajouterPanier.php?id=<?= $produit['idItem'] ?>">
-Ajouter
-</a>
+                                    <a class="add-link" href="scripts/php/ajouterPanier.php?id=<?= $produit['idItem'] ?>">
+                                        Ajouter
+                                    </a>
 
-<?php else: ?>
+                                <?php else: ?>
 
-<span class="add-link" style="opacity:0.5">
-Ajouter
-</span>
+                                    <span class="add-link" style="opacity:0.5">
+                                        Ajouter
+                                    </span>
 
-<?php endif; ?>
+                                <?php endif; ?>
 
-</div>
+                            </div>
 
-</div>
+                        </div>
 
-<?php endforeach; ?>
+                    <?php endforeach; ?>
 
-<?php else: ?>
+                <?php else: ?>
 
-<p class="no-product">
+                    <p class="no-product">
 
-Aucun produit trouvé avec ces filtres.
+                        Aucun produit trouvé avec ces filtres.
 
-</p>
+                    </p>
 
-<?php endif; ?>
+                <?php endif; ?>
 
-</section>
+            </section>
 
-</div>
+        </div>
 
-</main>
+    </main>
 
 </body>
 

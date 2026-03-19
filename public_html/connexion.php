@@ -1,5 +1,6 @@
 <?php
 session_start();
+include("scripts/php/bd/connectionBd.php");
 
 $message = '';
 

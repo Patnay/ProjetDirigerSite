@@ -1,7 +1,9 @@
 /*
  Auteur: Patrice Paul  
- Date dernier modif: 10 mars 2026
- Exemple : TO DO
+ Date dernier modif: 18 mars 2026
+ Exemple : 
+ Pour ajouterPanier =>  CALL ajouterPanier(idJoueur,idItem);
+
 */
 
 DROP PROCEDURE IF EXISTS ajouterPanier;
@@ -12,38 +14,17 @@ CREATE PROCEDURE ajouterPanier(
     IN pIdItem     INT
     )
 BEGIN
-    DECLARE vExisteJoueur INT DEFAULT 0;
-    DECLARE vExisteItem   INT DEFAULT 0;
     DECLARE vStock        INT DEFAULT 0;
-
-    /*- Validations de base -*/
-    /*Quantite*/
-    IF pQuantite IS NULL OR pQuantite <= 0 THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Quantité invalide (doit être > 0).';
-    END IF;
-
-    SELECT COUNT(*) INTO vExisteJoueur
-      FROM Joueurs
-     WHERE idJoueur = pIdJoueur;
-	/*Existance du joueur*/
-    IF vExisteJoueur = 0 THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Joueur inexistant.';
-    END IF;
-
-    SELECT COUNT(*) INTO vExisteItem
-      FROM Items
-     WHERE idItem = pIdItem;
-	/*si l'item existe*/
-    IF vExisteItem = 0 THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Item inexistant.';
-    END IF;
-
+    DECLARE vQuantite  INT ;
+    
+    SELECT quantitePanier INTO vQuantite FROM Paniers WHERE idItem = pIdItem AND idJoueur = pIdJoueur;
+	SELECT quantiteStock INTO vStock FROM Items WHERE idItem = pIdItem;
     START TRANSACTION;
 
         /* On verrouille la ligne de l'article si on réserve le stock, pour cohérence. */
 			
             /*check si la quantiter dmd est plus que le stock*/
-            IF pQuantite > vStock THEN
+            IF vQuantite + 1 > vStock THEN
                 ROLLBACK;
                 SIGNAL SQLSTATE '45002' SET MESSAGE_TEXT = 'Stock insuffisant pour cet item.';
             END IF;
@@ -51,17 +32,13 @@ BEGIN
         mais si il exite deja il vas augmenter la quantier a la place*/
         INSERT INTO Paniers (idJoueur, idItem, quantitePanier)
         VALUES (pIdJoueur, pIdItem, 1)
-        ON DUPLICATE KEY UPDATE quantitePanier = 1 + VALUES(quantitePanier);
+        ON DUPLICATE KEY UPDATE quantitePanier = quantitePanier + 1;
 		/*https://dev.mysql.com/doc/refman/8.4/en/insert.html Consultee le 10 mars 2025*/
 	COMMIT;
 END
 |
 
 DELIMITER ;
-
-
-DROP PROCEDURE IF EXISTS payerPanier;
-DELIMITER |
 
 CREATE PROCEDURE payerPanier(
     IN pIdJoueur INT
