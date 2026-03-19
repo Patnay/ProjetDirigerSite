@@ -2,6 +2,7 @@ use dbdarquest6;
 
 #pour les armes (pNom, pQuantite, pPrix, pPhoto, pDescription, pEfficacite, pGenreArme)
 #pour les sorts (pNom, pQuantite, pPrix, pPhoto, pInstantane, prarete, ptype, pDescription, pPVie, pPDegat)
+#pour les armures (
 
 # pour le inserts d'armes
 CALL ajouterArme(
@@ -40,6 +41,25 @@ CALL ajouterArme(
     'Légendaire',
     'a'
 );
+CALL ajouterArme(
+    'Fire Giant Braid',
+    50,
+    5,
+    '../image/fireGiant.jpg',
+    'Un fouet, fait de poil de géant maintenant disparu',
+    'Légendaire',
+    'a'
+);
+CALL ajouterArme(
+    'Rennala Staff',
+    35,
+    26,
+    '../image/rennalaStaff.jpg',
+    'Le bâton magique de la reine sorcière Rennala',
+    'Légendaire',
+    'b'
+);
+
 # Pour les sort
 CALL ajouterSort(
     'Star Light',
@@ -54,30 +74,134 @@ CALL ajouterSort(
     '10'
 );
 
-SHOW CREATE PROCEDURE ajouterSort;
+SHOW CREATE PROCEDURE ajouterPotion;
 
 #pour les armures
+CALL ajouterArmure(
+	'Skin du Wylder',
+    '1',
+    '25',
+    '../image/wylder.jpg',
+    'Acier et tissu',
+    'Large'
+);
+CALL ajouterArmure(
+	'Skin du Guardien',
+    '25',
+    '25',
+    '../image/guariden.jpg',
+    'Acier et tissu',
+    'Large'
+);
+CALL ajouterArmure(
+	'Skin du Raider',
+    '25',
+    '25',
+    '../image/raider.jpg',
+    'Acier et tissu',
+    'Large'
+);
+CALL ajouterArmure(
+	'Skin de la Recluse',
+    '25',
+    '25',
+    '../image/recluse.jpg',
+    'Tissu',
+    'Medium'
+);
+CALL ajouterArmure(
+	'Skin de la Revenant',
+    '25',
+    '25',
+    '../image/revenant.jpg',
+    'Tissu et os',
+    'Small'
+);
+CALL ajouterArmure(
+	'Skin d Ironeye',
+    '25',
+    '25',
+    '../image/ironeye.jpg',
+    'Acier et tissu',
+    'Medium'
+);
+CALL ajouterArmure(
+	'Skin de la Duchess',
+    '25',
+    '25',
+    '../image/duchess.jpg',
+    'Tissu',
+    'Medium'
+);
+CALL ajouterArmure(
+	'Skin d Executor',
+    '25',
+    '25',
+    '../image/executor.jpg',
+    'Tissu',
+    'Medium'
+);
+CALL ajouterArmure(
+	'Skin de l Undertaker',
+    '25',
+    '25',
+    '../image/undertaker.jpg',
+    'Tissu',
+    'Medium'
+);
+CALL ajouterArmure(
+	'Skin du Scholar',
+    '25',
+    '25',
+    '../image/scholar.jpg',
+    'Tissu',
+    'Medium'
+);
 
 
 #pour les potions
+CALL ajouterPotion(
+	'Flask of Crimson Tears',
+    '500',
+    '5',
+    '../image/potionRouge.jpg',
+    'Boost les dégats',
+    '1'
+);
+CALL ajouterPotion(
+	'Estus Flask',
+    '500',
+    '5',
+    '../image/potionJaune.jpg',
+    'Donne des indices pour les énigmes',
+    '1'
+);
+CALL ajouterPotion(
+	'Flask of Cerulean Tears',
+    '500',
+    '5',
+    '../image/potionBleu.jpg',
+    'Boost les vitesse',
+    '1'
+);
 
 
 
-INSERT INTO Items(nom, quantiteStock, prix, photo, typeItem, estDisponible) VALUES ('Fire Giant Braid', 24, 3,'../image/fireGiant.jpg', 'f', '1');
-INSERT INTO Items(nom, quantiteStock, prix, photo, typeItem, estDisponible) VALUES ('Rennala Staff', 5, 10,'../image/rennalaStaff.jpg', 'b', '1');
-INSERT INTO Items(nom, quantiteStock, prix, photo, typeItem, estDisponible) VALUES ('Armure du général Radahn', 3, 5,'../image/radahnArmor.jpg', 'r', '1');
-INSERT INTO Items(nom, quantiteStock, prix, photo, typeItem, estDisponible) VALUES ('Star Light', 1, 7,'../image/spam.jpg', 't', '1');
-INSERT INTO Items(nom, quantiteStock, prix, photo, typeItem, estDisponible) VALUES ('Flask of Crimson Tears', 100, 1,'../image/potionRouge.jpg', 'p', '1');
-INSERT INTO Items(nom, quantiteStock, prix, photo, typeItem, estDisponible) VALUES ('Skin du Wylder', 1, 20,'../image/wylder.jpg', 'r', '1');
-
+select * FROM Joueurs;
 select * FROM Items;
 select * FROM Armes;
 select * FROM Armures;
+select * from Potions;
+select * from Typesorts;
 DELETE FROM Armes;
 DELETE FROM Items;
 DELETE FROM Armures;
+DELETE FROM Potions;
+DELETE FROM Sorts;
+DELETE FROM Typesorts;
+DELETE FROM Inventaires;
+DELETE FROM Paniers;
 
-DELETE FROM Items WHERE idItem = 30;
 
 
 # pour les inserts de catégorie
