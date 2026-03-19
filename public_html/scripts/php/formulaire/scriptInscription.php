@@ -60,6 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         include("scripts/php/connect.php");
         echo "<h2>Compte créé avec succès !</h2>";
     }
+    header("Location: boutique.php");
 }
 else{
     

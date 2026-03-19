@@ -1,5 +1,9 @@
 <?php
 session_start();
+if (!isset($_SESSION["idJoueur"])) {
+    header("Location: connexion.php");
+    exit;
+}
 require_once("scripts/php/bd/connectionBd.php");
 
 
@@ -7,11 +11,6 @@ $sql = "SELECT i.nom,i.prix,i.photo,p.quantitePanier
         FROM Items i INNER JOIN 
         Paniers p ON i.idItem = p.idItem 
         WHERE p.idJoueur = ? ";
-
-
-
-
-
 
 $stmt = $pdo->prepare($sql);
 $stmt->execute([$_SESSION["idJoueur"]]);
@@ -25,8 +24,9 @@ $sql = "SELECT SUM(i.prix*p.quantitePanier) as prixTotal
         
 $stmt = $pdo->prepare($sql);
 $stmt->execute([$_SESSION["idJoueur"]]);
-
 $prixTotal = $stmt->fetch(PDO::FETCH_ASSOC);
+if($prixTotal['prixTotal'] === null) 
+    $prixTotal['prixTotal'] = 0;
 ?>
 
 <!DOCTYPE html>
@@ -86,8 +86,9 @@ $prixTotal = $stmt->fetch(PDO::FETCH_ASSOC);
                         <p style=" color: black;"> Prix total:<?=number_format($prixTotal['prixTotal'])?> </p>
                         <form action="panier.php" method="POST">
                             <button type="submit">Payer Votre Panier</button>
-                            <?php include("scripts/php/payerPanier.php") ?>
                         </form>
+                        
+                            <?php include("scripts/php/payerPanier.php") ?>
                     </aside>
 
         </div>

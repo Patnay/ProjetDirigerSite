@@ -1,5 +1,9 @@
 <?php
  session_start();
+if (!isset($_SESSION["idJoueur"])) {
+    header("Location: connexion.php");
+    exit;
+}
 ?>
 <?php 
  $alias = $_SESSION['alias'];

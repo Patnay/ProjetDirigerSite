@@ -3,8 +3,9 @@ session_start();
 
 require_once "bd/connectionBd.php";
 
-if (!isset($_SESSION['idJoueur'])) {
-    die("Erreur : vous devez être connecté pour ajouter au panier.");
+if (!isset($_SESSION["idJoueur"])) {
+    header("Location: ../../connexion.php");
+    exit;
 }
 
 $idItem = $_GET['id'] ?? null;
