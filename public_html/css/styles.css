@@ -555,3 +555,28 @@ gap:15px;
     border-radius: 10px;
     flex-direction: column;
 }
+
+.number{
+    font-weight:bold;
+    align-items: flex-end;
+    margin-bottom:5px;
+}
+.product-image-panier{
+
+width:90%;
+
+height:90%;
+
+background-color:#5a5a5a;
+
+display:flex;
+
+align-items:flex-start;
+
+justify-content:center;
+
+margin-bottom:12px;
+
+overflow:hidden;
+
+}
