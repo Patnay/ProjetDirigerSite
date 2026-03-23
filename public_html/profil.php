@@ -150,7 +150,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 <label for="mp">Nouveau mot de passe :</label>
                 <input type="password" id="mp" name="mp"
                        placeholder="Laisser vide pour ne pas changer">
-
+                <a href="logout.php" class="logout-btn">Déconnexion</a>
                 <button type="submit" class="filter-btn">Enregistrer les modifications</button>
             </form>
         </div>
