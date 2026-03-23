@@ -1,106 +1,105 @@
 <?php
- session_start();
-if (!isset($_SESSION["idJoueur"])) {
+session_start();
+require_once("scripts/php/bd/connectionBd.php");
+
+/* =========================
+   PROTÉGER LA PAGE
+========================= */
+if (empty($_SESSION["idJoueur"])) {
     header("Location: connexion.php");
     exit;
 }
+
+$idJoueur = (int)$_SESSION["idJoueur"];
+
+/* =========================
+   RÉCUPÉRER INVENTAIRE
+========================= */
+$sql = "
+SELECT 
+    Items.idItem,
+    Items.nom,
+    Items.prix,
+    Items.photo,
+    Items.quantiteStock,
+    Inventaires.quantiteInventaire
+FROM Inventaires
+INNER JOIN Items ON Inventaires.idItem = Items.idItem
+WHERE Inventaires.idJoueur = :idJoueur
+ORDER BY Items.nom ASC
+";
+
+$stmt = $pdo->prepare($sql);
+$stmt->execute([":idJoueur" => $idJoueur]);
+$inventaire = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
-<!-- 
- A corriger pour l<affichage du panier
- <?php 
- $alias = $_SESSION['alias'];
- $sql = "SELECT Inventaires.idItem, Items.nom, Items.photo, FROM Items 
-INNER JOIN Inventaires ON Inventaires.idItem = Items.idItem
-INNER JOIN Joueurs ON Joueurs.idJoueur = Inventaires.idJoueur
-WHERE Joueurs.alias = alias = ? values(?)";
-$stmt = $pdo->query($sql);
-$produits = $stmt->fetchAll(PDO::FETCH_ASSOC);
-$stmt->execute([$alias]);
-?> -->
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
-<meta charset="UTF-8">
-<title>Boutique</title>
-<link rel="stylesheet" href="css/styles.css">
+    <meta charset="UTF-8">
+    <title>Inventaire</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" href="favicon.ico">
 </head>
-
 <body>
 
 <?php include "header.php"; ?>
 
 <main class="shop-page">
+    <div class="shop-container">
 
-<div class="shop-container">
+        <aside class="filters">
+            <h2>Inventaire</h2>
 
-<!-- FILTRE -->
-<aside class="filters">
+            <div class="filter-block">
+                <p>
+                    Joueur :
+                    <strong><?= htmlspecialchars($_SESSION["alias"] ?? "") ?></strong>
+                </p>
+            </div>
 
-<h2>Filtrer la recherche</h2>
+            <div class="filter-block">
+                <a href="boutique.php" class="reset-btn">Retour boutique</a>
+            </div>
+        </aside>
 
-<div class="filter-block">
-<label>Catégorie</label>
-<select>
-<option>Toutes</option>
-<option>Armes</option>
-<option>Armures</option>
-<option>Potions</option>
-</select>
-</div>
+        <section class="products-grid">
+            <?php if (!empty($inventaire)): ?>
 
-<div class="filter-block">
-<label>Prix</label>
-<p>Min: __ Max: __</p>
-</div>
+                <?php foreach ($inventaire as $item): ?>
+                    <div class="product-card">
 
-<div class="filter-block">
-<label>Évaluation</label>
-<p>Min: __ Max: __</p>
-</div>
+                        <div class="product-image">
+                            <img src="images/<?= htmlspecialchars($item['photo']) ?>" alt="<?= htmlspecialchars($item['nom']) ?>">
+                        </div>
 
-</aside>
+                        <h3><?= htmlspecialchars($item['nom']) ?></h3>
 
+                        <p class="price">
+                            <?= number_format((float)$item['prix'], 2) ?>
+                        </p>
 
-<!-- PRODUITS -->
-<section class="products-grid">
+                        <p class="stock">
+                            Quantité inventaire : <?= (int)$item['quantiteInventaire'] ?>
+                        </p>
 
-<?php foreach($produits as $produit): ?>
+                        <p class="stock">
+                            Stock boutique : <?= (int)$item['quantiteStock'] ?>
+                        </p>
 
-<div class="product-card">
+                        <div class="product-actions">
+                            <a href="detail.php?id=<?= $item['idItem'] ?>">Detail</a>
+                        </div>
 
-<div class="product-image">
-<img src="images/<?php echo $produit['image']; ?>" alt="">
-</div>
+                    </div>
+                <?php endforeach; ?>
 
-<h3><?php echo $produit['nom']; ?></h3>
+            <?php else: ?>
+                <p class="no-product">Votre inventaire est vide.</p>
+            <?php endif; ?>
+        </section>
 
-<p class="price"><?php echo $produit['prix']; ?> $</p>
-
-<p class="stock">
-Stock : <?php echo $produit['qtStock']; ?>
-</p>
-
-<div class="product-actions">
-
-<a href="detail.php?id=<?php echo $produit['idItem']; ?>">
-Detail
-</a>
-
-<a class="add-link" href="ajouter_panier.php?id=<?php echo $produit['idItem']; ?>">
-Ajouter
-</a>
-
-</div>
-
-</div>
-
-<?php endforeach; ?>
-
-</section>
-
-</div>
-
+    </div>
 </main>
 
 </body>
