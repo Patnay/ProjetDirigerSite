@@ -1,21 +1,31 @@
 <?php
+$nbOrHeader = 0;
+$nbArgentHeader = 0;
+$nbBronzeHeader = 0;
 
-$bourseHeader = 0;
+$profilLink = "connexion.php";
+$profilTitle = "Se connecter";
+$profilImg = "";
 
 if (isset($_SESSION["idJoueur"]) && isset($pdo)) {
-    $sqlHeader = "SELECT nbOr FROM Joueurs WHERE idJoueur = :idJoueur";
+    $sqlHeader = "SELECT * FROM Joueurs WHERE idJoueur = :idJoueur";
     $stmtHeader = $pdo->prepare($sqlHeader);
     $stmtHeader->execute([":idJoueur" => $_SESSION["idJoueur"]]);
     $joueurHeader = $stmtHeader->fetch(PDO::FETCH_ASSOC);
 
     if ($joueurHeader) {
-        $bourseHeader = (int)$joueurHeader["nbOr"];
+        $nbOrHeader = (int)($joueurHeader["nbOr"] ?? 0);
+        $nbArgentHeader = (int)($joueurHeader["nbArgent"] ?? 0);
+        $nbBronzeHeader = (int)($joueurHeader["nbBronze"] ?? 0);
+
+        $profilLink = "profil.php";
+        $profilTitle = "Profil";
+        $profilImg = trim($joueurHeader["img"] ?? "");
     }
 }
 ?>
 
 <header class="site-header">
-    <link rel="icon" type="favicon"href="favicon.ico"/>
     <div class="header-left">
         <a href="boutique.php" class="logo-link">
             <div class="logo">BFGD</div>
@@ -32,7 +42,9 @@ if (isset($_SESSION["idJoueur"]) && isset($pdo)) {
     <div class="header-right">
 
         <div class="currency-group">
-            <div class="currency gold">🪙 <span><?= $bourseHeader ?></span></div>
+            <div class="currency gold">🪙 <span><?= $nbOrHeader ?></span></div>
+            <div class="currency silver">🪙 <span><?= $nbArgentHeader ?></span></div>
+            <div class="currency copper">🪙 <span><?= $nbBronzeHeader ?></span></div>
         </div>
 
         <div class="plus-menu-container">
@@ -46,9 +58,15 @@ if (isset($_SESSION["idJoueur"]) && isset($pdo)) {
         </div>
 
         <a href="panier.php" class="icon-link" title="Panier">🛒</a>
-        <a href="<?= isset($_SESSION['idJoueur']) ? 'profil.php' : 'connexion.php' ?>" class="icon-link" title="<?= isset($_SESSION['idJoueur']) ? 'Profil' : 'Se connecter' ?>">👤</a>
-    </div>
 
+        <a href="<?= $profilLink ?>" class="icon-link" title="<?= $profilTitle ?>">
+            <?php if ($profilImg !== ""): ?>
+                <img src="images/<?= htmlspecialchars($profilImg) ?>" alt="Profil" class="header-profile-image">
+            <?php else: ?>
+                👤
+            <?php endif; ?>
+        </a>
+    </div>
 </header>
 
 <script>
