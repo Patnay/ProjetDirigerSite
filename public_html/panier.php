@@ -35,7 +35,7 @@ if($prixTotal['prixTotal'] === null)
 <head>
     <meta charset="UTF-8">
     <title>Boutique</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/panier.css">
     <link rel="icon" type="favicon" href="favicon.ico" />
 </head>
 
@@ -58,7 +58,7 @@ if($prixTotal['prixTotal'] === null)
 
                         <div class="product-card"  ">
 
-                            <div class="product-image">
+                            <div class="product-image-panier">
 
                                 <img src="images/<?= htmlspecialchars($produit['photo']) ?>" alt="">
 
@@ -72,9 +72,12 @@ if($prixTotal['prixTotal'] === null)
                                 (<?= number_format($produit['prix'], 2) ?>/u)
 
                             </p>
-                            
 
-               
+                            <p class="number">
+                                <button>+</button>
+                                <?=number_format($produit['quantitePanier'])?>
+                                <button>-</button>
+                            </p>
 
                         </div>
 
@@ -83,9 +86,9 @@ if($prixTotal['prixTotal'] === null)
 
             </section>
               <aside style="background-color: white; height: 64px; width: 64px; ">
-                        <p style=" color: black;"> Prix total:<?=number_format($prixTotal['prixTotal'])?> </p>
+                        <p style=" color: black; font-family: Goudy Old Style, serif;"> Prix total:<?=number_format($prixTotal['prixTotal'])?> </p>
                         <form action="panier.php" method="POST">
-                            <button type="submit">Payer Votre Panier</button>
+                            <button type="submit" class="connect">Payer Votre Panier</button>
                         </form>
                         
                             <?php include("scripts/php/payerPanier.php") ?>
