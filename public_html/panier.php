@@ -35,7 +35,7 @@ if($prixTotal['prixTotal'] === null)
 <head>
     <meta charset="UTF-8">
     <title>Boutique</title>
-    <link rel="stylesheet" href="css/panier.css">
+    <link rel="stylesheet" href="css/styles.css">
     <link rel="icon" type="favicon" href="favicon.ico" />
 </head>
 
@@ -56,9 +56,9 @@ if($prixTotal['prixTotal'] === null)
 
                     <?php foreach ($produits as $produit): ?>
 
-                        <div class="product-card"  ">
+                        <div class="product-card">
 
-                            <div class="product-image-panier">
+                            <div class="product-image">
 
                                 <img src="images/<?= htmlspecialchars($produit['photo']) ?>" alt="">
 

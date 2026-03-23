@@ -23,7 +23,7 @@ $etoileMax = isset($_GET["etoileMax"]) && $_GET["etoileMax"] !== ""
     : null;
 
 /* =========================
-   CATÉGORIES (CHECKBOXES)
+   CATÉGORIES
 ========================= */
 
 $categories = $_GET["categories"] ?? [];
@@ -33,6 +33,18 @@ if (!is_array($categories)) {
 
 $categoriesValides = ["Armures", "Armes", "Sorts", "Potions"];
 $categories = array_values(array_intersect($categories, $categoriesValides));
+
+/* =========================
+   SAVOIR SI UN FILTRE EST ACTIF
+========================= */
+
+$filtreActif = (
+    $prixMin !== null ||
+    $prixMax !== null ||
+    $etoileMin !== null ||
+    $etoileMax !== null ||
+    !empty($categories)
+);
 
 /* =========================
    REQUÊTE SQL
@@ -142,6 +154,14 @@ if (!empty($having)) {
 ========================= */
 
 $sql .= " ORDER BY Items.nom";
+
+/* =========================
+   LIMITE SI AUCUN FILTRE
+========================= */
+
+if (!$filtreActif) {
+    $sql .= " LIMIT 12";
+}
 
 /* =========================
    EXÉCUTION

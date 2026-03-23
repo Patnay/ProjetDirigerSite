@@ -5,7 +5,9 @@ if (!isset($_SESSION["idJoueur"])) {
     exit;
 }
 ?>
-<?php 
+<!-- 
+ A corriger pour l<affichage du panier
+ <?php 
  $alias = $_SESSION['alias'];
  $sql = "SELECT Inventaires.idItem, Items.nom, Items.photo, FROM Items 
 INNER JOIN Inventaires ON Inventaires.idItem = Items.idItem
@@ -14,7 +16,7 @@ WHERE Joueurs.alias = alias = ? values(?)";
 $stmt = $pdo->query($sql);
 $produits = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $stmt->execute([$alias]);
-?>
+?> -->
 <!DOCTYPE html>
 <html lang="fr">
 

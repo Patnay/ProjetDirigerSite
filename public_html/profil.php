@@ -106,12 +106,20 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <h1>Profil</h1>
 
             <div class="profile-box">
+                <div class="profile-image-box">
+                    <?php if (!empty($joueur["img"])): ?>
+                        <img src="images/<?= htmlspecialchars($joueur["img"]) ?>" alt="Image du profil" class="profile-image">
+                    <?php else: ?>
+                        <div class="profile-image-placeholder">👤</div>
+                    <?php endif; ?>
+                </div>
+
                 <p><strong>Pseudo :</strong> <?= htmlspecialchars($joueur["alias"] ?? "") ?></p>
                 <p><strong>Courriel :</strong> <?= htmlspecialchars($joueur["courriel"] ?? "") ?></p>
-                <p><strong>Or:</strong> <?= (int)($joueur["nbOr"] ?? 0) ?> pièces</p>
-                <p><strong>Argent:</strong> <?= (int)($joueur["nbArgent"] ?? 0) ?> pièces</p>
-                <p><strong>Bronze:</strong> <?= (int)($joueur["nbBronze"] ?? 0) ?> pièces</p>
-                <p><strong>Points :</strong> <?= (int)($joueur["ptVie"] ?? 0) ?></p>
+                <p><strong>Or :</strong> <?= (int)($joueur["nbOr"] ?? 0) ?></p>
+                <p><strong>Argent :</strong> <?= (int)($joueur["nbArgent"] ?? 0) ?></p>
+                <p><strong>Bronze :</strong> <?= (int)($joueur["nbBronze"] ?? 0) ?></p>
+                <p><strong>Vie :</strong> <?= (int)($joueur["pVie"] ?? 0) ?></p>
 
                 <div class="profile-inventory-link">
                     <a href="inventaire.php" class="icon-link" title="Inventaire">📦</a>
@@ -120,7 +128,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         </div>
 
         <div class="profile-card">
-            <h2>Modifier vos infos de connexion</h2>
+            <h2>Modifier vos informations</h2>
 
             <?php if ($message !== ""): ?>
                 <p class="message-info"><?= htmlspecialchars($message) ?></p>
@@ -132,29 +140,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
             <form action="profil.php" method="POST" class="profile-form">
                 <label for="alias">Pseudo :</label>
-                <input
-                    type="text"
-                    id="alias"
-                    name="alias"
-                    required
-                    value="<?= htmlspecialchars($joueur["alias"] ?? "") ?>"
-                >
+                <input type="text" id="alias" name="alias" required
+                       value="<?= htmlspecialchars($joueur["alias"] ?? "") ?>">
+
+                <label for="courriel">Courriel :</label>
+                <input type="email" id="courriel" name="courriel" required
+                       value="<?= htmlspecialchars($joueur["courriel"] ?? "") ?>">
 
                 <label for="mp">Nouveau mot de passe :</label>
-                <input
-                    type="password"
-                    id="mp"
-                    name="mp"
-                    placeholder="Laisser vide pour ne pas changer"
-                >
-                <?php 
-                // Pour le débugage mettre en commentaire pour la mise en production
-                echo("Le id Joueur est = :".$_SESSION["idJoueur"]);
-                ?>
-                <button type="submit" class="filter-btn">
-                    Enregistrer les modifications
-                </button>
-                <a  href="scripts/php/deconnect.php">Deconnecter</a>
+                <input type="password" id="mp" name="mp"
+                       placeholder="Laisser vide pour ne pas changer">
+
+                <button type="submit" class="filter-btn">Enregistrer les modifications</button>
             </form>
         </div>
 
