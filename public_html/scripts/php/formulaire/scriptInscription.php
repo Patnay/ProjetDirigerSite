@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 else{
     
-       // echo "<h2>Pas encore envoyer</h2>";
+        //echo "<h2>Pas encore envoyer</h2>";
 }
 
 //   if(!($erreurs)){

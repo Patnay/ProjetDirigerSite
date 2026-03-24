@@ -1,5 +1,10 @@
 <?php
-session_start();
+try{
+    session_start();
+}
+catch(Exception){
+    
+}
 if (!isset($_SESSION["idJoueur"])) {
     header("Location: connexion.php");
     exit;
@@ -42,6 +47,7 @@ if ($prixTotal['prixTotal'] === null)
     <meta charset="UTF-8">
     <title>Boutique</title>
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/panier.css">
     <link rel="icon" type="favicon" href="favicon.ico" />
 </head>
 
@@ -54,18 +60,13 @@ if ($prixTotal['prixTotal'] === null)
             
         <?= $message ?>
             <?php if(isset($produits[0])): ?>
-            <section class="products-grid"
-                style="display: flex; 
-                       flex-direction: column; 
-                       overflow: scroll; 
-                       height: min-content;
-                       width: min-content; ">
+            <section class="products-grid cart_container">
                 
                 <?php foreach ($produits as $produit): ?>
 
-                    <div class="product-card" id="card-<?= $produit['idItem'] ?>">
+                    <div class="product-card cart_cards" id="card-<?= $produit['idItem'] ?>">
 
-                        <div class="product-image">
+                        <div class="product-image cart_img">
                             <img src="images/<?= htmlspecialchars($produit['photo']) ?>" alt="">
                         </div>
 
