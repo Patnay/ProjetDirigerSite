@@ -1,9 +1,11 @@
 <?php
-try{
+try {
+    ini_set('display_errors', 'Off');
+    ini_set('log_errors', 'On');
+    error_reporting(E_ALL);
     session_start();
-}
-catch(Exception){
-    
+} catch (Exception) {
+
 }
 include("scripts/php/bd/connectionBd.php");
 
@@ -42,60 +44,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <title>Connexion</title>
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/connexion.css">
 </head>
+
 <body class="shop-page">
 
-<?php include "header.php"; ?>
+    <?php include "header.php"; ?>
 
-<div class="connect-container">
-    <main>
-        <h1>Connexion</h1>
+    <div class="connect-container">
+        <main>
+            <h1>Connexion</h1>
 
-        <?php if ($message !== ''): ?>
-            <p class="message-erreur"><?= htmlspecialchars($message) ?></p>
-        <?php endif; ?>
+            <?php if ($message !== ''): ?>
+                <p class="message-erreur"><?= htmlspecialchars($message) ?></p>
+            <?php endif; ?>
 
         <form action="connexion.php" method="POST">
             <fieldset>
                 <legend>Veuillez vous connecter :</legend>
 
-                <label for="pseudo">Pseudo :</label>
-                <input
-                    type="text"
-                    id="pseudo"
-                    name="pseudo"
-                    value="<?= htmlspecialchars($_POST['pseudo'] ?? '') ?>"
-                    required
-                >
+                    <label for="pseudo">Pseudo :</label>
+                    <input type="text" id="pseudo" name="pseudo" value="<?= htmlspecialchars($_POST['pseudo'] ?? '') ?>"
+                        required>
 
-                <br><br>
+                    <br><br>
 
-                <label for="mp">Mot de passe :</label>
-                <input
-                    type="password"
-                    id="mp"
-                    name="mp"
-                    required
-                >
+                    <label for="mp">Mot de passe :</label>
+                    <input type="password" id="mp" name="mp" required>
 
-                <br><br>
+                    <br><br>
 
                 <button type="submit" class="connect">Se connecter</button>
             </fieldset>
         </form>
 
-        <br>
+            <br>
 
-        <p>
-            Pas encore de compte ?
-            <a href="inscription.php">Créer un compte</a>
-        </p>
-    </main>
-</div>
+            <p>
+                Pas encore de compte ?
+                <a href="inscription.php">Créer un compte</a>
+            </p>
+        </main>
+    </div>
 
 </body>
+
 </html>

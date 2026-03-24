@@ -1,9 +1,11 @@
 <?php
-try{
+try {
+    ini_set('display_errors', 'Off');
+    ini_set('log_errors', 'On');
+    error_reporting(E_ALL);
     session_start();
-}
-catch(Exception){
-    
+} catch (Exception) {
+
 }
 if (!isset($_SESSION["idJoueur"])) {
     header("Location: connexion.php");
