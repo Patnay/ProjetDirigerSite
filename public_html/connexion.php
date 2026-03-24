@@ -1,5 +1,10 @@
 <?php
-session_start();
+try{
+    session_start();
+}
+catch(Exception){
+    
+}
 include("scripts/php/bd/connectionBd.php");
 
 $message = '';
