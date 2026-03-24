@@ -51,7 +51,7 @@ if (isset($_SESSION["idJoueur"]) && isset($pdo)) {
             <button class="icon-btn" id="plusBtn" type="button">+</button>
 
             <div class="plus-dropdown" id="plusDropdown">
-                <a href="demander_argent.php">Demander argent</a>
+                <a href="demanderArgent.php">Demander argent</a>
                 <a href="enigme.php">Aller à la page énigme</a>
                 <a href="inventaire.php">Vendre item</a>
             </div>
