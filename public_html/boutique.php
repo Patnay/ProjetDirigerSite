@@ -212,6 +212,15 @@ $produits = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link rel="stylesheet" href="css/styles.css">
     <link rel="icon" type="favicon" href="favicon.ico" />
 </head>
+<script>
+    const audio = new Audio("musique/roundtableHold.mp3");
+    audio.loop = true;
+    audio.muted = true;
+    audio.play();
+    document.addEventListener("click", () => {
+        audio.muted = false;
+    });
+</script>
 <script src="https://cdn.jsdelivr.net/npm/animejs/dist/bundles/anime.umd.min.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
