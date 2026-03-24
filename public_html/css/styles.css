@@ -590,3 +590,223 @@ transition:0.2s;
 .logout-btn:hover{
 background-color:#cc0000;
 }
+/* ===== BACKGROUND IMAGE SUR LES PAGES NORMALES ===== */
+body{
+    background-image: url("../image/BackgroundImage.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+/* ===== PAS D'IMAGE DE BACKGROUND SUR PROFIL ===== */
+body.profile-page{
+    background-image: none;
+    background-color: #001b5e;
+}
+
+/* ===== BLEU PLUS PÂLE ET TRANSPARENT ===== */
+.shop-container,
+.about-container,
+.connect-container,
+.detail-container,
+.profile-card{
+    background-color: rgba(40, 95, 200, 0.72);
+}
+
+/* ===== PANNEAU FILTRES PLUS TRANSPARENT ===== */
+.filters{
+    background-color: rgba(10, 10, 35, 0.78);
+}
+
+/* ===== HEADER BRUN PLUS TRANSPARENT ===== */
+.site-header{
+    background-color: rgba(90, 58, 34, 0.78);
+    backdrop-filter: blur(3px);
+}
+/* ===== PAGE PROFIL ===== */
+
+body.profile-page{
+    background-image:none;
+    background-color:#001b5e;
+}
+
+/* HEADER PROFIL */
+body.profile-page .site-header{
+    background-color:rgba(90,58,34,0.78);
+    backdrop-filter:blur(3px);
+}
+
+/* WRAPPER */
+.profile-wrapper{
+    max-width:1200px;
+    margin:0 auto;
+    display:grid;
+    grid-template-columns:320px 1fr;
+    gap:30px;
+    align-items:start;
+}
+
+/* CARTES EXTERNES */
+.profile-card{
+    background-color:rgba(90,58,34,0.82);
+    border-radius:22px;
+    padding:26px 28px;
+    border:none;
+    box-shadow:0 10px 28px rgba(0,0,0,0.35);
+}
+
+/* TITRES */
+.profile-card h1,
+.profile-card h2{
+    color:#000;
+    font-size:2.2rem;
+    font-weight:700;
+    margin-bottom:24px;
+}
+
+/* BLOCS INTERNES */
+.profile-box,
+.profile-form{
+    background-color:rgba(35,78,165,0.88);
+    border-radius:18px;
+    padding:22px;
+    border:none;
+}
+
+/* IMAGE */
+.profile-image-box{
+    display:flex;
+    justify-content:center;
+    margin-bottom:18px;
+}
+
+.profile-image{
+    width:160px;
+    height:160px;
+    object-fit:cover;
+    border-radius:50%;
+    border:4px solid #d4af37;
+    display:block;
+    box-shadow:0 6px 18px rgba(0,0,0,0.35);
+}
+
+.profile-image-placeholder{
+    width:160px;
+    height:160px;
+    border-radius:50%;
+    border:4px solid #d4af37;
+    background-color:#222;
+    color:white;
+    font-size:3rem;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 6px 18px rgba(0,0,0,0.35);
+}
+
+/* TEXTE INFOS */
+.profile-box p{
+    color:#111;
+    font-size:1rem;
+    margin-bottom:12px;
+    line-height:1.45;
+}
+
+.profile-box strong{
+    color:#111;
+}
+
+/* LIEN INVENTAIRE */
+.profile-inventory-link{
+    margin-top:16px;
+}
+
+/* FORMULAIRE */
+.profile-form{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+
+.profile-form label{
+    color:#111;
+    font-size:0.95rem;
+    font-weight:600;
+    margin-bottom:2px;
+}
+
+.profile-form input{
+    width:100%;
+    padding:12px 14px;
+    border:none;
+    outline:none;
+    border-radius:14px;
+    background-color:#f3f3f3;
+    color:#111;
+    font-size:1rem;
+}
+
+.profile-form input::placeholder{
+    color:#666;
+}
+
+/* BOUTON SAVE */
+.profile-form .filter-btn,
+.profile-form button{
+    width:100%;
+    padding:12px 18px;
+    border:none;
+    border-radius:22px;
+    background-color:#d4af37;
+    color:#000;
+    font-weight:700;
+    cursor:pointer;
+    margin-top:8px;
+}
+
+.profile-form .filter-btn:hover,
+.profile-form button:hover{
+    background-color:#bf9a2d;
+}
+
+/* LOGOUT */
+.logout-btn{
+    display:inline-block;
+    padding:12px 22px;
+    border-radius:22px;
+    background-color:#ff5252;
+    color:white;
+    text-decoration:none;
+    font-weight:700;
+    margin-bottom:10px;
+}
+
+.logout-btn:hover{
+    background-color:#d93f3f;
+}
+
+/* MESSAGES */
+.profile-card .message-info{
+    margin-bottom:12px;
+    color:#ffe082;
+    font-weight:700;
+}
+
+.profile-card .message-erreur{
+    margin-bottom:12px;
+    color:#ffb3b3;
+    font-weight:700;
+}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+    .profile-wrapper{
+        grid-template-columns:1fr;
+    }
+
+    .profile-card h1,
+    .profile-card h2{
+        font-size:1.9rem;
+    }
+}
