@@ -1,149 +1,148 @@
 <?php
-try {
-    ini_set('display_errors', 'Off');
-    ini_set('log_errors', 'On');
-    error_reporting(E_ALL);
-    session_start();
-} catch (Exception) {
+require_once "init.php";
 
-}
 if (!isset($_SESSION["idJoueur"])) {
     header("Location: connexion.php");
     exit;
 }
-require_once("scripts/php/bd/connectionBd.php");
 
+$idJoueur = (int)$_SESSION["idJoueur"];
+
+/* Produits du panier */
 $sql = "SELECT i.idItem, i.nom, i.prix, i.photo, p.quantitePanier
-        FROM Items i 
-        INNER JOIN Paniers p ON i.idItem = p.idItem 
-        WHERE p.idJoueur = ?";
+        FROM Items i
+        INNER JOIN Paniers p ON i.idItem = p.idItem
+        WHERE p.idJoueur = ?
+        ORDER BY i.nom ASC";
 
 $stmt = $pdo->prepare($sql);
-$stmt->execute([$_SESSION["idJoueur"]]);
-
+$stmt->execute([$idJoueur]);
 $produits = $stmt->fetchAll(PDO::FETCH_ASSOC);
-$message = '';
-if($produits == null){
-$message ='<article><h3>Votre panier est vide</h3>
-            <p>Vous pouvez le remplire en vous rendant vers la <a href="boutique.php">Boutique</a></p></article>';
-}
 
-
-$sql = "SELECT SUM(i.prix*p.quantitePanier) as prixTotal
-        FROM Items i 
-        INNER JOIN Paniers p ON i.idItem = p.idItem 
+/* Prix total */
+$sql = "SELECT SUM(i.prix * p.quantitePanier) AS prixTotal
+        FROM Items i
+        INNER JOIN Paniers p ON i.idItem = p.idItem
         WHERE p.idJoueur = ?";
 
 $stmt = $pdo->prepare($sql);
-$stmt->execute([$_SESSION["idJoueur"]]);
+$stmt->execute([$idJoueur]);
 $prixTotal = $stmt->fetch(PDO::FETCH_ASSOC);
 
-if ($prixTotal['prixTotal'] === null) 
+if (!isset($prixTotal['prixTotal']) || $prixTotal['prixTotal'] === null) {
     $prixTotal['prixTotal'] = 0;
+}
 ?>
-
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
     <meta charset="UTF-8">
-    <title>Boutique</title>
+    <title>Panier</title>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/panier.css">
-    <link rel="icon" type="favicon" href="favicon.ico" />
+    <link rel="icon" href="favicon.ico">
 </head>
-
 <body>
 
-    <?php include "header.php"; ?>
-    <main class="shop-page" style="max-height:700px;">
+<?php include "header.php"; ?>
 
-        <div class="shop-container">
-            
-        <?= $message ?>
-            <?php if(isset($produits[0])): ?>
-            <section class="products-grid cart_container">
-                
-                <?php foreach ($produits as $produit): ?>
+<main class="shop-page">
+    <div class="shop-container cart-page-wrapper">
 
-                    <div class="product-card cart_cards" id="card-<?= $produit['idItem'] ?>">
+        <?php if (empty($produits)): ?>
+            <article class="cart-empty">
+                <h3>Votre panier est vide</h3>
+                <p>Vous pouvez le remplir en allant dans la <a href="boutique.php">Boutique</a>.</p>
+            </article>
+        <?php else: ?>
 
-                        <div class="product-image cart_img">
-                            <img src="images/<?= htmlspecialchars($produit['photo']) ?>" alt="">
+            <div class="cart-layout">
+
+                <section class="cart_container">
+                    <?php foreach ($produits as $produit): ?>
+                        <div class="product-card cart_cards" id="card-<?= (int)$produit['idItem'] ?>">
+
+                            <div class="product-image cart_img">
+                                <img src="images/<?= htmlspecialchars($produit['photo']) ?>" alt="<?= htmlspecialchars($produit['nom']) ?>">
+                            </div>
+
+                            <div>
+                                <h3><?= htmlspecialchars($produit['nom']) ?></h3>
+
+                                <p class="price"
+                                   id="prix-<?= (int)$produit['idItem'] ?>"
+                                   data-prix="<?= htmlspecialchars($produit['prix']) ?>">
+                                    <?= number_format((float)$produit['prix'] * (int)$produit['quantitePanier'], 2) ?>
+                                    (<?= number_format((float)$produit['prix'], 2) ?>/u)
+                                </p>
+
+                                <p class="number">
+                                    <button type="button" onclick="modifierQuantite(<?= (int)$produit['idItem'] ?>, 'plus')">+</button>
+                                    <span id="qte-<?= (int)$produit['idItem'] ?>">
+                                        <?= (int)$produit['quantitePanier'] ?>
+                                    </span>
+                                    <button type="button" onclick="modifierQuantite(<?= (int)$produit['idItem'] ?>, 'moins')">-</button>
+                                </p>
+                            </div>
+
                         </div>
+                    <?php endforeach; ?>
+                </section>
 
-                        <h3><?= htmlspecialchars($produit['nom']) ?></h3>
+                <aside class="cart-summary">
+                    <h2>Résumé</h2>
 
-                        <p class="price" 
-                           id="prix-<?= $produit['idItem'] ?>" 
-                           data-prix="<?= $produit['prix'] ?>">
-                            <?= number_format($produit['prix'] * $produit['quantitePanier'], 2) ?>
-                            (<?= number_format($produit['prix'], 2) ?>/u)
-                        </p>
+                    <p class="cart-total-label">Prix total</p>
+                    <p class="cart-total-value">
+                        <span id="prix-total"><?= number_format((float)$prixTotal['prixTotal'], 2) ?></span>
+                    </p>
 
-                        <p class="number">
-                            <button onclick="modifierQuantite(<?= $produit['idItem'] ?>, 'plus')">+</button>
-                            <span id="qte-<?= $produit['idItem'] ?>">
-                                <?= $produit['quantitePanier'] ?>
-                            </span>
-                            <button onclick="modifierQuantite(<?= $produit['idItem'] ?>, 'moins')">-</button>
-                        </p>
+                    <form action="panier.php" method="POST">
+                        <button type="submit" class="connect">Payer votre panier</button>
+                    </form>
 
-                    </div>
+                    <?php include "scripts/php/payerPanier.php"; ?>
+                </aside>
 
-                <?php endforeach; ?>
+            </div>
 
-            </section>
-             
+        <?php endif; ?>
 
-            <aside style="background-color: white; height: 64px; width: 64px;">
-                <p style="color: black; font-family: Goudy Old Style, serif;">
-                    Prix total: 
-                    <span id="prix-total"><?= number_format($prixTotal['prixTotal']) ?></span>
-                </p>
-
-                <form action="panier.php" method="POST">
-                    <button type="submit" class="connect">Payer Votre Panier</button>
-                </form>
-
-                <?php include("scripts/php/payerPanier.php") ?>
-            </aside>
-            <?php endif; ?>
-
-        </div>
-
-
-    </main>
-
-</body>
-
-</html>
+    </div>
+</main>
 
 <script>
 function modifierQuantite(idItem, action) {
     fetch("updatePanier.php", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: "idItem=" + idItem + "&action=" + action
+        body: "idItem=" + encodeURIComponent(idItem) + "&action=" + encodeURIComponent(action)
     })
     .then(res => res.json())
     .then(data => {
-
         if (data.quantite <= 0) {
-            document.getElementById("card-" + idItem).remove();
+            const card = document.getElementById("card-" + idItem);
+            if (card) card.remove();
         } else {
-            document.getElementById("qte-" + idItem).textContent = data.quantite;
+            const qte = document.getElementById("qte-" + idItem);
+            if (qte) qte.textContent = data.quantite;
 
-            const prixUnitaire = parseFloat(
-                document.getElementById("prix-" + idItem).dataset.prix
-            );
-
-            document.getElementById("prix-" + idItem).textContent =
-                (prixUnitaire * data.quantite).toFixed(2) +
-                " (" + prixUnitaire.toFixed(2) + "/u)";
+            const prixElt = document.getElementById("prix-" + idItem);
+            if (prixElt) {
+                const prixUnitaire = parseFloat(prixElt.dataset.prix);
+                prixElt.textContent =
+                    (prixUnitaire * data.quantite).toFixed(2) +
+                    " (" + prixUnitaire.toFixed(2) + "/u)";
+            }
         }
 
-        document.getElementById("prix-total").textContent = data.total;
+        const totalElt = document.getElementById("prix-total");
+        if (totalElt) {
+            totalElt.textContent = data.total;
+        }
     });
 }
 </script>
+
+</body>
+</html>
