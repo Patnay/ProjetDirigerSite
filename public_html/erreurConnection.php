@@ -1,5 +1,13 @@
 <?php
-  session_start();
+
+try {
+    ini_set('display_errors', 'Off');
+    ini_set('log_errors', 'On');
+    error_reporting(E_ALL);
+    session_start();
+} catch (Exception) {
+
+}
 ?>
 <!DOCTYPE html>
 <html lang="fr">
