@@ -47,6 +47,17 @@ $filtreActif = (
 );
 
 /* =========================
+   PAGINATION
+========================= */
+
+$itemsParPage = 12;
+$page = isset($_GET["page"]) && is_numeric($_GET["page"]) && $_GET["page"] > 0
+    ? (int)$_GET["page"]
+    : 1;
+
+$offset = ($page - 1) * $itemsParPage;
+
+/* =========================
    REQUÊTE SQL
 ========================= */
 
@@ -156,11 +167,23 @@ if (!empty($having)) {
 $sql .= " ORDER BY Items.nom";
 
 /* =========================
-   LIMITE SI AUCUN FILTRE
+   PAGINATION SEULEMENT SI AUCUN FILTRE
 ========================= */
 
+$totalPages = 1;
+
 if (!$filtreActif) {
-    $sql .= " LIMIT 12";
+    $sqlCount = "SELECT COUNT(*) FROM Items";
+    $stmtCount = $pdo->query($sqlCount);
+    $totalItems = (int)$stmtCount->fetchColumn();
+    $totalPages = max(1, ceil($totalItems / $itemsParPage));
+
+    if ($page > $totalPages) {
+        $page = $totalPages;
+        $offset = ($page - 1) * $itemsParPage;
+    }
+
+    $sql .= " LIMIT $itemsParPage OFFSET $offset";
 }
 
 /* =========================
@@ -344,7 +367,25 @@ $produits = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </section>
 
         </div>
+           <?php if (!$filtreActif && $totalPages > 1): ?>
+        <div class="pagination">
 
+        <?php if ($page > 1): ?>
+            <a class="page-arrow" href="boutique.php?page=<?= $page - 1 ?>">←</a>
+        <?php else: ?>
+            <span class="page-arrow disabled">←</span>
+        <?php endif; ?>
+
+        <span class="page-number">Page <?= $page ?> / <?= $totalPages ?></span>
+
+        <?php if ($page < $totalPages): ?>
+            <a class="page-arrow" href="boutique.php?page=<?= $page + 1 ?>">→</a>
+        <?php else: ?>
+            <span class="page-arrow disabled">→</span>
+        <?php endif; ?>
+
+        </div>
+        <?php endif; ?>         
     </main>
 
 </body>

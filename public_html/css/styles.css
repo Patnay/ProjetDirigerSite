@@ -810,3 +810,49 @@ body.profile-page .site-header{
         font-size:1.9rem;
     }
 }
+.pagination{
+    width:100%;
+    margin-top:30px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:20px;
+}
+
+/* CENTRAGE GLOBAL */
+.shop-page{
+    display:flex;
+    flex-direction:column;
+}
+
+/* BOUTONS */
+.page-arrow{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:45px;
+    height:45px;
+    border-radius:50%;
+    background-color:#1f1f1f;
+    color:white;
+    text-decoration:none;
+    font-size:1.3rem;
+    font-weight:bold;
+    border:2px solid gold;
+}
+
+.page-arrow:hover{
+    background-color:#3a3a3a;
+}
+
+.page-arrow.disabled{
+    opacity:0.4;
+    pointer-events:none;
+}
+
+/* NUMERO */
+.page-number{
+    font-weight:bold;
+    font-size:1.1rem;
+    color:white;
+}
