@@ -59,6 +59,33 @@ CALL ajouterArme(
     'Légendaire',
     'b'
 );
+CALL ajouterArme(
+    'Épée du Bell Bearing Hunter',
+    50,
+    30,
+    '../image/bell.jpg',
+    'L arme du terrible Bell Bearing Hunter utilisé pour la chasse',
+    'Légendaire',
+    'a'
+);
+CALL ajouterArme(
+    'Starcourge Greatsword',
+    100,
+    50,
+    '../image/radahnSword.jpg',
+    'Arme utilisé par le général Radahn, avant qu il ne perde ses eprits',
+    'Légendaire',
+    'a'
+);
+CALL ajouterArme(
+    'Lance du tyrant Mesmer',
+    75,
+    45,
+    '../image/mesmer.jpg',
+    'Utilisé par le tyran Mesmer pour conquérir l entre-terre',
+    'Légendaire',
+    'a'
+);
 
 # Pour les sort
 CALL ajouterSort(
@@ -72,6 +99,78 @@ CALL ajouterSort(
     'Test description',
     '20',
     '10'
+);
+CALL ajouterSort(
+    'Comet Azur',
+    15,
+    75,
+    '../image/comet.jpg',
+    1,      -- estInstantane
+    10,      -- rareté (exemple)
+    's',     -- typeSort (exemple)
+    'Un canon de magie',
+    '20',
+    '10'
+);
+CALL ajouterSort(
+    'Souffle de feu de dragon',
+    20,
+    70,
+    '../image/souffleFeu.jpg',
+    1,      -- estInstantane
+    10,      -- rareté (exemple)
+    'f',     -- typeSort (exemple)
+    'Un souffle volé d un dragon',
+    '15',
+    '30'
+);
+CALL ajouterSort(
+    'Souffle de glace de dragon',
+    20,
+    70,
+    '../image/souffleGlace.jpg',
+    1,      -- estInstantane
+    10,      -- rareté (exemple)
+    'g',     -- typeSort (exemple)
+    'Un souffle volé d un dragon',
+    '15',
+    '30'
+);
+CALL ajouterSort(
+    'Ancient Dragon Lighthing Strike',
+    30,
+    72,
+    '../image/dragonLightning.jpg',
+    1,      -- estInstantane
+    10,      -- rareté (exemple)
+    'z',     -- typeSort (exemple)
+    'La foudre du roi dragon',
+    '50',
+    '30'
+);
+CALL ajouterSort(
+    'Golden Order Ring',
+    14,
+    71,
+    '../image/goldenRing.jpg',
+    1,      -- estInstantane
+    10,      -- rareté (exemple)
+    'r',     -- typeSort (exemple)
+    'Un sort crée par le Golden Order',
+    '25',
+    '15'
+);
+CALL ajouterSort(
+    'Erdtree GreatHeal',
+    14,
+    71,
+    '../image/heal.jpg',
+    1,      -- estInstantane
+    10,      -- rareté (exemple)
+    'h',     -- typeSort (exemple)
+    'Un sort crée par la divinité de l arbre-monde',
+    '40',
+    '0'
 );
 
 SHOW CREATE PROCEDURE ajouterPotion;
@@ -184,7 +283,14 @@ CALL ajouterPotion(
     'Boost les vitesse',
     '1'
 );
-
+CALL ajouterPotion(
+	'Flask from Dark souls',
+    '500',
+    '5',
+    '../image/potionDark.jpg',
+    'Boost la sagesse',
+    '1'
+);
 
 
 select * FROM Joueurs;
@@ -194,7 +300,7 @@ select * FROM Armures;
 select * from Potions;
 select * from Typesorts;
 DELETE FROM Armes;
-DELETE FROM Items;
+DELETE FROM Items WHERE idItem = 7;
 DELETE FROM Armures;
 DELETE FROM Potions;
 DELETE FROM Sorts;
@@ -221,7 +327,6 @@ INSERT INTO Categories(idCategorie, nomCategorie) VALUES ('f', 'fouet');
 CREATE TABLE DemandesArgent (
     idDemande INT AUTO_INCREMENT PRIMARY KEY,
     idJoueur INT NOT NULL,
-    montant INT NOT NULL DEFAULT 10,
     dateDemande DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (idJoueur) REFERENCES Joueurs(idJoueur)
 );
@@ -234,4 +339,5 @@ DELETE FROM Joueurs WHERE alias = 'AliasTest';
 select * from Joueurs;
 
 ALTER TABLE Joueurs DROP COLUMN age;
-# procedure stocké
+
+# procedure stocké pour modifier la quantité d'item dans un panier
