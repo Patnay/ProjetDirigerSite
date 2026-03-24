@@ -46,6 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <title>Connexion</title>
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/connexion.css">
 </head>
 <body class="shop-page">
 
@@ -60,8 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php endif; ?>
 
         <form action="connexion.php" method="POST">
-            <fieldset>
-                <legend>Veuillez vous connecter :</legend>
+            <fieldset class="connect-block">
 
                 <label for="pseudo">Pseudo :</label>
                 <input
@@ -84,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <br><br>
 
-                <button type="submit" class="connect">Se connecter</button>
+                <button type="submit" class="connect-button">Se connecter</button>
             </fieldset>
         </form>
 
