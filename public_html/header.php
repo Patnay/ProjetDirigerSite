@@ -57,7 +57,7 @@ if (isset($_SESSION["idJoueur"]) && isset($pdo)) {
             </div>
         </div>
 
-        <a href="panier.php" class="icon-link" title="Panier">🛒</a>
+        <a href="panier.php" class="icon-link" id="cart-icon" title="Panier">🛒</a>
 
         <a href="<?= $profilLink ?>" class="icon-link" title="<?= $profilTitle ?>">
             <?php if ($profilImg !== ""): ?>

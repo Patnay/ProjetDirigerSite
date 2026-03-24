@@ -212,7 +212,84 @@ $produits = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link rel="stylesheet" href="css/styles.css">
     <link rel="icon" type="favicon" href="favicon.ico" />
 </head>
+<script src="https://cdn.jsdelivr.net/npm/animejs/dist/bundles/anime.umd.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    if (typeof anime === "undefined") {
+        console.error("Anime.js non chargé");
+        return;
+    }
 
+    const { animate } = anime;
+    const cartIcon = document.getElementById("cart-icon");
+    const buttons = document.querySelectorAll(".add-to-cart-btn");
+
+    if (!cartIcon) {
+        console.error("Icône panier introuvable");
+        return;
+    }
+
+    if (!buttons.length) {
+        console.error("Aucun bouton .add-to-cart-btn trouvé");
+        return;
+    }
+
+    buttons.forEach(function (btn) {
+        btn.addEventListener("click", function (e) {
+            e.preventDefault();
+
+            const card = btn.closest(".product-card");
+            const img = card ? card.querySelector(".product-image img") : null;
+
+            if (!img) {
+                window.location.href = btn.href;
+                return;
+            }
+
+            const imgRect = img.getBoundingClientRect();
+            const cartRect = cartIcon.getBoundingClientRect();
+
+            const clone = document.createElement("div");
+            clone.className = "fly-cart-clone";
+            clone.style.left = imgRect.left + "px";
+            clone.style.top = imgRect.top + "px";
+            clone.style.width = imgRect.width + "px";
+            clone.style.height = imgRect.height + "px";
+
+            const cloneImg = document.createElement("img");
+            cloneImg.src = img.src;
+            cloneImg.alt = img.alt || "";
+            clone.appendChild(cloneImg);
+
+            document.body.appendChild(clone);
+
+            animate(clone, {
+                left: cartRect.left + "px",
+                top: cartRect.top + "px",
+                width: "30px",
+                height: "30px",
+                opacity: [1, 0.3],
+                scale: [1, 0.4],
+                rotate: "1turn",
+                duration: 800,
+                ease: "out(3)",
+                onComplete: function () {
+                    clone.remove();
+
+                    animate(cartIcon, {
+                        scale: [1, 1.2, 1],
+                        duration: 250,
+                        ease: "out(3)",
+                        onComplete: function () {
+                            window.location.href = btn.href;
+                        }
+                    });
+                }
+            });
+        });
+    });
+});
+</script>
 <body>
 
     <?php include "header.php"; ?>
@@ -348,9 +425,11 @@ $produits = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 </a>
 
                                 <?php if ($produit['quantiteStock'] > 0): ?>
-                                    <a class="add-link" href="scripts/php/ajouterPanier.php?id=<?= $produit['idItem'] ?>">
-                                        Ajouter
-                                    </a>
+                                    <a class="add-link add-to-cart-btn"
+                                href="scripts/php/ajouterPanier.php?id=<?= $produit['idItem'] ?>"
+                                data-id="<?= $produit['idItem'] ?>">
+                                     Ajouter
+                                </a>
                                 <?php else: ?>
                                     <span class="add-link" style="opacity:0.5">
                                         Ajouter
