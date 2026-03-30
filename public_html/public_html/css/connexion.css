@@ -1,0 +1,36 @@
+/* ===== CONNEXION / INSCRIPTION ===== */
+.connect-page {
+    padding: 30px;
+}
+
+.connect-container {
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: #002c8c;
+    border: 3px solid #0c1f63;
+    padding: 30px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.connect-button {
+    font-size: 20px;
+    font-family: "Lucida Console", monospace;
+    background-image: linear-gradient(to bottom left, gold, rgb(132, 142, 20));
+    color: black;
+}
+.connect-container h1 {
+    font-size: 2.2rem;
+    margin-bottom: 25px;
+    color: white;
+}
+
+.connect-block {
+    background-color: #4a4a4a;
+    border: 2px solid rgb(176, 15, 98);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+

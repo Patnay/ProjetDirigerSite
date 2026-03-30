@@ -1,0 +1,239 @@
+/* ===== CONTENEUR GLOBAL PANIER ===== */
+
+.cart-page-wrapper {
+    width: 100%;
+}
+
+.cart-layout {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 25px;
+    align-items: start;
+    width: 100%;
+}
+
+/* ===== LISTE DES ITEMS ===== */
+
+.cart_container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    max-height: 650px;
+    overflow-y: auto;
+    padding-right: 8px;
+}
+
+.cart_container::-webkit-scrollbar {
+    width: 10px;
+}
+
+.cart_container::-webkit-scrollbar-track {
+    background: rgba(20, 20, 20, 0.25);
+    border-radius: 10px;
+}
+
+.cart_container::-webkit-scrollbar-thumb {
+    background: gold;
+    border-radius: 10px;
+}
+
+/* ===== CARD PRODUIT ===== */
+
+.cart_cards {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 20px;
+    align-items: center;
+    background-color: rgba(74, 74, 74, 0.95);
+    border: 3px solid gold;
+    border-radius: 14px;
+    padding: 18px;
+    min-height: 180px;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.28);
+}
+
+.cart_cards h3 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    color: white;
+}
+
+.cart_cards .price {
+    font-size: 1.35rem;
+    font-weight: bold;
+    color: #f4f4f4;
+    margin-bottom: 14px;
+}
+
+.cart_cards .number {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+/* ===== IMAGE ===== */
+
+.cart_img {
+    width: 180px;
+    height: 150px;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 0;
+    border: 2px solid rgba(255, 215, 0, 0.7);
+    background-color: #2d2d2d;
+}
+
+.cart_img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* ===== BOUTONS QUANTITÉ ===== */
+
+.cart_cards .number button {
+    width: 34px;
+    height: 34px;
+    border: none;
+    border-radius: 8px;
+    background-color: gold;
+    color: black;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.cart_cards .number button:hover {
+    background-color: #e0b800;
+    transform: translateY(-1px);
+}
+
+.cart_cards .number span {
+    min-width: 24px;
+    text-align: center;
+    color: white;
+    font-size: 1.15rem;
+}
+
+/* ===== PANNEAU TOTAL ===== */
+
+.cart-summary {
+    background-color: rgba(20, 20, 40, 0.88);
+    border: 3px solid gold;
+    border-radius: 16px;
+    padding: 22px;
+    position: sticky;
+    top: 20px;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.28);
+}
+
+.cart-summary h2 {
+    font-size: 1.8rem;
+    margin-bottom: 18px;
+    color: white;
+}
+
+.cart-total-label {
+    font-size: 1rem;
+    color: #ddd;
+    margin-bottom: 6px;
+}
+
+.cart-total-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: gold;
+    margin-bottom: 20px;
+}
+
+.cart-summary form {
+    width: 100%;
+}
+
+.cart-summary .connect {
+    width: 100%;
+    font-size: 1.4rem;
+    line-height: 1.1;
+    border: none;
+    border-radius: 18px;
+    padding: 16px 18px;
+    background-image: none;
+    background-color: gold;
+    color: black;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.cart-summary .connect:hover {
+    background-color: #e0b800;
+    transform: translateY(-1px);
+}
+
+/* ===== MESSAGE PANIER VIDE ===== */
+
+.cart-empty {
+    width: 100%;
+    background-color: rgba(74, 74, 74, 0.95);
+    border: 3px solid gold;
+    border-radius: 14px;
+    padding: 30px;
+    text-align: center;
+    color: white;
+}
+
+.cart-empty h3 {
+    font-size: 2rem;
+    margin-bottom: 12px;
+}
+
+.cart-empty p {
+    font-size: 1.1rem;
+    line-height: 1.5;
+}
+
+.cart-empty a {
+    color: gold;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.cart-empty a:hover {
+    text-decoration: underline;
+}
+
+/* ===== RESPONSIVE ===== */
+
+@media (max-width: 1100px) {
+    .cart-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .cart-summary {
+        position: static;
+    }
+}
+
+@media (max-width: 700px) {
+    .cart_cards {
+        grid-template-columns: 1fr;
+    }
+
+    .cart_img {
+        width: 100%;
+        height: 220px;
+    }
+
+    .cart_cards h3 {
+        font-size: 1.6rem;
+    }
+
+    .cart_cards .price {
+        font-size: 1.15rem;
+    }
+}

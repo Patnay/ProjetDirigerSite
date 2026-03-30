@@ -1,0 +1,15 @@
+-Patrice 17 mars 2026
+J''ai mit les scripts MySql dans le main
+Creation de compte fonction
+TO-Do:
+Deconnection set $_SESSION[infos] // DECONNECTION TJR PAS FAIT
+ajouterPanier /// fait
+pagePanier // FAIT
+ 
+--Patrice 18 mars 2026
+La page Panier est completter ajouterPanier est completter et tester 
+REDO des procedure ajouterItem Commencement ce Payer pagePanier
+TO-Do
+PayerPanier
+Deconnection
+Ajuster les quantiter item (emmanuel psq fuck le js)
