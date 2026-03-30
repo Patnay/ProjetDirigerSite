@@ -210,17 +210,8 @@ $produits = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <meta charset="UTF-8">
     <title>Boutique</title>
     <link rel="stylesheet" href="css/styles.css">
-    <link rel="icon" type="favicon" href="favicon.ico" />
+  <link rel="icon" type="image/png" href="favicon.png">
 </head>
-<script>
-    const audio = new Audio("musique/roundtableHold.mp3");
-    audio.loop = true;
-    audio.muted = true;
-    audio.play();
-    document.addEventListener("click", () => {
-        audio.muted = false;
-    });
-</script>
 <script src="https://cdn.jsdelivr.net/npm/animejs/dist/bundles/anime.umd.min.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
@@ -480,9 +471,66 @@ document.addEventListener("DOMContentLoaded", function () {
         <?php endif; ?>
 
         </div>
-        <?php endif; ?>         
-    </main>
+        <?php endif; ?> 
 
+<!-- Bouton musique -->
+<img id="musicToggle" 
+     src="image/sonOff.jpg" 
+     style="
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 60px;
+        height: 60px;
+        cursor: pointer;
+        z-index: 9999;
+     ">
+<audio id="bgMusic" loop>
+    <source src="musique/roundtableHold.mp3" type="audio/mp3">
+</audio>
+<script>
+const music = document.getElementById("bgMusic");
+const toggleBtn = document.getElementById("musicToggle");
+
+let musicOn = false;
+
+toggleBtn.addEventListener("click", () => {
+    musicOn = !musicOn;
+
+    if (musicOn) {
+        music.play();
+        toggleBtn.src = "image/sonOn.jpg";
+    } else {
+        music.pause();
+        toggleBtn.src = "image/sonOff.jpg";
+    }
+});
+</script>        
+    </main>
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <filter id="electric-border" x="-20%" y="-20%" width="140%" height="140%">
+      <feTurbulence id="turb" type="turbulence" baseFrequency="0.02" numOctaves="3" seed="2" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="25" />
+    </filter>
+  </defs>
+</svg>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const turb = document.getElementById("turb");
+    let t = 0;
+
+    function animate() {
+        t += 0.005;
+        const bf = 0.015 + Math.sin(t) * 0.015;
+        turb.setAttribute("baseFrequency", bf);
+        requestAnimationFrame(animate);
+    }
+
+    animate();
+});
+</script>
 </body>
 
 </html>

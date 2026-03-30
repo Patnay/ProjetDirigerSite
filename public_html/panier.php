@@ -40,7 +40,7 @@ if (!isset($prixTotal['prixTotal']) || $prixTotal['prixTotal'] === null) {
     <title>Panier</title>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/panier.css">
-    <link rel="icon" href="favicon.ico">
+    <link rel="icon" type="image/png" href="favicon.png">
 </head>
 <body>
 
@@ -109,6 +109,40 @@ if (!isset($prixTotal['prixTotal']) || $prixTotal['prixTotal'] === null) {
         <?php endif; ?>
 
     </div>
+    
+<!-- Bouton musique -->
+<img id="musicToggle" 
+     src="image/sonOff.jpg" 
+     style="
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 60px;
+        height: 60px;
+        cursor: pointer;
+        z-index: 9999;
+     ">
+<audio id="bgMusic" loop>
+    <source src="musique/limgrave.mp3" type="audio/mp3">
+</audio>
+<script>
+const music = document.getElementById("bgMusic");
+const toggleBtn = document.getElementById("musicToggle");
+
+let musicOn = false;
+
+toggleBtn.addEventListener("click", () => {
+    musicOn = !musicOn;
+
+    if (musicOn) {
+        music.play();
+        toggleBtn.src = "image/sonOn.jpg";
+    } else {
+        music.pause();
+        toggleBtn.src = "image/sonOff.jpg";
+    }
+});
+</script>
 </main>
 
 <script>
