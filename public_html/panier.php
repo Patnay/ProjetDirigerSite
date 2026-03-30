@@ -48,7 +48,7 @@ foreach ($produits as $produit) {
     <title>Panier</title>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/panier.css">
-    <link rel="icon" href="favicon.ico">
+    <link rel="icon" type="image/png" href="favicon.png">
 </head>
 <body>
 

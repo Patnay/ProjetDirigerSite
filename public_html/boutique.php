@@ -403,7 +403,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             <h3><?= htmlspecialchars($produit['nom']) ?></h3>
 
                             <p class="price">
-                                <?= number_format($produit['prix'], 2) ?>
+                                <?= number_format($produit['prix'], 2) ?> 🪙
                             </p>
 
                             <p class="stars">
