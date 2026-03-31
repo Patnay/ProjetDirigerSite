@@ -147,6 +147,39 @@ foreach ($produits as $produit) {
         <?php endif; ?>
 
     </div>
+    <!-- Bouton musique -->
+<img id="musicToggle" 
+     src="image/sonOff.jpg" 
+     style="
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 60px;
+        height: 60px;
+        cursor: pointer;
+        z-index: 9999;
+     ">
+<audio id="bgMusic" loop>
+    <source src="musique/limgrave.mp3" type="audio/mp3">
+</audio>
+<script>
+const music = document.getElementById("bgMusic");
+const toggleBtn = document.getElementById("musicToggle");
+
+let musicOn = false;
+
+toggleBtn.addEventListener("click", () => {
+    musicOn = !musicOn;
+
+    if (musicOn) {
+        music.play();
+        toggleBtn.src = "image/sonOn.jpg";
+    } else {
+        music.pause();
+        toggleBtn.src = "image/sonOff.jpg";
+    }
+});
+</script>
 </main>
 
 <script>
