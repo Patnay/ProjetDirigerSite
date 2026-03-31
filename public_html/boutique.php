@@ -5,9 +5,10 @@ try {
     error_reporting(E_ALL);
     session_start();
 } catch (Exception) {
-
 }
+
 require_once("scripts/php/bd/connectionBd.php");
+$isAjax = isset($_GET["ajax"]) && $_GET["ajax"] == "1";
 
 /* =========================
    RÉCUPÉRATION DES FILTRES
@@ -201,8 +202,177 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 
 $produits = $stmt->fetchAll(PDO::FETCH_ASSOC);
-?>
 
+/* =========================
+   FONCTION RENDU CONTENU MAIN
+========================= */
+
+function renderShopContent($produits, $categories, $filtreActif, $totalPages, $page, $prixMin, $prixMax, $etoileMin, $etoileMax)
+{
+    ?>
+    <div class="shop-container">
+
+        <aside class="filters">
+            <h2>Filtrer la recherche</h2>
+            <form method="get" action="boutique.php">
+
+                <div class="filter-block">
+                    <label>Catégories</label>
+
+                    <div>
+                        <label>
+                            <input type="checkbox" name="categories[]" value="Armures"
+                                <?= in_array("Armures", $categories, true) ? "checked" : "" ?>>
+                            Armures
+                        </label>
+                    </div>
+
+                    <div>
+                        <label>
+                            <input type="checkbox" name="categories[]" value="Armes"
+                                <?= in_array("Armes", $categories, true) ? "checked" : "" ?>>
+                            Armes
+                        </label>
+                    </div>
+
+                    <div>
+                        <label>
+                            <input type="checkbox" name="categories[]" value="Sorts"
+                                <?= in_array("Sorts", $categories, true) ? "checked" : "" ?>>
+                            Sorts
+                        </label>
+                    </div>
+
+                    <div>
+                        <label>
+                            <input type="checkbox" name="categories[]" value="Potions"
+                                <?= in_array("Potions", $categories, true) ? "checked" : "" ?>>
+                            Potions
+                        </label>
+                    </div>
+                </div>
+
+                <div class="filter-block">
+                    <label>Prix minimum</label>
+                    <input type="number" step="0.01" name="prixMin" placeholder="Min"
+                           value="<?= htmlspecialchars($_GET['prixMin'] ?? '') ?>">
+                </div>
+
+                <div class="filter-block">
+                    <label>Prix maximum</label>
+                    <input type="number" step="0.01" name="prixMax" placeholder="Max"
+                           value="<?= htmlspecialchars($_GET['prixMax'] ?? '') ?>">
+                </div>
+
+                <div class="filter-block">
+                    <label>Étoiles minimum</label>
+                    <input type="number" step="0.1" min="0" max="5" name="etoileMin" placeholder="Min"
+                           value="<?= htmlspecialchars($_GET['etoileMin'] ?? '') ?>">
+                </div>
+
+                <div class="filter-block">
+                    <label>Étoiles maximum</label>
+                    <input type="number" step="0.1" min="0" max="5" name="etoileMax" placeholder="Max"
+                           value="<?= htmlspecialchars($_GET['etoileMax'] ?? '') ?>">
+                </div>
+
+                <div class="filter-buttons">
+                    <button class="filter-btn" type="submit">
+                        Filtrer
+                    </button>
+
+                    <a class="reset-btn" href="boutique.php">
+                        Réinitialiser
+                    </a>
+                </div>
+
+            </form>
+        </aside>
+
+        <section class="products-grid">
+            <?php if (count($produits) > 0): ?>
+                <?php foreach ($produits as $produit): ?>
+                    <div class="product-card">
+
+                        <div class="product-image">
+                            <img src="images/<?= htmlspecialchars($produit['photo']) ?>" alt="">
+                        </div>
+
+                        <h3><?= htmlspecialchars($produit['nom']) ?></h3>
+
+                        <p class="price">
+                            <?= number_format($produit['prix'], 2) ?>
+                        </p>
+
+                        <p class="stars">
+                            ⭐ <?= number_format($produit['etoile'], 1) ?> / 5
+                        </p>
+
+                        <p class="stock">
+                            <?php if ($produit['quantiteStock'] > 0): ?>
+                                Stock : <?= $produit['quantiteStock'] ?>
+                            <?php else: ?>
+                                Rupture de stock
+                            <?php endif; ?>
+                        </p>
+
+                        <div class="product-actions">
+                            <a href="detail.php?id=<?= $produit['idItem'] ?>">
+                                Detail
+                            </a>
+
+                            <?php if ($produit['quantiteStock'] > 0): ?>
+                                <a class="add-link add-to-cart-btn"
+                                   href="scripts/php/ajouterPanier.php?id=<?= $produit['idItem'] ?>"
+                                   data-id="<?= $produit['idItem'] ?>">
+                                    Ajouter
+                                </a>
+                            <?php else: ?>
+                                <span class="add-link" style="opacity:0.5">
+                                    Ajouter
+                                </span>
+                            <?php endif; ?>
+                        </div>
+
+                    </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <p class="no-product">
+                    Aucun produit trouvé avec ces filtres.
+                </p>
+            <?php endif; ?>
+        </section>
+
+    </div>
+
+    <?php if (!$filtreActif && $totalPages > 1): ?>
+        <div class="pagination">
+            <?php if ($page > 1): ?>
+                <a class="page-arrow" href="boutique.php?page=<?= $page - 1 ?>">←</a>
+            <?php else: ?>
+                <span class="page-arrow disabled">←</span>
+            <?php endif; ?>
+
+            <span class="page-number">Page <?= $page ?> / <?= $totalPages ?></span>
+
+            <?php if ($page < $totalPages): ?>
+                <a class="page-arrow" href="boutique.php?page=<?= $page + 1 ?>">→</a>
+            <?php else: ?>
+                <span class="page-arrow disabled">→</span>
+            <?php endif; ?>
+        </div>
+    <?php endif;
+}
+
+/* Pour PRENDREJUSTE LE CRISS DE CALISSE DE MAIN */
+
+if ($isAjax) {
+    ob_start();
+    renderShopContent($produits, $categories, $filtreActif, $totalPages, $page, $prixMin, $prixMax, $etoileMin, $etoileMax);
+    echo ob_get_clean();
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -210,8 +380,9 @@ $produits = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <meta charset="UTF-8">
     <title>Boutique</title>
     <link rel="stylesheet" href="css/styles.css">
-  <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="icon" type="image/png" href="favicon.png">
 </head>
+
 <script src="https://cdn.jsdelivr.net/npm/animejs/dist/bundles/anime.umd.min.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
@@ -290,192 +461,20 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 </script>
+
 <body>
 
-    <?php include "header.php"; ?>
+<?php include "header.php"; ?>
 
-    <main class="shop-page">
-
-        <div class="shop-container">
-
-            <!-- =========================
-                 FILTRES
-            ========================= -->
-
-            <aside class="filters">
-
-                <h2>Filtrer la recherche</h2>
-
-                <form method="get" action="boutique.php">
-
-                    <div class="filter-block">
-                        <label>Catégories</label>
-
-                        <div>
-                            <label>
-                                <input type="checkbox" name="categories[]" value="Armures"
-                                    <?= in_array("Armures", $categories, true) ? "checked" : "" ?>>
-                                Armures
-                            </label>
-                        </div>
-
-                        <div>
-                            <label>
-                                <input type="checkbox" name="categories[]" value="Armes"
-                                    <?= in_array("Armes", $categories, true) ? "checked" : "" ?>>
-                                Armes
-                            </label>
-                        </div>
-
-                        <div>
-                            <label>
-                                <input type="checkbox" name="categories[]" value="Sorts"
-                                    <?= in_array("Sorts", $categories, true) ? "checked" : "" ?>>
-                                Sorts
-                            </label>
-                        </div>
-
-                        <div>
-                            <label>
-                                <input type="checkbox" name="categories[]" value="Potions"
-                                    <?= in_array("Potions", $categories, true) ? "checked" : "" ?>>
-                                Potions
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="filter-block">
-                        <label>Prix minimum</label>
-                        <input type="number" step="0.01" name="prixMin" placeholder="Min"
-                            value="<?= htmlspecialchars($_GET['prixMin'] ?? '') ?>">
-                    </div>
-
-                    <div class="filter-block">
-                        <label>Prix maximum</label>
-                        <input type="number" step="0.01" name="prixMax" placeholder="Max"
-                            value="<?= htmlspecialchars($_GET['prixMax'] ?? '') ?>">
-                    </div>
-
-                    <div class="filter-block">
-                        <label>Étoiles minimum</label>
-                        <input type="number" step="0.1" min="0" max="5" name="etoileMin" placeholder="Min"
-                            value="<?= htmlspecialchars($_GET['etoileMin'] ?? '') ?>">
-                    </div>
-
-                    <div class="filter-block">
-                        <label>Étoiles maximum</label>
-                        <input type="number" step="0.1" min="0" max="5" name="etoileMax" placeholder="Max"
-                            value="<?= htmlspecialchars($_GET['etoileMax'] ?? '') ?>">
-                    </div>
-
-                    <div class="filter-buttons">
-
-                        <button class="filter-btn" type="submit">
-                            Filtrer
-                        </button>
-
-                        <a class="reset-btn" href="boutique.php">
-                            Réinitialiser
-                        </a>
-
-                    </div>
-
-                </form>
-
-            </aside>
-
-            <!-- =========================
-                 PRODUITS
-            ========================= -->
-
-            <section class="products-grid">
-
-                <?php if (count($produits) > 0): ?>
-
-                    <?php foreach ($produits as $produit): ?>
-
-                        <div class="product-card">
-
-                            <div class="product-image">
-                                <img src="images/<?= htmlspecialchars($produit['photo']) ?>" alt="">
-                            </div>
-
-                            <h3><?= htmlspecialchars($produit['nom']) ?></h3>
-
-                            <p class="price">
-                                <?= number_format($produit['prix'], 2) ?> 🪙
-                            </p>
-
-                            <p class="stars">
-                                ⭐ <?= number_format($produit['etoile'], 1) ?> / 5
-                            </p>
-
-                            <p class="stock">
-                                <?php if ($produit['quantiteStock'] > 0): ?>
-                                    Stock : <?= $produit['quantiteStock'] ?>
-                                <?php else: ?>
-                                    Rupture de stock
-                                <?php endif; ?>
-                            </p>
-
-                            <div class="product-actions">
-
-                                <a href="detail.php?id=<?= $produit['idItem'] ?>">
-                                    Detail
-                                </a>
-
-                                <?php if ($produit['quantiteStock'] > 0): ?>
-                                    <a class="add-link add-to-cart-btn"
-                                href="scripts/php/ajouterPanier.php?id=<?= $produit['idItem'] ?>"
-                                data-id="<?= $produit['idItem'] ?>">
-                                     Ajouter
-                                </a>
-                                <?php else: ?>
-                                    <span class="add-link" style="opacity:0.5">
-                                        Ajouter
-                                    </span>
-                                <?php endif; ?>
-
-                            </div>
-
-                        </div>
-
-                    <?php endforeach; ?>
-
-                <?php else: ?>
-
-                    <p class="no-product">
-                        Aucun produit trouvé avec ces filtres.
-                    </p>
-
-                <?php endif; ?>
-
-            </section>
-
-        </div>
-           <?php if (!$filtreActif && $totalPages > 1): ?>
-        <div class="pagination">
-
-        <?php if ($page > 1): ?>
-            <a class="page-arrow" href="boutique.php?page=<?= $page - 1 ?>">←</a>
-        <?php else: ?>
-            <span class="page-arrow disabled">←</span>
-        <?php endif; ?>
-
-        <span class="page-number">Page <?= $page ?> / <?= $totalPages ?></span>
-
-        <?php if ($page < $totalPages): ?>
-            <a class="page-arrow" href="boutique.php?page=<?= $page + 1 ?>">→</a>
-        <?php else: ?>
-            <span class="page-arrow disabled">→</span>
-        <?php endif; ?>
-
-        </div>
-        <?php endif; ?> 
+<main class="shop-page" id="shop-main">
+    <?php
+    renderShopContent($produits, $categories, $filtreActif, $totalPages, $page, $prixMin, $prixMax, $etoileMin, $etoileMax);
+    ?>
+</main>
 
 <!-- Bouton musique -->
-<img id="musicToggle" 
-     src="image/sonOff.jpg" 
+<img id="musicToggle"
+     src="image/sonOff.jpg"
      style="
         position: fixed;
         bottom: 20px;
@@ -505,8 +504,8 @@ toggleBtn.addEventListener("click", () => {
         toggleBtn.src = "image/sonOff.jpg";
     }
 });
-</script>        
-    </main>
+</script>
+
 <svg width="0" height="0" style="position:absolute">
   <defs>
     <filter id="electric-border" x="-20%" y="-20%" width="140%" height="140%">
@@ -531,6 +530,50 @@ document.addEventListener("DOMContentLoaded", () => {
     animate();
 });
 </script>
-</body>
 
+<!-- Script pour le cirss d'AJAX -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+    const mainContainer = document.getElementById("shop-main");
+
+    function loadAjax(url) {
+        fetch(url + (url.includes("?") ? "&" : "?") + "ajax=1")
+            .then(res => res.text())
+            .then(html => {
+                mainContainer.innerHTML = html;
+                window.history.pushState({}, "", url);
+                attachPaginationListeners();
+                attachFilterListener();
+            })
+            .catch(err => console.error("Erreur AJAX :", err));
+    }
+
+    function attachFilterListener() {
+        const filterForm = document.querySelector(".filters form");
+        if (!filterForm) return;
+
+        filterForm.addEventListener("submit", function(e) {
+            e.preventDefault();
+            const url = "boutique.php?" + new URLSearchParams(new FormData(filterForm)).toString();
+            loadAjax(url);
+        });
+    }
+
+    function attachPaginationListeners() {
+        document.querySelectorAll(".pagination a").forEach(link => {
+            link.addEventListener("click", function(e) {
+                e.preventDefault();
+                loadAjax(this.href);
+            });
+        });
+    }
+
+    attachFilterListener();
+    attachPaginationListeners();
+
+});
+</script>
+
+</body>
 </html>
