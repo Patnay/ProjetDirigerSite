@@ -7,6 +7,18 @@ $profilLink = "connexion.php";
 $profilTitle = "Se connecter";
 $profilImg = "";
 
+$nbItemsPanier = 0;
+
+if (isset($_SESSION["idJoueur"]) && isset($pdo)) {
+    $stmtPanier = $pdo->prepare("
+        SELECT IFNULL(SUM(quantitePanier),0)
+        FROM Paniers
+        WHERE idJoueur = ?
+    ");
+    $stmtPanier->execute([$_SESSION["idJoueur"]]);
+    $nbItemsPanier = (int)$stmtPanier->fetchColumn();
+}
+
 if (isset($_SESSION["idJoueur"]) && isset($pdo)) {
     $sqlHeader = "SELECT * FROM Joueurs WHERE idJoueur = :idJoueur";
     $stmtHeader = $pdo->prepare($sqlHeader);
@@ -57,7 +69,15 @@ if (isset($_SESSION["idJoueur"]) && isset($pdo)) {
             </div>
         </div>
 
-        <a href="panier.php" class="icon-link" id="cart-icon" title="Panier">🛒</a>
+        <a href="panier.php" class="icon-link cart-icon-container" id="cart-icon" title="Panier">
+    <img src="image/panier.png" alt="Panier" class="cart-img">
+
+    <?php if ($nbItemsPanier > 0): ?>
+        <span class="cart-count">
+            <?= $nbItemsPanier > 99 ? '99+' : $nbItemsPanier ?>
+        </span>
+    <?php endif; ?>
+</a>
 
         <a href="<?= $profilLink ?>" class="icon-link" title="<?= $profilTitle ?>">
             <?php if ($profilImg !== ""): ?>

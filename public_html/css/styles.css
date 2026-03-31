@@ -904,3 +904,46 @@ body.profile-page .site-header{
     pointer-events: none;
     z-index: 3;
 }
+.icon-link.cart-icon-container{
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    overflow: visible;
+}
+
+.cart-img{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    transform: translate(-50%, -50%);
+}
+
+.cart-count{
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    z-index: 10;
+
+    background: red;
+    color: white;
+
+    font-size: 0.7rem;
+    font-weight: bold;
+    line-height: 1;
+
+    border-radius: 50%;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    box-shadow: 0 0 6px rgba(0,0,0,0.5);
+}
