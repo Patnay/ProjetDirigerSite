@@ -393,6 +393,10 @@ if ($isAjax) {
     ?>
 </main>
 
+<footer>
+    <?php include "footer.php"; ?>
+</footer>
+
 <!-- Bouton musique -->
 <img id="musicToggle"
      src="image/sonOff.jpg"
