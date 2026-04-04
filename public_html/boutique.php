@@ -301,7 +301,7 @@ function renderShopContent($produits, $categories, $filtreActif, $totalPages, $p
                         <h3><?= htmlspecialchars($produit['nom']) ?></h3>
 
                         <p class="price">
-                            <?= number_format($produit['prix'], 2) ?>
+                            <?= number_format($produit['prix'], 2) ?> 🪙
                         </p>
 
                         <p class="stars">
@@ -451,7 +451,6 @@ document.addEventListener("DOMContentLoaded", () => {
         turb.setAttribute("baseFrequency", bf);
         requestAnimationFrame(animate);
     }
-
     animate();
 });
 </script>
@@ -459,7 +458,6 @@ document.addEventListener("DOMContentLoaded", () => {
 <!-- Script pour le cirss d'AJAX -->
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-
     const mainContainer = document.getElementById("shop-main");
 
     function loadAjax(url) {
@@ -470,10 +468,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 window.history.pushState({}, "", url);
                 attachPaginationListeners();
                 attachFilterListener();
+                attachResetListener();
             })
             .catch(err => console.error("Erreur AJAX :", err));
     }
-
+    
     function attachFilterListener() {
         const filterForm = document.querySelector(".filters form");
         if (!filterForm) return;
@@ -485,6 +484,16 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    function attachResetListener() {
+        const resetBtn = document.querySelector(".reset-btn");
+        if (!resetBtn) return;
+
+        resetBtn.addEventListener("click", function(e) {
+            e.preventDefault();
+            loadAjax("boutique.php");
+        });
+    }
+    
     function attachPaginationListeners() {
         document.querySelectorAll(".pagination a").forEach(link => {
             link.addEventListener("click", function(e) {
@@ -493,12 +502,9 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
     }
-
     attachFilterListener();
     attachPaginationListeners();
-
 });
 </script>
-
 </body>
 </html>
