@@ -1,6 +1,6 @@
 /*
  Auteur: Patrice Paul  
- Date dernier modif: 18 mars 2026
+ Date dernier modif: 6 avri 2026
  Exemple : 
  Pour ajouterPanier =>  CALL ajouterPanier(idJoueur,idItem);
 
@@ -219,3 +219,96 @@ BEGIN
 END$$
 
 DELIMITER ;
+
+
+/* ========= Vendre Items ============= */
+
+DELIMITER $$
+
+CREATE PROCEDURE VendreItem(
+    IN p_idJoueur INT,
+    IN p_idItem INT
+)
+BEGIN
+    DECLARE v_prix INT;
+    DECLARE v_typeItem CHAR(1);
+    DECLARE v_rareté TINYINT;
+    DECLARE v_prixVente DECIMAL(10,2);
+
+    DECLARE v_or INT;
+    DECLARE v_argent INT;
+
+    -- Gestion erreur
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+    END;
+
+    START TRANSACTION;
+
+    -- Est-ce que le joueurs le prossede ?
+    IF NOT EXISTS (
+        SELECT 1 FROM Inventaires 
+        WHERE idJoueur = p_idJoueur AND idItem = p_idItem
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Erreur : item non possédé';
+    END IF;
+
+    -- Infos item
+    SELECT prix, typeItem
+    INTO v_prix, v_typeItem
+    FROM Items
+    WHERE idItem = p_idItem;
+
+    -- isSort ?? getRareter for the price : 60%
+    IF v_typeItem = 'S' THEN
+        SELECT rarete INTO v_rareté
+        FROM Sorts
+        WHERE idItem = p_idItem;
+
+        CASE v_rareté
+            WHEN 1 THEN SET v_prixVente = v_prix * 1.00;
+            WHEN 2 THEN SET v_prixVente = v_prix * 0.95;
+            WHEN 3 THEN SET v_prixVente = v_prix * 0.90;
+            ELSE SET v_prixVente = v_prix * 0.60;
+        END CASE;
+    ELSE
+        SET v_prixVente = v_prix * 0.60;
+    END IF;
+
+    -- Separer or/argent/bronze
+    SET v_or = FLOOR(v_prixVente);
+    SET v_argent = FLOOR((v_prixVente - v_or) * 100);
+    SET v_bronze = ROUND((((v_prixVente - v_or) * 100) - v_argent) * 100);
+    -- Ajouter gains
+    UPDATE Joueurs
+    SET 
+        nbOr = nbOr + v_or,
+        nbArgent = nbArgent + v_argent,
+        nbBronze = nbBronze + v_bronze
+    WHERE idJoueur = p_idJoueur;
+
+    -- Retirer inventaire
+    DELETE FROM Inventaires
+    WHERE idJoueur = p_idJoueur AND idItem = p_idItem;
+
+    -- Remettre dans le stock
+    UPDATE Items
+    SET stock = stock + 1
+    WHERE idItem = p_idItem;
+
+    COMMIT;
+
+    
+   -- SELECT v_or AS orGagne, v_argent AS argentGagne; --- Pour Debuger
+
+END $$
+
+DELIMITER ;
+
+-- Exemple d'appel 
+CALL VendreItem(
+    1, -- idJoueur
+    10 -- idItem
+    );
