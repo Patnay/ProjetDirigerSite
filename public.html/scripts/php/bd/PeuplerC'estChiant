@@ -299,6 +299,7 @@ select * FROM Armes;
 select * FROM Armures;
 select * from Potions;
 select * from Typesorts;
+select * from Inventaires;
 DELETE FROM Armes;
 DELETE FROM Items WHERE idItem = 7;
 DELETE FROM Armures;
@@ -340,4 +341,133 @@ select * from Joueurs;
 
 ALTER TABLE Joueurs DROP COLUMN age;
 
-# procedure stocké pour modifier la quantité d'item dans un panier
+# ajout de questions répondes, énigmes
+-- Exemple d'appel
+CALL AjouterEnigme(
+    'Qui est jaune et qui att?', -- question
+    'A', -- idCategorie 
+    'M', -- difficulter
+    0, -- est piger a Parler psq jsp cetait pk mais cetait dans le model du prof
+    'Un chien', -- mauvaise rep
+    'Bob', -- mauvaise rep
+    'Gilenne Gagnion', -- mauvaise rep
+    'Jaunathan'-- la bonne reponse (oui js psq comment ecrire ce vieux nom)
+    );
+    
+    -- énigmes facile
+    CALL AjouterEnigme(
+    'De quelle couleur est l animation d éclair dans la boutique?',
+    'A',
+    'F',
+    '0',
+    'Bleu',
+    'Rouge',
+    'Vert',
+    'Orange'
+    );
+    
+    CALL AjouterEnigme(
+    'De quel demi-dieu reçoit ton notre première great rune?',
+    'A',
+    'F',
+    '0',
+    'Radahn',
+    'Maliketh',
+    'Malenia',
+    'Godrick'
+    );
+    
+    CALL AjouterEnigme(
+    'Quelle est l arme du tyrant Mesmer?',
+    'A',
+    'F',
+    '0',
+    'Une épée',
+    'Un arc',
+    'Une hache',
+    'Une lance'
+    );
+    
+    -- énigmes moyenne
+    CALL AjouterEnigme(
+    'D après le lore, quel est le demi-dieu le plus puissant?',
+    'A',
+    'M',
+    '0',
+    'Godwyn',
+    'Malenia',
+    'Mogh',
+    'Radahn'
+    );
+    
+    CALL AjouterEnigme(
+    'Quel lieu est reconnu comme étant la réprésentation de l enfer dans Elden Ring?',
+    'A',
+    'M',
+    '0',
+    'Limgrave',
+    'Crumbling Farum Azula',
+    'Halligtree',
+    'Caelid'
+    );
+    
+    CALL AjouterEnigme(
+    'Quel est le nom du ending où tu te marries avec la demi-dieu Ranni?',
+    'A',
+    'M',
+    '0',
+    'Lord of the Frienzed Flame',
+    'Age of Order',
+    'Blessing of Despair',
+    'Age of the Stars'
+    );
+    
+    -- énigmes difficiles
+    CALL AjouterEnigme(
+    'Dans B.F.G.D., quel est le développeur qui représente la lettre B?',
+    'A',
+    'D',
+    '0',
+    'Edouard',
+    'William',
+    'Emmanuel',
+    'Patrice'
+    );
+    
+	 CALL AjouterEnigme(
+    'Dans B.F.G.D., quel est le développeur qui représente la lettre F?',
+    'A',
+    'D',
+    '0',
+    'William',
+    'Patrice',
+    'Edouard',
+    'Emmanuel'
+    );
+    
+            CALL AjouterEnigme(
+    'Dans B.F.G.D., quel est le développeur qui représente la lettre G?',
+    'A',
+    'D',
+    '0',
+    'Patrice',
+    'Emmanuel',
+    'William',
+    'Edouard'
+    );
+    
+	 CALL AjouterEnigme(
+    'Dans B.F.G.D., quel est le développeur qui représente la lettre D?',
+    'A',
+    'D',
+    '0',
+    'Emmanuel',
+    'Edouard',
+    'Patrice',
+    'William'
+    );
+    
+    SELECT * FROM Enigmes;
+    SELECT * FROM Reponses;
+    DELETE FROM Enigmes;
+    DELETE FROM Reponses;
