@@ -76,52 +76,52 @@ foreach ($produits as $produit) {
                     <?php foreach ($produits as $produit): ?>
                         <div class="product-card cart_cards" id="card-<?= (int)$produit['idItem'] ?>">
 
-                            <div class="product-image cart_img">
-                                <img src="images/<?= htmlspecialchars($produit['photo']) ?>" alt="<?= htmlspecialchars($produit['nom']) ?>">
-                            </div>
+    <div class="product-image cart_img">
+        <img src="images/<?= htmlspecialchars($produit['photo']) ?>" alt="<?= htmlspecialchars($produit['nom']) ?>">
+    </div>
 
-                            <div>
-                                <h3><?= htmlspecialchars($produit['nom']) ?></h3>
+    <div class="cart-info">
+        <h3><?= htmlspecialchars($produit['nom']) ?></h3>
 
-                                <p class="price"
-                                   id="prix-<?= (int)$produit['idItem'] ?>"
-                                   data-prix="<?= htmlspecialchars($produit['prix']) ?>">
-                                    <?= number_format((float)$produit['prix'] * (int)$produit['quantitePanier'], 2) ?>
-                                    (<?= number_format((float)$produit['prix'], 2) ?>/u)
-                                </p>
+        <p class="price"
+           id="prix-<?= (int)$produit['idItem'] ?>"
+           data-prix="<?= htmlspecialchars($produit['prix']) ?>">
+            <?= number_format((float)$produit['prix'] * (int)$produit['quantitePanier'], 2) ?>
+            (<?= number_format((float)$produit['prix'], 2) ?>/u)
+        </p>
 
-                                <p class="stock">
-                                    Stock boutique :
-                                    <span id="stock-<?= (int)$produit['idItem'] ?>"><?= (int)$produit['quantiteStock'] ?></span>
-                                </p>
+        <p class="stock">
+            Stock boutique :
+            <span id="stock-<?= (int)$produit['idItem'] ?>"><?= (int)$produit['quantiteStock'] ?></span>
+        </p>
 
-                                <div class="number" style="margin-bottom:12px;">
-                                    <button type="button" onclick="modifierQuantite(<?= (int)$produit['idItem'] ?>, 'moins')">-</button>
+        <div class="number">
+            <button type="button" onclick="modifierQuantite(<?= (int)$produit['idItem'] ?>, 'moins')">-</button>
 
-                                    <input
-                                        type="number"
-                                        min="1"
-                                        value="<?= (int)$produit['quantitePanier'] ?>"
-                                        id="qte-<?= (int)$produit['idItem'] ?>"
-                                        class="cart-qty-input"
-                                        onchange="modifierQuantiteManuelle(<?= (int)$produit['idItem'] ?>)"
-                                    >
+            <input
+                type="number"
+                min="1"
+                value="<?= (int)$produit['quantitePanier'] ?>"
+                id="qte-<?= (int)$produit['idItem'] ?>"
+                class="cart-qty-input"
+                onchange="modifierQuantiteManuelle(<?= (int)$produit['idItem'] ?>)"
+            >
 
-                                    <button type="button" onclick="modifierQuantite(<?= (int)$produit['idItem'] ?>, 'plus')">+</button>
-                                </div>
+            <button type="button" onclick="modifierQuantite(<?= (int)$produit['idItem'] ?>, 'plus')">+</button>
+        </div>
 
-                                <div class="product-actions">
-                                    <a href="detail.php?id=<?= (int)$produit['idItem'] ?>">Detail</a>
+        <div class="cart-actions">
+            <a href="detail.php?id=<?= (int)$produit['idItem'] ?>" class="detail-link">Detail</a>
 
-                                    <button type="button"
-                                            class="remove-item-btn"
-                                            onclick="supprimerItem(<?= (int)$produit['idItem'] ?>)">
-                                        Supprimer
-                                    </button>
-                                </div>
-                            </div>
+            <button type="button"
+                    class="remove-item-btn"
+                    onclick="supprimerItem(<?= (int)$produit['idItem'] ?>)">
+                Supprimer
+            </button>
+        </div>
+    </div>
 
-                        </div>
+</div>
                     <?php endforeach; ?>
                 </section>
 
