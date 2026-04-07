@@ -52,12 +52,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="css/connexion.css">
 </head>
 
-<body class="shop-page">
+<body>
 
-    <?php include "header.php"; ?>
-
+<?php include "header.php"; ?>
+<main class="shop-page connect-page">
     <div class="connect-container">
-        <main>
+
             <h1>Connexion</h1>
 
             <?php if ($message !== ''): ?>
@@ -89,9 +89,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 Pas encore de compte ?
                 <a href="inscription.php">Créer un compte</a>
             </p>
-        </main>
+\
     </div>
-
+</main>
 </body>
 
 </html>

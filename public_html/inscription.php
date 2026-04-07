@@ -15,10 +15,9 @@
   <title>Inscription</title>
 </head>
 
-<?php include "header.php" ?>
-
 <body>
-<main class="shop-page">
+<?php include "header.php"; ?>
+<main lass="shop-page connect-page">
   <div class="connect-container">
       <h1>Se créer un compte</h1>
       <form action="inscription.php" method="POST">
@@ -63,7 +62,9 @@
     }
     ?>
   <br>
-      <button class="connect-button" onclick="window.location.href = 'connexion.php'">Déjà connecté? Connectez-vous</button>
+      <button type="button" class="connect-secondary" onclick="window.location.href='connexion.php'">
+      Déjà un compte ? Connectez-vous
+      </button>
   </div>
   
 <!-- Bouton musique -->
