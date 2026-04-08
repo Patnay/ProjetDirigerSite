@@ -17,7 +17,7 @@
 
 <body>
 <?php include "header.php"; ?>
-<main lass="shop-page connect-page">
+<main>
   <div class="connect-container">
       <h1>Se créer un compte</h1>
       <form action="inscription.php" method="POST">
