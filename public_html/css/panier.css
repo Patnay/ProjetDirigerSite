@@ -116,7 +116,7 @@
 
 /* ===== QUANTITÉ ===== */
 
-.cart-info .number{
+.cart-info.number{
     display:flex;
     align-items:center;
     gap:10px;
@@ -125,11 +125,11 @@
     font-weight:bold;
 }
 
-.cart-info .number button{
+.number button{
     width:42px;
     height:42px;
     border:none;
-    border-radius:10px;
+    border-radius:12px;
     background-color:gold;
     color:black;
     font-size:1.2rem;
@@ -139,7 +139,7 @@
     flex:0 0 auto;
 }
 
-.cart-info .number button:hover{
+.number button:hover{
     background-color:#e0b800;
     transform:translateY(-1px);
 }
