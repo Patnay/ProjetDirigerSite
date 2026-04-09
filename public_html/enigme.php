@@ -1,6 +1,10 @@
 <?php   
 require_once "init.php";
 $isAjax = isset($_GET["ajax"]) && $_GET["ajax"] == "1";
+if (!isset($_SESSION["idJoueur"])) {
+    header("Location: connexion.php");
+    exit;
+}
 
 if ($isAjax) {
     ob_start();
@@ -14,6 +18,8 @@ if ($isAjax) {
 $question = "";
 $reponses = [];
 $resultat = "";
+$idJoueur = (int)$_SESSION["idJoueur"];
+$difficulte = "";
 function GetQuestionReponse($diff){
     global $conn;
     $sql = "SELECT * FROM Enigmes
@@ -33,17 +39,34 @@ function GetQuestionReponse($diff){
     $sqlRep = "SELECT * FROM reponses WHERE idEnigme = ?";
     $stmtRep = $conn->prepare($sqlRep);
     $stmtRep->execute([$enigme["idEnigme"]]);
-    $reponses = $stmtRep->fetchAll(PDO::FETCH_ASSOC);
+    $reponsesEnigme = $stmtRep->fetchAll(PDO::FETCH_ASSOC);
+    
 
     return[
         "question" => $enigme["enonce"],
-        "reponses" => $reponses
+        "reponses" => $reponsesEnigme,
+        "difficulte" => $diff
     ];
 }
 
 if($_SERVER["REQUEST_METHOD"] === "POST"){
     if($_POST["bonne"] == 1){
-        $message = "Bonne réponse!";
+        if($difficulte = "F"){
+          $sql = "UPDATE Joueurs SET nbBronze = nbBronze + 10 WHERE idJoueur = ?";
+          $stmt = $conn->prepare($sql);
+          $stmt->execute($idJoueur);
+          $message = "Bonne réponse!!";
+        }else if($difficulte = "M"){
+          $sql = "UPDATE Joueurs SET nbArgent = nbArgent + 10 WHERE idJoueur = ?";
+          $stmt = $conn->prepare($sql);
+          $stmt->execute($idJoueur);
+          $message = "Bonne réponse!!";
+        }else{
+          $sql = "UPDATE Joueurs SET nbOr = nbOr + 10 WHERE idJoueur = ?";
+          $stmt = $conn->prepare($sql);
+          $stmt->execute($idJoueur);
+          $message = "Bonne réponse!!";
+        }
     } else {
         $message = "Mauvaise réponse...";
     }
