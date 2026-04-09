@@ -40,6 +40,12 @@ BEGIN
         SET nbOr = nbOr + 2
         WHERE idJoueur = NEW.idJoueur;
     END IF;
+    -- Streak 10 -> bonus or
+    IF NEW.streak >= 10 AND OLD.streak < 10 THEN
+        UPDATE Joueurs
+        SET nbOr = nbOr + 23
+        WHERE idJoueur = NEW.idJoueur;
+    END IF;
     -- Ajouter ce que on vas parler en team ***********************************
 
 END $$

@@ -947,3 +947,16 @@ body.profile-page .site-header{
 
     box-shadow: 0 0 6px rgba(0,0,0,0.5);
 }
+/* ===== CACHER SCROLLBAR PAGE COMPLETE ===== */
+
+html, body {
+    overflow-y: scroll; /* garde le scroll actif */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge ancien */
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+}
