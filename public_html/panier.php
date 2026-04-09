@@ -133,7 +133,7 @@ foreach ($produits as $produit) {
                         <span id="prix-total"><?= number_format((float)$prixTotal['prixTotal'], 2) ?></span>
                     </p>
 
-                    <form action="scripts/php/payerPanier.php" method="POST" style="margin-bottom:12px;">
+                    <form id="payerPanierForm" style="margin-bottom:12px;">
                         <button type="submit" class="connect">Payer votre panier</button>
                     </form>
 
@@ -295,6 +295,89 @@ foreach ($produits as $produit) {
                 cursor:pointer;
             ">
             Fermer
+        </button>
+    </div>
+</div>
+
+<!-- Ici c,est lui pour les fonds insuffisants -->
+<div id="fondsAlert" style="
+    display:none;
+    position:fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    background:rgba(0,0,0,0.75);
+    backdrop-filter: blur(4px);
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+">
+    <div style="
+        background:#1a1a1a;
+        border:2px solid gold;
+        padding:30px;
+        border-radius:12px;
+        text-align:center;
+        width:320px;
+        color:white;
+        font-family: 'Agmena Pro', serif;
+    ">
+        <h2 style="margin-bottom:15px; color:#d4af37;">Fonds insuffisants</h2>
+        <p style="margin-bottom:25px;">
+            Vous n’avez pas assez d'or pour effectuer cet achat.
+        </p>
+
+        <button onclick="document.getElementById('fondsAlert').style.display='none'"
+            style="
+                padding:10px 20px;
+                background:#444;
+                color:white;
+                border:none;
+                border-radius:8px;
+                cursor:pointer;
+            ">
+            Fermer
+        </button>
+    </div>
+</div>
+
+<!-- Pour la réussite d'un achat -->
+ <div id="achatReussiAlert" style="
+    display:none;
+    position:fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    background:rgba(0,0,0,0.75);
+    backdrop-filter: blur(4px);
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+">
+    <div style="
+        background:#1a1a1a;
+        border:2px solid gold;
+        padding:30px;
+        border-radius:12px;
+        text-align:center;
+        width:320px;
+        color:white;
+        font-family: 'Agmena Pro', serif;
+    ">
+        <h2 style="margin-bottom:15px; color:#d4af37;">Achat réussi</h2>
+        <p style="margin-bottom:25px;">
+            Vos items ont été ajoutés à votre inventaire.
+        </p>
+
+        <button onclick="location.reload()"
+            style="
+                padding:10px 20px;
+                background:gold;
+                color:black;
+                border:none;
+                border-radius:8px;
+                cursor:pointer;
+                font-weight:bold;
+            ">
+            Continuer
         </button>
     </div>
 </div>
@@ -480,6 +563,39 @@ document.getElementById("confirmerSupprimerItem").addEventListener("click", func
 function afficherStockInsuffisant() {
     document.getElementById("stockAlert").style.display = "flex";
 }
+</script>
+
+<script>
+document.getElementById("payerPanierForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    fetch("scripts/php/payerPanier.php", {
+        method: "POST"
+    })
+    .then(res => res.text())
+    .then(data => {
+
+        if (data.includes("FONDS_INSUFFISANTS")) {
+            document.getElementById("fondsAlert").style.display = "flex";
+            return;
+        }
+
+        if (data.includes("DEPASSE_STOCK")) {
+            document.getElementById("stockAlert").style.display = "flex";
+            return;
+        }
+
+        if (data.includes("PANIER_VIDE")) {
+            alert("Votre panier est vide.");
+            return;
+        }
+
+        if (data.includes("OK")) {
+            document.getElementById("achatReussiAlert").style.display = "flex";
+            return;
+        }
+    });
+});
 </script>
 
 </body>
