@@ -30,7 +30,7 @@ if (!$panier) {
 /* Vérifier stock */
 foreach ($panier as $item) {
     if ((int)$item["quantitePanier"] > (int)$item["quantiteStock"]) {
-        echo "<script>alert('La quantité d\\'un item dépasse le stock disponible.'); window.location='../../panier.php';</script>";
+        echo "DEPASSE_STOCK";
         exit;
     }
 }
@@ -49,7 +49,7 @@ $joueur = $stmt->fetch(PDO::FETCH_ASSOC);
 $argentTotal = ((int)$joueur["nbOr"] + (int)$joueur["nbArgent"] + (int)$joueur["nbBronze"]);
 
 if ($argentTotal < $total) {
-    echo "<script>alert('Fonds insuffisants.'); window.location='../../panier.php';</script>";
+    echo "FONDS_INSUFFISANTS";
     exit;
 }
 
@@ -105,9 +105,9 @@ try {
 
     $pdo->commit();
 
-    echo "<script>alert('Achat réussi.'); window.location='../../panier.php';</script>";
+    echo "OK";
     exit;
-
+    
 } catch (Exception $e) {
     $pdo->rollBack();
     echo "<script>alert('Erreur pendant le paiement.'); window.location='../../panier.php';</script>";
