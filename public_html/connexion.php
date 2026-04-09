@@ -50,14 +50,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Connexion</title>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/connexion.css">
+    <link rel="icon" type="image/png" href="favicon.png">
 </head>
 
-<body class="shop-page">
+<body>
 
-    <?php include "header.php"; ?>
-
+<?php include "header.php"; ?>
+<main class="shop-page connect-page">
     <div class="connect-container">
-        <main>
+
             <h1>Connexion</h1>
 
             <?php if ($message !== ''): ?>
@@ -89,9 +90,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 Pas encore de compte ?
                 <a href="inscription.php">Créer un compte</a>
             </p>
-        </main>
-    </div>
 
+    </div>
+</main>
 </body>
 
 </html>

@@ -138,7 +138,8 @@ foreach ($produits as $produit) {
                     </form>
 
                     <form action="scripts/php/viderPanier.php" method="POST">
-                        <button type="submit" class="remove-item-btn" style="width:100%;">Vider le panier</button>
+                        <!-- AJOUT : bouton devient type="button" -->
+                        <button type="button" id="viderPanierBtn" class="remove-item-btn" style="width:100%;">Vider le panier</button>
                     </form>
                 </aside>
 
@@ -147,9 +148,160 @@ foreach ($produits as $produit) {
         <?php endif; ?>
 
     </div>
-    <!-- Bouton musique -->
-<img id="musicToggle" 
-     src="image/sonOff.jpg" 
+</main>
+
+<!-- L'alert pour vider tout le panier -->
+<div id="viderPanierAlert" style="
+    display:none;
+    position:fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    background:rgba(0,0,0,0.75);
+    backdrop-filter: blur(4px);
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+">
+    <div style="
+        background:#1a1a1a;
+        border:2px solid gold;
+        padding:30px;
+        border-radius:12px;
+        text-align:center;
+        width:320px;
+        color:white;
+        font-family: 'Agmena Pro', serif;
+    ">
+        <h2 style="margin-bottom:15px; color:#d4af37;">Confirmation</h2>
+        <p style="margin-bottom:25px;">
+            Voulez-vous vraiment vider tout votre panier ?
+        </p>
+
+        <button onclick="document.getElementById('viderPanierAlert').style.display='none'"
+            style="
+                padding:10px 20px;
+                margin-right:10px;
+                background:#444;
+                color:white;
+                border:none;
+                border-radius:8px;
+                cursor:pointer;
+            ">
+            Annuler
+        </button>
+
+        <button id="confirmerViderPanier"
+            style="
+                padding:10px 20px;
+                background:#d9534f;
+                color:white;
+                border:none;
+                border-radius:8px;
+                cursor:pointer;
+            ">
+            Vider le panier
+        </button>
+    </div>
+</div>
+
+<!-- Pour l'alert de suprrimer un item dans panier -->
+<div id="supprimerItemAlert" style="
+    display:none;
+    position:fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    background:rgba(0,0,0,0.75);
+    backdrop-filter: blur(4px);
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+">
+    <div style="
+        background:#1a1a1a;
+        border:2px solid gold;
+        padding:30px;
+        border-radius:12px;
+        text-align:center;
+        width:320px;
+        color:white;
+        font-family: 'Agmena Pro', serif;
+    ">
+        <h2 style="margin-bottom:15px; color:#d4af37;">Confirmation</h2>
+        <p style="margin-bottom:25px;">
+            Voulez-vous vraiment supprimer cet item ?
+        </p>
+
+        <button onclick="document.getElementById('supprimerItemAlert').style.display='none'"
+            style="
+                padding:10px 20px;
+                margin-right:10px;
+                background:#444;
+                color:white;
+                border:none;
+                border-radius:8px;
+                cursor:pointer;
+            ">
+            Annuler
+        </button>
+
+        <button id="confirmerSupprimerItem"
+            style="
+                padding:10px 20px;
+                background:#d9534f;
+                color:white;
+                border:none;
+                border-radius:8px;
+                cursor:pointer;
+            ">
+            Supprimer
+        </button>
+    </div>
+</div>
+
+<!-- Et celui l'a c'est pour la quantité (bon quand même un peu évident non?) -->
+<div id="stockAlert" style="
+    display:none;
+    position:fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    background:rgba(0,0,0,0.75);
+    backdrop-filter: blur(4px);
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+">
+    <div style="
+        background:#1a1a1a;
+        border:2px solid gold;
+        padding:30px;
+        border-radius:12px;
+        text-align:center;
+        width:320px;
+        color:white;
+        font-family: 'Agmena Pro', serif;
+    ">
+        <h2 style="margin-bottom:15px; color:#d4af37;">Attention</h2>
+        <p style="margin-bottom:25px;">
+            La quantité demandée dépasse le stock disponible.
+        </p>
+
+        <button onclick="document.getElementById('stockAlert').style.display='none'"
+            style="
+                padding:10px 20px;
+                background:#444;
+                color:white;
+                border:none;
+                border-radius:8px;
+                cursor:pointer;
+            ">
+            Fermer
+        </button>
+    </div>
+</div>
+
+<!-- Bouton musique -->
+<img id="musicToggle"
+     src="image/sonOff.jpg"
      style="
         position: fixed;
         bottom: 20px;
@@ -162,6 +314,7 @@ foreach ($produits as $produit) {
 <audio id="bgMusic" loop>
     <source src="musique/limgrave.mp3" type="audio/mp3">
 </audio>
+
 <script>
 const music = document.getElementById("bgMusic");
 const toggleBtn = document.getElementById("musicToggle");
@@ -180,7 +333,16 @@ toggleBtn.addEventListener("click", () => {
     }
 });
 </script>
-</main>
+
+<script>
+document.getElementById("viderPanierBtn").addEventListener("click", function () {
+    document.getElementById("viderPanierAlert").style.display = "flex";
+});
+
+document.getElementById("confirmerViderPanier").addEventListener("click", function () {
+    document.querySelector("form[action='scripts/php/viderPanier.php']").submit();
+});
+</script>
 
 <script>
 function modifierQuantite(idItem, action) {
@@ -267,7 +429,7 @@ function majCarte(idItem, data) {
         }
 
         if (data.depasseStock) {
-            alert("La quantité demandée dépasse le stock disponible en boutique.");
+            afficherStockInsuffisant();
         }
     }
 
@@ -275,6 +437,48 @@ function majCarte(idItem, data) {
     if (totalElt) {
         totalElt.textContent = data.total;
     }
+}
+</script>
+
+<script>
+let itemASupprimer = null;
+
+function supprimerItem(idItem) {
+    itemASupprimer = idItem;
+    document.getElementById("supprimerItemAlert").style.display = "flex";
+}
+
+document.getElementById("confirmerSupprimerItem").addEventListener("click", function () {
+    if (!itemASupprimer) return;
+
+    fetch("scripts/php/supprimerItemPanier.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: "idItem=" + encodeURIComponent(itemASupprimer)
+    })
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById("supprimerItemAlert").style.display = "none";
+
+        if (data.erreur) {
+            document.getElementById("stockAlert").style.display = "flex";
+            return;
+        }
+
+        const card = document.getElementById("card-" + itemASupprimer);
+        if (card) card.remove();
+
+        const totalElt = document.getElementById("prix-total");
+        if (totalElt) totalElt.textContent = data.total;
+
+        location.reload();        
+    });
+
+    itemASupprimer = null;
+});
+
+function afficherStockInsuffisant() {
+    document.getElementById("stockAlert").style.display = "flex";
 }
 </script>
 
