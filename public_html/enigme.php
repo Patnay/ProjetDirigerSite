@@ -10,6 +10,45 @@ if ($isAjax) {
     echo ob_get_clean();
     exit;
 }
+
+$question = "";
+$reponses = [];
+$resultat = "";
+function GetQuestionReponse($diff){
+    global $conn;
+    $sql = "SELECT * FROM Enigmes
+            WHERE difficulte = ? AND estPige = 0
+            ORDER BY RAND() LIMIT 1";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute([$diff]);
+    $enigme = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if(!$enigme){
+        return null;
+    }
+
+    /*$update = $conn->prepare("UPDATE enigmes SET estPige = 1 WHERE idEnigme = ?");
+    $update->execute([$enigme["idEnigme"]]);*/
+
+    $sqlRep = "SELECT * FROM reponses WHERE idEnigme = ?";
+    $stmtRep = $conn->prepare($sqlRep);
+    $stmtRep->execute([$enigme["idEnigme"]]);
+    $reponses = $stmtRep->fetchAll(PDO::FETCH_ASSOC);
+
+    return[
+        "question" => $enigme["enonce"],
+        "reponses" => $reponses
+    ];
+}
+
+if($_SERVER["REQUEST_METHOD"] === "POST"){
+    if($_POST["bonne"] == 1){
+        $message = "Bonne réponse!";
+    } else {
+        $message = "Mauvaise réponse...";
+    }
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -25,20 +64,43 @@ if ($isAjax) {
 <body>
 <main class="about-page">
     <section class="about-container">
-
-        <h1>Énigmes</h1>
-
-        <div class="about-block">
-            <h2>Pas finis</h2>
-            <p>
-                Cette page est toujours en construction,
-                veuillez attendre que les godlike programmeurs
-                finissent cette page, merci beaucoup de votre patience et profitez bien de la musique :3
-            </p>
+    <h1>Enigma</h1>
+    <div>
+        <div>
+           <h3>Choisissez votre difficulté de l'énigme</h3>
+        <div>
+           <button onclick="GetQuestionReponse(F)">Facile</button>
+           <button onclick="GetQuestionReponse(M)">Moyen</button>
+           <button onclick="GetQuestionReponse(D)">Difficile</button>
         </div>
+    </div>
+    <br>
+        <div>
+            <h3>La question:</h3>
+            <p><?= $question?></p>
+            <div>
+                <!--<button>Réponse 1</button>
+                <button>Réponse 2</button>
+                <br>
+                <button>Réponse 3</button>
+                <button>Réponse 4</button>-->
+                <?php foreach($reponses as $rep): ?>
+                    <form>
+                        <input type="hidden" name="bonne" value="<?= $rep["estBonneReponse"]?>">
+                        <button type="submit"><?= $rep["reponse"]?></button>
+                    </form>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <br>
+        <aside>
+        <section class="about-container">
+            <div><?= $message?></div>
+        </section>
+        </aside>
+    </div>
     </section>
     
-
 </main>
 <!-- Bouton musique -->
 <img id="musicToggle" 
