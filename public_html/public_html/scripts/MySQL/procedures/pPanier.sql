@@ -223,20 +223,25 @@ DELIMITER ;
 
 /* ========= Vendre Items ============= */
 
+USE dbdarquest6;
+DROP PROCEDURE IF EXISTS vendreItem;
 DELIMITER $$
 
-CREATE PROCEDURE VendreItem(
+CREATE PROCEDURE vendreItem(
     IN p_idJoueur INT,
-    IN p_idItem INT
+    IN p_idItem INT,
+    IN p_qtVente INT
 )
 BEGIN
     DECLARE v_prix INT;
     DECLARE v_typeItem CHAR(1);
     DECLARE v_rareté TINYINT;
     DECLARE v_prixVente DECIMAL(10,2);
+    DECLARE v_qtInv INT;
 
     DECLARE v_or INT;
     DECLARE v_argent INT;
+    DECLARE v_bronze INT;
 
     -- Gestion erreur
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
@@ -260,6 +265,10 @@ BEGIN
     INTO v_prix, v_typeItem
     FROM Items
     WHERE idItem = p_idItem;
+    
+    SELECT quantiteInventaire INTO v_qtInv
+    FROM Inventaires
+    WHERE idItem = p_idItem AND idJoueur = p_idJoueur;
 
     -- isSort ?? getRareter for the price : 60%
     IF v_typeItem = 'S' THEN
@@ -290,25 +299,40 @@ BEGIN
     WHERE idJoueur = p_idJoueur;
 
     -- Retirer inventaire
-    DELETE FROM Inventaires
-    WHERE idJoueur = p_idJoueur AND idItem = p_idItem;
+    IF p_qtVente = v_qtInv THEN
+        BEGIN
+            DELETE FROM Inventaires
+            WHERE idJoueur = p_idJoueur AND idItem = p_idItem;
+        END;
+    END IF;
+    IF p_qtVente < v_qtInv THEN
+        BEGIN
+            UPDATE Inventaires
+            SET quantiteInventaire = quantiteInventaire - p_qtVente
+            WHERE idJoueur = p_idJoueur AND idItem = p_idItem;
+        END;
+    END IF;
+
 
     -- Remettre dans le stock
     UPDATE Items
-    SET stock = stock + 1
+    SET quantiteStock = quantiteStock + p_qtVente
     WHERE idItem = p_idItem;
 
     COMMIT;
 
-    
-   -- SELECT v_or AS orGagne, v_argent AS argentGagne; --- Pour Debuger
+   
 
 END $$
 
 DELIMITER ;
 
 -- Exemple d'appel 
-CALL VendreItem(
-    1, -- idJoueur
-    10 -- idItem
+CALL vendreItem(
+    13, -- idJoueur
+    62, -- idItem
+    1 -- qtVente
     );
+SELECT * FROM Joueurs WHERE idJoueur = 13;
+SELECT * FROM Inventaires WHERE idJoueur = 13 AND idItem = 62;
+SELECT * FROM Items WHERE idItem = 62;
