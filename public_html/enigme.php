@@ -17,7 +17,7 @@ $resultat = "";
 function GetQuestionReponse($diff){
     global $conn;
     $sql = "SELECT * FROM Enigmes
-            WHERE difficulte = ? AND estPige = 0
+            WHERE difficulte = ? AND estPiege = 0
             ORDER BY RAND() LIMIT 1";
     $stmt = $conn->prepare($sql);
     $stmt->execute([$diff]);
@@ -27,7 +27,7 @@ function GetQuestionReponse($diff){
         return null;
     }
 
-    /*$update = $conn->prepare("UPDATE enigmes SET estPige = 1 WHERE idEnigme = ?");
+    /*$update = $conn->prepare("UPDATE enigmes SET estPiege = 1 WHERE idEnigme = ?");
     $update->execute([$enigme["idEnigme"]]);*/
 
     $sqlRep = "SELECT * FROM reponses WHERE idEnigme = ?";
