@@ -520,6 +520,23 @@ function majCarte(idItem, data) {
     if (totalElt) {
         totalElt.textContent = data.total;
     }
+
+    // Mise à jour du compteur dans le header
+fetch("scripts/php/getPanierCount.php")
+    .then(res => res.json())
+    .then(obj => {
+        const count = obj.count;
+        const badge = document.getElementById("cart-count");
+
+        if (!badge) return;
+
+        if (count <= 0) {
+            badge.style.display = "none";
+        } else {
+            badge.style.display = "inline-block";
+            badge.textContent = (count > 99 ? "99+" : count);
+        }
+    });
 }
 </script>
 
