@@ -69,12 +69,13 @@ if (!$produit) {
 <head>
     <meta charset="UTF-8">
     <title>Détail produit</title>
+    <link rel="icon" type="image/png" href="favicon.png">
     <link rel="stylesheet" href="css/styles.css">
 </head>
-<body class="shop-page">
-
 <?php include "header.php"; ?>
 
+<body>
+<main class="shop-page">
 <div class="shop-container">
 
     <div class="product-card" style="max-width:600px;margin:auto">
@@ -85,7 +86,7 @@ if (!$produit) {
 
         <h2><?= htmlspecialchars($produit['nom']) ?></h2>
 
-        <p class="price"><?= $produit['prix'] ?> $</p>
+        <p class="price"><?= $produit['prix'] ?> 🪙</p>
         <p class="stock">Stock : <?= $produit['quantiteStock'] ?></p>
 
         <hr style="margin:15px 0">
@@ -118,7 +119,9 @@ if (!$produit) {
 
         <!-- ACTION -->
         <?php if ($produit['quantiteStock'] > 0): ?>
-            <a href="scripts/php/ajouterPanier.php?idItem=<?= $idItem ?>" class="add-link">
+            <a class="add-link add-to-cart-btn"
+            href="scripts/php/ajouterPanier.php?id=<?= $produit['idItem'] ?>"
+            data-id="<?= $produit['idItem'] ?>">
                 Ajouter au panier
             </a>
         <?php else: ?>
@@ -128,6 +131,39 @@ if (!$produit) {
     </div>
 
 </div>
+<!-- Bouton musique -->
+<img id="musicToggle" 
+     src="image/sonOff.jpg" 
+     style="
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 60px;
+        height: 60px;
+        cursor: pointer;
+        z-index: 9999;
+     ">
+<audio id="bgMusic" loop>
+    <source src="musique/academy.mp3" type="audio/mp3">
+</audio>
+<script>
+const music = document.getElementById("bgMusic");
+const toggleBtn = document.getElementById("musicToggle");
 
+let musicOn = false;
+
+toggleBtn.addEventListener("click", () => {
+    musicOn = !musicOn;
+
+    if (musicOn) {
+        music.play();
+        toggleBtn.src = "image/sonOn.jpg";
+    } else {
+        music.pause();
+        toggleBtn.src = "image/sonOff.jpg";
+    }
+});
+</script>     
+</main>
 </body>
 </html>
