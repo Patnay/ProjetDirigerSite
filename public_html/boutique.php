@@ -469,6 +469,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 attachPaginationListeners();
                 attachFilterListener();
                 attachResetListener();
+                console.log(html);
             })
             .catch(err => console.error("Erreur AJAX :", err));
     }
@@ -493,7 +494,7 @@ document.addEventListener("DOMContentLoaded", () => {
             loadAjax("boutique.php");
         });
     }
-    
+
     function attachPaginationListeners() {
         document.querySelectorAll(".pagination a").forEach(link => {
             link.addEventListener("click", function(e) {
@@ -504,6 +505,54 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     attachFilterListener();
     attachPaginationListeners();
+});
+</script>
+
+<!--  Celui pour l'ajout reset là, bref vous comprenez, sinon giet mamaw-->
+<script>
+function updateCartBadge() {
+    fetch("scripts/php/getPanierCount.php")
+        .then(res => res.json())
+        .then(obj => {
+            const count = obj.count;
+            const badge = document.getElementById("cart-count");
+
+            if (!badge) return;
+
+            if (count <= 0) {
+                badge.style.display = "none";
+            } else {
+                badge.style.display = "inline-flex";
+                badge.textContent = (count > 99 ? "99+" : count);
+            }
+        });
+}
+
+function attachAddToCartListeners() {
+    document.querySelectorAll(".add-to-cart-btn").forEach(btn => {
+        btn.addEventListener("click", function(e) {
+            e.preventDefault();
+
+            const id = this.dataset.id;
+
+            fetch("scripts/php/ajouterPanier.php?id=" + id)
+                .then(res => res.text())
+                .then(() => {
+                    updateCartBadge();
+                })
+                .catch(err => console.error("Erreur ajout panier :", err));
+        });
+    });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    attachAddToCartListeners();
+
+    const originalLoadAjax = loadAjax;
+    loadAjax = function(url) {
+        originalLoadAjax(url);
+        setTimeout(() => attachAddToCartListeners(), 50);
+    };
 });
 </script>
 </body>
