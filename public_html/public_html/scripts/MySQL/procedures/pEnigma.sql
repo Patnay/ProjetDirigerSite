@@ -278,3 +278,82 @@ CALL RepondreEnigme(
 );
 DELETE FROM Statistiques where idJoueur = 13;
 
+/* Get random non used enigmes*/ 
+DROP FUNCTION IF EXISTS EnigmeAleatoire;
+DELIMITER $$
+
+CREATE FUNCTION EnigmeAleatoire(
+    p_idJoueur INT,
+    p_difficulte CHAR(1)
+)
+RETURNS INT
+DETERMINISTIC
+BEGIN
+    DECLARE v_idEnigme INT;
+
+    SELECT e.idEnigme INTO v_idEnigme
+    FROM Enigmes e
+    WHERE 
+        -- Doit avoir des réponses
+        EXISTS (
+            SELECT 1 FROM Reponses r
+            WHERE r.idEnigme = e.idEnigme
+        )
+        -- Jamais répondu
+        AND NOT EXISTS (
+            SELECT 1 FROM Statistiques s
+            WHERE s.idJoueur = p_idJoueur 
+            AND s.idEnigme = e.idEnigme
+        )
+        AND (p_difficulte = 'X' OR e.difficulte = p_difficulte)
+    ORDER BY RAND()
+    LIMIT 1;
+
+    RETURN v_idEnigme;
+END $$
+
+DELIMITER ;
+
+-- Vérifier les enigmes valides
+SELECT e.idEnigme, e.enonce, COUNT(r.idReponse) AS nbReponses
+FROM Enigmes e
+LEFT JOIN Reponses r ON r.idEnigme = e.idEnigme
+GROUP BY e.idEnigme;
+
+/* Get enigme*/
+/*Explication : En gros , la procedure prend le id joueurs avec la dificulter desirer et 
+                                       donne un question avec les reponse deja melanger*/
+DROP PROCEDURE IF EXISTS AfficherEnigmeJoueur;
+DELIMITER $$
+
+CREATE PROCEDURE AfficherEnigmeJoueur(
+    IN p_idJoueur INT,
+    IN p_difficulte CHAR(1)
+)
+BEGIN
+    DECLARE v_idEnigme INT;
+
+    SET v_idEnigme = EnigmeAleatoire(p_idJoueur, p_difficulte);
+
+    IF v_idEnigme IS NULL THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Aucune enigme disponible';
+    END IF;
+
+    -- Question + reponses dans un seul result set
+    SELECT NULL AS idReponse, enonce AS contenu, 'QUESTION' AS type
+    FROM Enigmes WHERE idEnigme = v_idEnigme
+
+    UNION ALL
+
+    SELECT idReponse, reponse AS contenu, 'REPONSE' AS type
+    FROM Reponses
+    WHERE idEnigme = v_idEnigme
+    ORDER BY type DESC, RAND();
+
+END $$
+
+DELIMITER ;
+
+-- Appel
+CALL AfficherEnigmeJoueur(13, 'X');
