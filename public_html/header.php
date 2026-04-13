@@ -73,7 +73,8 @@ if (isset($_SESSION["idJoueur"]) && isset($pdo)) {
     <img src="image/panier.png" alt="Panier" class="cart-img">
 
     <?php if ($nbItemsPanier > 0): ?>
-        <span class="cart-count">
+        <span class="cart-count" id="cart-count"
+            style="<?= $nbItemsPanier > 0 ? '' : 'display:none;' ?>">
             <?= $nbItemsPanier > 99 ? '99+' : $nbItemsPanier ?>
         </span>
     <?php endif; ?>
