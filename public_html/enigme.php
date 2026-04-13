@@ -20,6 +20,18 @@ $reponses = [];
 $resultat = "";
 $idJoueur = (int)$_SESSION["idJoueur"];
 $difficulte = "";
+
+if(isset($_GET["diff"])){
+   $diff = $_GET["diff"];
+   $data = GetQuestionReponse($diff);
+
+   if($data){
+    $question = $data['question'];
+    $reponses = $data['reponses'];
+    $difficulte = $data['difficulte'];
+   }
+}
+
 function GetQuestionReponse($diff){
     global $conn;
     $sql = "SELECT * FROM Enigmes
@@ -50,23 +62,20 @@ function GetQuestionReponse($diff){
 }
 
 if($_SERVER["REQUEST_METHOD"] === "POST"){
-    if($_POST["bonne"] == 1){
-        if($difficulte = "F"){
+    $bonne = $_POST["bonne"];
+    $diff = $_POST["diff"];
+
+    if($bonne == 1){
+        if($diff == "F"){
           $sql = "UPDATE Joueurs SET nbBronze = nbBronze + 10 WHERE idJoueur = ?";
-          $stmt = $conn->prepare($sql);
-          $stmt->execute($idJoueur);
-          $message = "Bonne réponse!!";
-        }else if($difficulte = "M"){
+        }else if($diff == "M"){
           $sql = "UPDATE Joueurs SET nbArgent = nbArgent + 10 WHERE idJoueur = ?";
-          $stmt = $conn->prepare($sql);
-          $stmt->execute($idJoueur);
-          $message = "Bonne réponse!!";
         }else{
           $sql = "UPDATE Joueurs SET nbOr = nbOr + 10 WHERE idJoueur = ?";
-          $stmt = $conn->prepare($sql);
-          $stmt->execute($idJoueur);
-          $message = "Bonne réponse!!";
         }
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([$idJoueur]);
+        $message = "Bonne réponse!!";
     } else {
         $message = "Mauvaise réponse...";
     }
@@ -92,9 +101,9 @@ if($_SERVER["REQUEST_METHOD"] === "POST"){
         <div>
            <h3>Choisissez votre difficulté de l'énigme</h3>
         <div>
-           <button onclick="GetQuestionReponse(F)">Facile</button>
-           <button onclick="GetQuestionReponse(M)">Moyen</button>
-           <button onclick="GetQuestionReponse(D)">Difficile</button>
+           <button onclick="location.href='enigme.php?diff=F'">Facile</button>
+           <button onclick="location.href='enigme.php?diff=M'">Moyen</button>
+           <button onclick="location.href='enigme.php?diff=D'">Difficile</button>
         </div>
     </div>
     <br>
@@ -108,8 +117,9 @@ if($_SERVER["REQUEST_METHOD"] === "POST"){
                 <button>Réponse 3</button>
                 <button>Réponse 4</button>-->
                 <?php foreach($reponses as $rep): ?>
-                    <form>
+                    <form method="POST" action="enigme.php?diff=<? $difficulte?>">
                         <input type="hidden" name="bonne" value="<?= $rep["estBonneReponse"]?>">
+                        <input type="hidden" name="diff" value="<?= $difficulte?>">
                         <button type="submit"><?= $rep["reponse"]?></button>
                     </form>
                 <?php endforeach; ?>
