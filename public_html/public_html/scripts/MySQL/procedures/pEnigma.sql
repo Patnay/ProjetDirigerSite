@@ -1,6 +1,6 @@
 /*
  Auteur : Patrice Paul
- Deriere maj : 6  avril 2026 
+ Deriere maj : 13  avril 2026 
 */
 
 /* ============Ajouter Enigme============== */
@@ -214,4 +214,67 @@ CALL UtiliserItemSoin(
     12  -- idEnigme
     );
 
+
+/* Repondre enigme*/
+/* Fonctionne mais ne permet pas au joueurs de pouvoir refaire un enigme ...
+    Doit modifier la table stats pour ajouter cette feature 
+*/
+USE dbdarquest6;
+DROP PROCEDURE IF EXISTS RepondreEnigme;
+DELIMITER $$
+
+CREATE PROCEDURE RepondreEnigme(
+    IN p_idJoueur INT,
+    IN p_idEnigme INT,
+    IN p_idReponse INT
+)
+BEGIN
+    DECLARE v_estBonne TINYINT;
+    DECLARE v_difficulte CHAR(1);
+    DECLARE v_or INT DEFAULT 0;
+
+    -- Vérifier bonne réponse
+    SELECT estBonneReponse INTO v_estBonne
+FROM Reponses
+WHERE idReponse = p_idReponse AND idEnigme = p_idEnigme;
+
+-- Ajouter ceci
+IF v_estBonne IS NULL THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Erreur : réponse inexistante pour cette énigme';
+END IF;
+
+    -- Récuperer difficulté
+    SELECT difficulte INTO v_difficulte
+    FROM Enigmes WHERE idEnigme = p_idEnigme;
+
+    -- Enregistrer dans Statistiques
+    INSERT INTO Statistiques (idJoueur, idEnigme, estReussi)
+    VALUES (p_idJoueur, p_idEnigme, v_estBonne);
+
+    IF v_estBonne = 1 THEN
+        -- Or selon difficulté
+        CASE v_difficulte
+            WHEN 'F' THEN SET v_or = 10;
+            WHEN 'M' THEN SET v_or = 25;
+            WHEN 'D' THEN SET v_or = 50;
+        END CASE;
+
+        CALL GainsOrEnigme(p_idJoueur, v_or, 0, 0);
+    ELSE
+        CALL PerdreVieEnigme(p_idJoueur, p_idEnigme);
+    END IF;
+
+    SELECT v_estBonne AS estReussi, v_or AS orGagne;
+END $$
+
+DELIMITER ;
+
+-- Appel
+CALL RepondreEnigme(
+	13,-- idJoueur
+	9, -- idEnigme 
+	36 -- idReponse
+);
+DELETE FROM Statistiques where idJoueur = 13;
 
