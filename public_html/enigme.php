@@ -1,17 +1,7 @@
 <?php
 require_once "init.php";
-$isAjax = isset($_GET["ajax"]) && $_GET["ajax"] == "1";
 if (!isset($_SESSION["idJoueur"])) {
     header("Location: connexion.php");
-    exit;
-}
-
-if ($isAjax) {
-    ob_start();
-    /*Ici faudra changer cette ligne Edi, pour tes elements du contenu d'énigme (oui c'est
-    un criss de copier collé de celui de la boutique, j'ai la flemme quoi) */
-    renderShopContent($produits, $categories, $filtreActif, $totalPages, $page, $prixMin, $prixMax, $etoileMin, $etoileMax);
-    echo ob_get_clean();
     exit;
 }
 
@@ -21,36 +11,32 @@ $resultat = "";
 $idJoueur = (int) $_SESSION["idJoueur"];
 $difficulte = "";
 
-if (isset($_GET["diff"])) {
-    $diff = $_GET["diff"];
-    $data = GetQuestionReponse($diff);
+isset($_POST["diff"]) ? $diff = 'F' : $diff = $_POST["diff"];
+    $data = GetQuestionReponse($diff,$pdo);
 
     if ($data) {
         $question = $data['question'];
         $reponses = $data['reponses'];
         $difficulte = $data['difficulte'];
     }
-}
 
-function GetQuestionReponse($diff)
+/*INSTANCIE TES VARIABLE STP.... $conn qui = null ne vas pa resussir a exectute shit*/
+function GetQuestionReponse($diff,$pdo)
 {
-    global $conn;
     $sql = "SELECT * FROM Enigmes
             WHERE difficulte = ? AND estPiege = 0
             ORDER BY RAND() LIMIT 1";
-    $stmt = $conn->prepare($sql);
+    $stmt = $pdo->prepare($sql);
     $stmt->execute([$diff]);
     $enigme = $stmt->fetch(PDO::FETCH_ASSOC);
-
+    
     if (!$enigme) {
         return null;
     }
 
-    /*$update = $conn->prepare("UPDATE enigmes SET estPiege = 1 WHERE idEnigme = ?");
-    $update->execute([$enigme["idEnigme"]]);*/
 
-    $sqlRep = "SELECT * FROM reponses WHERE idEnigme = ?";
-    $stmtRep = $conn->prepare($sqlRep);
+    $sqlRep = "SELECT * FROM Reponses WHERE idEnigme = ?";
+    $stmtRep = $pdo->prepare($sqlRep);
     $stmtRep->execute([$enigme["idEnigme"]]);
     $reponsesEnigme = $stmtRep->fetchAll(PDO::FETCH_ASSOC);
 
@@ -157,7 +143,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <br>
             <div>
                 <h3>La question:</h3>
-                <p><?= $question ?></p>
+                <p><?= $data ?></p>
                 <div>
                     <!--<button>Réponse 1</button>
                 <button>Réponse 2</button>
