@@ -47,9 +47,17 @@ if (!$item) {
 }
 
 /* Flash messages : une seule fois */
-$messageInfo = $_SESSION["message_info"] ?? "";
-$messageErreur = $_SESSION["message_erreur"] ?? "";
-unset($_SESSION["message_info"], $_SESSION["message_erreur"]);
+$messageInfo = "";
+$messageErreur = "";
+
+$messageItemId = isset($_SESSION["message_item_id"]) ? (int)$_SESSION["message_item_id"] : 0;
+
+if ($messageItemId === $idItem) {
+    $messageInfo = $_SESSION["message_info"] ?? "";
+    $messageErreur = $_SESSION["message_erreur"] ?? "";
+}
+
+unset($_SESSION["message_info"], $_SESSION["message_erreur"], $_SESSION["message_item_id"]);
 
 /* Ratio estimé selon ta procédure */
 $ratioVente = 0.60;
