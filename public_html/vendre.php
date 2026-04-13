@@ -82,7 +82,7 @@ if (($item["typeItem"] ?? "") === "S") {
     <meta charset="UTF-8">
     <title>Vendre un item</title>
     <link rel="stylesheet" href="css/styles.css">
-    <link rel="icon" href="favicon.png">
+    <link rel="icon" type="image/png" href="favicon.png">
 </head>
 <body>
 

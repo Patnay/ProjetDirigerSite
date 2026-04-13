@@ -29,9 +29,12 @@ SELECT
     Items.prix,
     Items.photo,
     Items.quantiteStock,
-    Inventaires.quantiteInventaire
+    Items.typeItem,
+    Inventaires.quantiteInventaire,
+    Potions.effet
 FROM Inventaires
 INNER JOIN Items ON Inventaires.idItem = Items.idItem
+LEFT JOIN Potions ON Items.idItem = Potions.idItem
 WHERE Inventaires.idJoueur = :idJoueur
 ORDER BY Items.nom ASC
 ";
@@ -46,7 +49,7 @@ $inventaire = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <meta charset="UTF-8">
     <title>Inventaire</title>
     <link rel="stylesheet" href="css/styles.css">
-    <link rel="icon" href="favicon.ico">
+    <link rel="icon" type="image/png" href="favicon.png">
 </head>
 <body>
 
@@ -94,11 +97,17 @@ $inventaire = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             Stock boutique : <?= (int)$item['quantiteStock'] ?>
                         </p>
 
-                        <div class="product-actions">
+                        <div class="product-actions" style="flex-wrap:wrap; gap:10px;">
     <a href="detail.php?id=<?= (int)$item['idItem'] ?>">Detail</a>
 
-    <a href="vendre.php?id=<?= (int)$item['idItem'] ?>" 
+            <?php if (!empty($item["effet"])): ?>
+    <a href="scripts/php/utiliserPotion.php?idItem=<?= (int)$item['idItem'] ?>" 
        class="add-link">
+        Utiliser
+    </a>
+<?php endif; ?>                   
+
+    <a href="vendre.php?id=<?= (int)$item['idItem'] ?>" class="add-link">
         Vendre
     </a>
 </div>
@@ -113,6 +122,38 @@ $inventaire = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     </div>
 </main>
+<!-- Bouton musique -->
+<img id="musicToggle" 
+     src="image/sonOff.jpg" 
+     style="
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 60px;
+        height: 60px;
+        cursor: pointer;
+        z-index: 9999;
+     ">
+<audio id="bgMusic" loop>
+    <source src="musique/honor.mp3" type="audio/mp3">
+</audio>
+<script>
+const music = document.getElementById("bgMusic");
+const toggleBtn = document.getElementById("musicToggle");
 
+let musicOn = false;
+
+toggleBtn.addEventListener("click", () => {
+    musicOn = !musicOn;
+
+    if (musicOn) {
+        music.play();
+        toggleBtn.src = "image/sonOn.jpg";
+    } else {
+        music.pause();
+        toggleBtn.src = "image/sonOff.jpg";
+    }
+});
+</script>
 </body>
 </html>
