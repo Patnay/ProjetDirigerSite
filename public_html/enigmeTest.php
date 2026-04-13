@@ -5,80 +5,29 @@ if (!isset($_SESSION["idJoueur"])) {
     exit;
 }
 
-if ($isAjax) {
-    ob_start();
-    /*Ici faudra changer cette ligne Edi, pour tes elements du contenu d'énigme (oui c'est
-    un criss de copier collé de celui de la boutique, j'ai la flemme quoi) */
-    renderShopContent($produits, $categories, $filtreActif, $totalPages, $page, $prixMin, $prixMax, $etoileMin, $etoileMax);
-    echo ob_get_clean();
-    exit;
-}
-
-$question = "";
-$reponses = [];
-$resultat = "";
-$idJoueur = (int) $_SESSION["idJoueur"];
-$difficulte = "";
-
-if (isset($_POST["diff"])) {
-    $diff = $_POST["diff"];
-    $data = GetQuestionReponse($diff);
-
-    if ($data) {
-        $question = $data['question'];
-        $reponses = $data['reponses'];
-        $difficulte = $data['difficulte'];
-    }
-}
-
-function GetQuestionReponse($diff)
-{
-    global $conn;
-    $sql = "SELECT * FROM Enigmes
-            WHERE difficulte = ? AND estPiege = 0
-            ORDER BY RAND() LIMIT 1";
-    $stmt = $conn->prepare($sql);
-    $stmt->execute([$diff]);
-    $enigme = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if (!$enigme) {
-        return null;
-    }
-
-    /*$update = $conn->prepare("UPDATE enigmes SET estPiege = 1 WHERE idEnigme = ?");
-    $update->execute([$enigme["idEnigme"]]);*/
-
-    $sqlRep = "SELECT * FROM reponses WHERE idEnigme = ?";
-    $stmtRep = $conn->prepare($sqlRep);
-    $stmtRep->execute([$enigme["idEnigme"]]);
-    $reponsesEnigme = $stmtRep->fetchAll(PDO::FETCH_ASSOC);
+// if ($isAjax) {
+//     ob_start();
+//     /*Ici faudra changer cette ligne Edi, pour tes elements du contenu d'énigme (oui c'est
+//     un criss de copier collé de celui de la boutique, j'ai la flemme quoi) */
+//     renderShopContent($produits, $categories, $filtreActif, $totalPages, $page, $prixMin, $prixMax, $etoileMin, $etoileMax);
+//     echo ob_get_clean();
+//     exit;
+// }
 
 
-    return [
-        "question" => $enigme["enonce"],
-        "reponses" => $reponsesEnigme,
-        "difficulte" => $diff
-    ];
-}
-{
-    $bonne = $_POST["bonne"];
-    $diff = $_POST["diff"];
+/*Get Question*/
 
-    if ($bonne == 1) {
-        if ($diff == "F") {
-            $sql = "UPDATE Joueurs SET nbBronze = nbBronze + 10 WHERE idJoueur = ?";
-        } else if ($diff == "M") {
-            $sql = "UPDATE Joueurs SET nbArgent = nbArgent + 10 WHERE idJoueur = ?";
-        } else {
-            $sql = "UPDATE Joueurs SET nbOr = nbOr + 10 WHERE idJoueur = ?";
-        }
-        $stmt = $conn->prepare($sql);
-        $stmt->execute([$idJoueur]);
-        $message = "Bonne réponse!!";
-    } else {
-        $message = "Mauvaise réponse...";
-    }
-}
+$sql = "CALL AfficherEnigmeJoueur(?,?)";
+$stmt = $pdo->prepare($sql);
+$stmt->execute([$_SESSION["idJoueur"],'X']);
+$enigme = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$rep1 = $enigme(0)["contenu"];
+$rep2 = $enigme(1)["contenu"];
+$rep3 = $enigme(2)["contenu"];
+$rep4 = $enigme(3)["contenu"];
+$question = $enigme(4)["contenu"];
+
+
 
 ?>
 <!DOCTYPE html>
@@ -162,13 +111,9 @@ function GetQuestionReponse($diff)
                 <br>
                 <button>Réponse 3</button>
                 <button>Réponse 4</button>-->
-                    <?php foreach ($reponses as $rep): ?>
-                        <form method="POST" action="enigme.php?diff=<? $difficulte ?>">
-                            <input type="hidden" name="bonne" value="<?= $rep["estBonneReponse"] ?>">
-                            <input type="hidden" name="diff" value="<?= $difficulte ?>">
-                            <button type="submit"><?= $rep["reponse"] ?></button>
-                        </form>
-                    <?php endforeach; ?>
+                  <?php 
+                  echo($rep1);
+                    ?>
                 </div>
             </div>
             <br>
