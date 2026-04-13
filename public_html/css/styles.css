@@ -960,3 +960,49 @@ body::-webkit-scrollbar {
     width: 0;
     height: 0;
 }
+/* ===== BOUTONS QUANTITÉ (VENDRE) ===== */
+
+.number {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.number button {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    border: none;
+    background: linear-gradient(145deg, gold, #c9a500);
+    color: black;
+    font-size: 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+/* Hover */
+.number button:hover {
+    transform: translateY(-2px) scale(1.05);
+    background: linear-gradient(145deg, #ffd700, #e6b800);
+}
+
+/* Click */
+.number button:active {
+    transform: scale(0.95);
+}
+
+/* INPUT */
+.cart-qty-input {
+    width: 70px;
+    height: 42px;
+    text-align: center;
+    border-radius: 10px;
+    border: none;
+    font-weight: bold;
+    font-size: 1.2rem;
+    background-color: #f4f4f4;
+    color: black;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
+}
