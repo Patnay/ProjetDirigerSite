@@ -1,6 +1,5 @@
 <?php
 require_once "init.php";
-$isAjax = isset($_GET["ajax"]) && $_GET["ajax"] == "1";
 if (!isset($_SESSION["idJoueur"])) {
     header("Location: connexion.php");
     exit;
@@ -21,8 +20,8 @@ $resultat = "";
 $idJoueur = (int) $_SESSION["idJoueur"];
 $difficulte = "";
 
-if (isset($_GET["diff"])) {
-    $diff = $_GET["diff"];
+if (isset($_POST["diff"])) {
+    $diff = $_POST["diff"];
     $data = GetQuestionReponse($diff);
 
     if ($data) {
