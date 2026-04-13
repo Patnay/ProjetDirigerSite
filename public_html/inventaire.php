@@ -95,8 +95,13 @@ $inventaire = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         </p>
 
                         <div class="product-actions">
-                            <a href="detail.php?id=<?= $item['idItem'] ?>">Detail</a>
-                        </div>
+    <a href="detail.php?id=<?= (int)$item['idItem'] ?>">Detail</a>
+
+    <a href="vendre.php?id=<?= (int)$item['idItem'] ?>" 
+       class="add-link">
+        Vendre
+    </a>
+</div>
 
                     </div>
                 <?php endforeach; ?>
