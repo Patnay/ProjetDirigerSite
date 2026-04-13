@@ -204,44 +204,5 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             }
         });
     </script>
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const mainContainer = document.getElementById("shop-main");
-
-            function loadAjax(url) {
-                fetch(url + (url.includes("?") ? "&" : "?") + "ajax=1")
-                    .then(res => res.text())
-                    .then(html => {
-                        mainContainer.innerHTML = html;
-                        window.history.pushState({}, "", url);
-                        attachPaginationListeners();
-                        attachFilterListener();
-                    })
-                    .catch(err => console.error("Erreur AJAX :", err));
-            }
-
-            function attachFilterListener() {
-                const filterForm = document.querySelector(".filters form");
-                if (!filterForm) return;
-
-                filterForm.addEventListener("submit", function (e) {
-                    e.preventDefault();
-                    const url = "boutique.php?" + new URLSearchParams(new FormData(filterForm)).toString();
-                    loadAjax(url);
-                });
-            }
-
-            function attachPaginationListeners() {
-                document.querySelectorAll(".pagination a").forEach(link => {
-                    link.addEventListener("click", function (e) {
-                        e.preventDefault();
-                        loadAjax(this.href);
-                    });
-                });
-            }
-            attachFilterListener();
-            attachPaginationListeners();
-        });
-    </script>
 </body>
 </html>
