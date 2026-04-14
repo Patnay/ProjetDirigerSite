@@ -29,7 +29,10 @@ if (isset($_SESSION["idJoueur"]) && isset($pdo)) {
         $nbOrHeader = (int)($joueurHeader["nbOr"] ?? 0);
         $nbArgentHeader = (int)($joueurHeader["nbArgent"] ?? 0);
         $nbBronzeHeader = (int)($joueurHeader["nbBronze"] ?? 0);
+        /*Modif Patrice pour page admin*/
+        $estAdmin = (int)($joueurHeader['estAdmin'] ?? 0);
 
+        
         $profilLink = "profil.php";
         $profilTitle = "Profil";
         $profilImg = trim($joueurHeader["img"] ?? "");
@@ -49,14 +52,22 @@ if (isset($_SESSION["idJoueur"]) && isset($pdo)) {
     <nav class="main-nav">
         <a href="enigme.php">Énigme</a>
         <a href="apropos.php">À propos</a>
+        <?php ?>
+        <?php
+        if($estAdmin === 1){
+            echo('
+        <a href="admin.php">Admin</a>');
+        }
+         ?>
+
     </nav>
 
     <div class="header-right">
 
         <div class="currency-group">
             <div class="currency gold">🪙 <span><?= $nbOrHeader ?></span></div>
-            <div class="currency silver">🪙 <span><?= $nbArgentHeader ?></span></div>
-            <div class="currency copper">🪙 <span><?= $nbBronzeHeader ?></span></div>
+            <div class="currency silver">🔘 <span><?= $nbArgentHeader ?></span></div>
+            <div class="currency copper">🟤 <span><?= $nbBronzeHeader ?></span></div>
         </div>
 
         <div class="plus-menu-container">
