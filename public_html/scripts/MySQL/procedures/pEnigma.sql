@@ -226,20 +226,20 @@ DELIMITER $$
 CREATE PROCEDURE RepondreEnigme(
     IN p_idJoueur INT,
     IN p_idEnigme INT,
-    IN p_idReponse INT
+    IN p_idReponse INT,
+    OUT p_estBonne TINYINT
 )
 BEGIN
-    DECLARE v_estBonne TINYINT;
     DECLARE v_difficulte CHAR(1);
     DECLARE v_or INT DEFAULT 0;
 
     -- Vérifier bonne réponse
-    SELECT estBonneReponse INTO v_estBonne
+    SELECT estBonneReponse INTO p_estBonne
 FROM Reponses
 WHERE idReponse = p_idReponse AND idEnigme = p_idEnigme;
 
 -- Ajouter ceci
-IF v_estBonne IS NULL THEN
+IF p_estBonne IS NULL THEN
     SIGNAL SQLSTATE '45000'
     SET MESSAGE_TEXT = 'Erreur : réponse inexistante pour cette énigme';
 END IF;
@@ -250,9 +250,9 @@ END IF;
 
     -- Enregistrer dans Statistiques
     INSERT INTO Statistiques (idJoueur, idEnigme, estReussi)
-    VALUES (p_idJoueur, p_idEnigme, v_estBonne);
+    VALUES (p_idJoueur, p_idEnigme, p_estBonne);
 
-    IF v_estBonne = 1 THEN
+    IF p_estBonne = 1 THEN
         -- Or selon difficulté
         CASE v_difficulte
             WHEN 'F' THEN SET v_or = 10;
@@ -264,19 +264,19 @@ END IF;
     ELSE
         CALL PerdreVieEnigme(p_idJoueur, p_idEnigme);
     END IF;
-
-    SELECT v_estBonne AS estReussi, v_or AS orGagne;
-END $$
-
-DELIMITER ;
+    RETURN p_estBonne;
+END
 
 -- Appel
 CALL RepondreEnigme(
 	13,-- idJoueur
 	9, -- idEnigme 
-	36 -- idReponse
+	34, -- idReponse
+    @output -- Output
 );
+
 DELETE FROM Statistiques where idJoueur = 13;
+SELECT @output;
 
 /* Get random non used enigmes*/ 
 DROP FUNCTION IF EXISTS EnigmeAleatoire;
