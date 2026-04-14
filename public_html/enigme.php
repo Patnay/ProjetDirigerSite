@@ -18,6 +18,7 @@ $data = GetQuestionReponse($diff, $pdo);
 
 if ($data) {
     $question = $data['question'];
+    shuffle($data['reponses']);
     $reponses = $data['reponses'];
     $difficulte = $data['difficulte'];
 }
@@ -25,12 +26,23 @@ if ($data) {
 /*INSTANCIE TES VARIABLE STP.... $conn qui = null ne vas pa resussir a exectute shit*/
 function GetQuestionReponse($diff, $pdo)
 {
+    $sql = "SELECT * FROM Enigmes";
+    if($diff === "D"){
+        $sql .= "WHERE difficulte IN (A,?) AND estPiege = 0";
+    }
+    else if($diff === "X"){
+        $sql .= "WHERE estPiege = 0";
+    }
+    else{
+         $sql .= "WHERE difficulte = ? AND estPiege = 0";
+    }
+    $sql .= "ORDER BY RAND() LIMIT 1";
     $sql = "SELECT * FROM Enigmes
             WHERE difficulte = ? AND estPiege = 0
             ORDER BY RAND() LIMIT 1";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$diff]);
-    $enigme = $stmt->fetch(PDO::FETCH_ASSOC);
+    $enigme = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     if (!$enigme) {
         return null;
@@ -38,37 +50,47 @@ function GetQuestionReponse($diff, $pdo)
 
     $sqlRep = "SELECT * FROM Reponses WHERE idEnigme = ?";
     $stmtRep = $pdo->prepare($sqlRep);
-    $stmtRep->execute([$enigme["idEnigme"]]);
+    $stmtRep->execute([$enigme[0]["idEnigme"]]);
     $reponsesEnigme = $stmtRep->fetchAll(PDO::FETCH_ASSOC);
 
     return [
-        "question" => $enigme["enonce"],
+        "question" => $enigme,
         "reponses" => $reponsesEnigme,
         "difficulte" => $diff
     ];
 }
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $bonne = $_POST["bonne"];
-    $diff = $_POST["diff"];
-
-    if ($bonne == 1) {
-        if ($diff == "F") {
-            $sql = "UPDATE Joueurs SET nbBronze = nbBronze + 10 WHERE idJoueur = ?";
-        } else if ($diff == "M") {
-            $sql = "UPDATE Joueurs SET nbArgent = nbArgent + 10 WHERE idJoueur = ?";
-        } else {
-            $sql = "UPDATE Joueurs SET nbOr = nbOr + 10 WHERE idJoueur = ?";
-        }
-
-        /*  remplacer conn par pdo, rien à foutre fuck off */
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([$idJoueur]);
-
+    $sql = "CALL RepondreEnigme(?,?,?,@output)";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$idJoueur,$_POST["idEnigme"],$_POST["idReponse"]]);
+    $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    if($result == 1){
         $message = "Bonne réponse!!";
-    } else {
+    }
+    else{
         $message = "Mauvaise réponse...";
     }
+    // $bonne = $_POST["bonne"];
+    // $diff = $_POST["diff"];
+
+    // if ($bonne == 1) {
+    //     if ($diff == "F") {
+    //         $sql = "UPDATE Joueurs SET nbBronze = nbBronze + 10 WHERE idJoueur = ?";
+    //     } else if ($diff == "M") {
+    //         $sql = "UPDATE Joueurs SET nbArgent = nbArgent + 10 WHERE idJoueur = ?";
+    //     } else {
+    //         $sql = "UPDATE Joueurs SET nbOr = nbOr + 10 WHERE idJoueur = ?";
+    //     }
+
+    //     /*  remplacer conn par pdo, rien à foutre fuck off */
+    //     $stmt = $pdo->prepare($sql);
+    //     $stmt->execute([$idJoueur]);
+
+    //     $message = "Bonne réponse!!";
+    // } else {
+    //     $message = "Mauvaise réponse...";
+    // }
 }
 ?>
 <!DOCTYPE html>
@@ -78,6 +100,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <meta charset="UTF-8">
     <title>Énigme</title>
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="styleSheet" href="css/enigme.css">
     <link rel="icon" type="image/png" href="favicon.png">
     <style>
         .diff-buttons {
@@ -150,13 +173,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 <h3>La question:</h3>
 
                 <!--  $data est un tableau ... alors faut afficher ça criss $question -->
-                <p><?= $question ?></p>
+                <p><?=$question[0]["enonce"]?></p>
 
                 <div>
                     <?php foreach ($reponses as $rep): ?>
-                        <form method="POST" action="enigme.php?diff=<?= $difficulte ?>">
-                            <input type="hidden" name="bonne" value="<?= $rep["estBonneReponse"] ?>">
-                            <input type="hidden" name="diff" value="<?= $difficulte ?>">
+                        <form method="POST" action="enigme.php?diff=<?= $difficulte?>">
+                            <input type="hidden" name="idEnigme" value="<?= $question[0]["idEnigme"] ?>">
+                            <input type="hidden" name="idReponse" value="<?= $rep["idReponse"]?>">
                             <button type="submit"><?= $rep["reponse"] ?></button>
                         </form>
                     <?php endforeach; ?>
