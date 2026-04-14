@@ -55,8 +55,8 @@ if (isset($_SESSION["idJoueur"]) && isset($pdo)) {
 
         <div class="currency-group">
             <div class="currency gold">🪙 <span><?= $nbOrHeader ?></span></div>
-            <div class="currency silver">🪙 <span><?= $nbArgentHeader ?></span></div>
-            <div class="currency copper">🪙 <span><?= $nbBronzeHeader ?></span></div>
+            <div class="currency silver">🔘 <span><?= $nbArgentHeader ?></span></div>
+            <div class="currency copper">🟤 <span><?= $nbBronzeHeader ?></span></div>
         </div>
 
         <div class="plus-menu-container">
@@ -72,12 +72,10 @@ if (isset($_SESSION["idJoueur"]) && isset($pdo)) {
         <a href="panier.php" class="icon-link cart-icon-container" id="cart-icon" title="Panier">
     <img src="image/panier.png" alt="Panier" class="cart-img">
 
-    <?php if ($nbItemsPanier > 0): ?>
-        <span class="cart-count" id="cart-count"
-            style="<?= $nbItemsPanier > 0 ? '' : 'display:none;' ?>">
-            <?= $nbItemsPanier > 99 ? '99+' : $nbItemsPanier ?>
-        </span>
-    <?php endif; ?>
+    <span class="cart-count" id="cart-count"
+        style="<?= $nbItemsPanier > 0 ? '' : 'display:none;' ?>">
+        <?= $nbItemsPanier > 99 ? '99+' : $nbItemsPanier ?>
+    </span>
 </a>
 
         <a href="<?= $profilLink ?>" class="icon-link" title="<?= $profilTitle ?>">
