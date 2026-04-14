@@ -11,17 +11,19 @@ $resultat = "";
 $idJoueur = (int) $_SESSION["idJoueur"];
 $difficulte = "";
 
-isset($_POST["diff"]) ? $diff = 'F' : $diff = $_POST["diff"];
-    $data = GetQuestionReponse($diff,$pdo);
+/* ici c'était inversé donc ça le brisait ... */
+$diff = isset($_GET["diff"]) ? $_GET["diff"] : "F";
 
-    if ($data) {
-        $question = $data['question'];
-        $reponses = $data['reponses'];
-        $difficulte = $data['difficulte'];
-    }
+$data = GetQuestionReponse($diff, $pdo);
+
+if ($data) {
+    $question = $data['question'];
+    $reponses = $data['reponses'];
+    $difficulte = $data['difficulte'];
+}
 
 /*INSTANCIE TES VARIABLE STP.... $conn qui = null ne vas pa resussir a exectute shit*/
-function GetQuestionReponse($diff,$pdo)
+function GetQuestionReponse($diff, $pdo)
 {
     $sql = "SELECT * FROM Enigmes
             WHERE difficulte = ? AND estPiege = 0
@@ -29,17 +31,15 @@ function GetQuestionReponse($diff,$pdo)
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$diff]);
     $enigme = $stmt->fetch(PDO::FETCH_ASSOC);
-    
+
     if (!$enigme) {
         return null;
     }
-
 
     $sqlRep = "SELECT * FROM Reponses WHERE idEnigme = ?";
     $stmtRep = $pdo->prepare($sqlRep);
     $stmtRep->execute([$enigme["idEnigme"]]);
     $reponsesEnigme = $stmtRep->fetchAll(PDO::FETCH_ASSOC);
-
 
     return [
         "question" => $enigme["enonce"],
@@ -60,14 +60,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         } else {
             $sql = "UPDATE Joueurs SET nbOr = nbOr + 10 WHERE idJoueur = ?";
         }
-        $stmt = $conn->prepare($sql);
+
+        /*  remplacer conn par pdo, rien à foutre fuck off */
+        $stmt = $pdo->prepare($sql);
         $stmt->execute([$idJoueur]);
+
         $message = "Bonne réponse!!";
     } else {
         $message = "Mauvaise réponse...";
     }
 }
-
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -134,24 +136,25 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <main class="about-page">
         <section class="about-container">
             <h1>Enigma</h1>
+
             <div class="diff-buttons">
                 <button class="diff-btn diff-F" onclick="location.href='enigme.php?diff=F'">Facile</button>
                 <button class="diff-btn diff-M" onclick="location.href='enigme.php?diff=M'">Moyen</button>
                 <button class="diff-btn diff-D" onclick="location.href='enigme.php?diff=D'">Difficile</button>
                 <button class="diff-btn diff-X" onclick="location.href='enigme.php?diff=X'">Aléatoire</button>
             </div>
+
             <br>
+
             <div>
                 <h3>La question:</h3>
-                <p><?= $data ?></p>
+
+                <!--  $data est un tableau ... alors faut afficher ça criss $question -->
+                <p><?= $question ?></p>
+
                 <div>
-                    <!--<button>Réponse 1</button>
-                <button>Réponse 2</button>
-                <br>
-                <button>Réponse 3</button>
-                <button>Réponse 4</button>-->
                     <?php foreach ($reponses as $rep): ?>
-                        <form method="POST" action="enigme.php?diff=<? $difficulte ?>">
+                        <form method="POST" action="enigme.php?diff=<?= $difficulte ?>">
                             <input type="hidden" name="bonne" value="<?= $rep["estBonneReponse"] ?>">
                             <input type="hidden" name="diff" value="<?= $difficulte ?>">
                             <button type="submit"><?= $rep["reponse"] ?></button>
@@ -159,17 +162,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     <?php endforeach; ?>
                 </div>
             </div>
+
             <br>
+
             <aside>
                 <section class="about-container">
-                    <div><?= $message ?></div>
+                    <div><?= $message ?? "" ?></div>
                 </section>
             </aside>
-            </div>
-        </section>
 
+        </section>
     </main>
-    <!-- Bouton musique -->
+<!-- Bouton musique -->
     <img id="musicToggle" src="image/sonOff.jpg" style="
         position: fixed;
         bottom: 20px;
@@ -200,45 +204,5 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             }
         });
     </script>
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const mainContainer = document.getElementById("shop-main");
-
-            function loadAjax(url) {
-                fetch(url + (url.includes("?") ? "&" : "?") + "ajax=1")
-                    .then(res => res.text())
-                    .then(html => {
-                        mainContainer.innerHTML = html;
-                        window.history.pushState({}, "", url);
-                        attachPaginationListeners();
-                        attachFilterListener();
-                    })
-                    .catch(err => console.error("Erreur AJAX :", err));
-            }
-
-            function attachFilterListener() {
-                const filterForm = document.querySelector(".filters form");
-                if (!filterForm) return;
-
-                filterForm.addEventListener("submit", function (e) {
-                    e.preventDefault();
-                    const url = "boutique.php?" + new URLSearchParams(new FormData(filterForm)).toString();
-                    loadAjax(url);
-                });
-            }
-
-            function attachPaginationListeners() {
-                document.querySelectorAll(".pagination a").forEach(link => {
-                    link.addEventListener("click", function (e) {
-                        e.preventDefault();
-                        loadAjax(this.href);
-                    });
-                });
-            }
-            attachFilterListener();
-            attachPaginationListeners();
-        });
-    </script>
 </body>
-
 </html>
