@@ -2,6 +2,7 @@
 $nbOrHeader = 0;
 $nbArgentHeader = 0;
 $nbBronzeHeader = 0;
+$isAdmin = false;
 
 $profilLink = "connexion.php";
 $profilTitle = "Se connecter";
@@ -24,20 +25,21 @@ if (isset($_SESSION["idJoueur"]) && isset($pdo)) {
     $stmtHeader = $pdo->prepare($sqlHeader);
     $stmtHeader->execute([":idJoueur" => $_SESSION["idJoueur"]]);
     $joueurHeader = $stmtHeader->fetch(PDO::FETCH_ASSOC);
+    
+    $isAdmin = (int)($joueurHeader["estAdmin"] ?? 0) === 1;
+if ($joueurHeader) {
+    $nbOrHeader = (int)($joueurHeader["nbOr"] ?? 0);
+    $nbArgentHeader = (int)($joueurHeader["nbArgent"] ?? 0);
+    $nbBronzeHeader = (int)($joueurHeader["nbBronze"] ?? 0);
 
-    if ($joueurHeader) {
-        $nbOrHeader = (int)($joueurHeader["nbOr"] ?? 0);
-        $nbArgentHeader = (int)($joueurHeader["nbArgent"] ?? 0);
-        $nbBronzeHeader = (int)($joueurHeader["nbBronze"] ?? 0);
-        /*Modif Patrice pour page admin*/
-        $estAdmin = (int)($joueurHeader['estAdmin'] ?? 0);
+    $profilLink = "profil.php";
+    $profilTitle = "Profil";
+    $profilImg = trim($joueurHeader["img"] ?? "");
 
-        
-        $profilLink = "profil.php";
-        $profilTitle = "Profil";
-        $profilImg = trim($joueurHeader["img"] ?? "");
-    }
+    $isAdmin = (int)($joueurHeader["estAdmin"] ?? 0) === 1;
 }
+}
+
 ?>
 
 <header class="site-header">
@@ -52,14 +54,9 @@ if (isset($_SESSION["idJoueur"]) && isset($pdo)) {
     <nav class="main-nav">
         <a href="enigme.php">Énigme</a>
         <a href="apropos.php">À propos</a>
-        <?php ?>
-        <?php
-        if($estAdmin === 1){
-            echo('
-        <a href="admin.php">Admin</a>');
-        }
-         ?>
-
+        <?php if ($isAdmin): ?>
+    <a href="admin.php">Admin</a>
+<?php endif; ?>
     </nav>
 
     <div class="header-right">
