@@ -258,14 +258,33 @@ END IF;
             WHEN 'F' THEN SET v_or = 10;
             WHEN 'M' THEN SET v_or = 25;
             WHEN 'D' THEN SET v_or = 50;
+            WHEN 'A' THEN SET v_or = 50;
         END CASE;
 
         CALL GainsOrEnigme(p_idJoueur, v_or, 0, 0);
+
+        -- Incrémenter streak + nbEnigmesMage si question mage
+        IF v_difficulte = 'A' THEN
+            UPDATE Joueurs
+            SET streak = streak + 1,
+                nbEnigmesMage = nbEnigmesMage + 1
+            WHERE idJoueur = p_idJoueur;
+        ELSE
+            UPDATE Joueurs
+            SET streak = streak + 1
+            WHERE idJoueur = p_idJoueur;
+        END IF;
     ELSE
         CALL PerdreVieEnigme(p_idJoueur, p_idEnigme);
+
+        -- Réinitialiser streak (nbEnigmesMage ne reset pas)
+        UPDATE Joueurs
+        SET streak = 0
+        WHERE idJoueur = p_idJoueur;
     END IF;
-    RETURN p_estBonne;
-END
+END $$
+
+DELIMITER ;
 
 -- Appel
 CALL RepondreEnigme(

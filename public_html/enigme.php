@@ -26,22 +26,26 @@ if ($data) {
 /*INSTANCIE TES VARIABLE STP.... $conn qui = null ne vas pa resussir a exectute shit*/
 function GetQuestionReponse($diff, $pdo)
 {
-    $sql = "SELECT * FROM Enigmes";
-    if($diff === "D"){
-        $sql .= "WHERE difficulte IN (A,?) AND estPiege = 0";
+    if ($diff === "D") {
+        // Difficile inclut aussi les questions mage (difficulte = 'A')
+        $sql = "SELECT * FROM Enigmes
+                WHERE difficulte IN ('D', 'A') AND estPiege = 0
+                ORDER BY RAND() LIMIT 1";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([]);
+    } elseif ($diff === "X") {
+        $sql = "SELECT * FROM Enigmes
+                WHERE estPiege = 0
+                ORDER BY RAND() LIMIT 1";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([]);
+    } else {
+        $sql = "SELECT * FROM Enigmes
+                WHERE difficulte = ? AND estPiege = 0
+                ORDER BY RAND() LIMIT 1";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$diff]);
     }
-    else if($diff === "X"){
-        $sql .= "WHERE estPiege = 0";
-    }
-    else{
-         $sql .= "WHERE difficulte = ? AND estPiege = 0";
-    }
-    $sql .= "ORDER BY RAND() LIMIT 1";
-    $sql = "SELECT * FROM Enigmes
-            WHERE difficulte = ? AND estPiege = 0
-            ORDER BY RAND() LIMIT 1";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([$diff]);
     $enigme = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     if (!$enigme) {
@@ -63,12 +67,13 @@ function GetQuestionReponse($diff, $pdo)
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $sql = "CALL RepondreEnigme(?,?,?,@output)";
     $stmt = $pdo->prepare($sql);
-    $stmt->execute([$idJoueur,$_POST["idEnigme"],$_POST["idReponse"]]);
-    $result = $stmt->fetch(PDO::FETCH_ASSOC);
-    if($result[0] == 1){
+    $stmt->execute([$idJoueur, $_POST["idEnigme"], $_POST["idReponse"]]);
+    $stmt->closeCursor();
+
+    $result = $pdo->query("SELECT @output AS estBonne")->fetch(PDO::FETCH_ASSOC);
+    if ($result["estBonne"] == 1) {
         $message = "Bonne réponse!!";
-    }
-    else{
+    } else {
         $message = "Mauvaise réponse...";
     }
     // $bonne = $_POST["bonne"];
