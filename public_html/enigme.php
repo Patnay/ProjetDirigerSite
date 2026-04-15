@@ -64,8 +64,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $sql = "CALL RepondreEnigme(?,?,?,@output)";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$idJoueur,$_POST["idEnigme"],$_POST["idReponse"]]);
-    $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    if($result == 1){
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    if($result[0] == 1){
         $message = "Bonne réponse!!";
     }
     else{
@@ -175,12 +175,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 <!--  $data est un tableau ... alors faut afficher ça criss $question -->
                 <p><?=$question[0]["enonce"]?></p>
 
-                <div>
+                <div class="rep_buttons">
                     <?php foreach ($reponses as $rep): ?>
                         <form method="POST" action="enigme.php?diff=<?= $difficulte?>">
                             <input type="hidden" name="idEnigme" value="<?= $question[0]["idEnigme"] ?>">
                             <input type="hidden" name="idReponse" value="<?= $rep["idReponse"]?>">
-                            <button type="submit"><?= $rep["reponse"] ?></button>
+                            <button class="rep-btn" type="submit"><?= $rep["reponse"] ?></button>
                         </form>
                     <?php endforeach; ?>
                 </div>
@@ -190,7 +190,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
             <aside>
                 <section class="about-container">
-                    <div><?= $message ?? "" ?></div>
+                    <div class="afficheRep"><?= $message ?? "" ?></div>
                 </section>
             </aside>
 
