@@ -28,7 +28,7 @@ BEGIN
 	DECLARE vNbArgent   INT DEFAULT 1000;
 	DECLARE vNbBronze    INT DEFAULT 1000;
 
-    DECLARE vPtVie    INT DEFAULT 0;
+    DECLARE vPtVie    INT DEFAULT 50;
 	DECLARE vImg VARCHAR(255) DEFAULT '../image/imageDefaut.jpg';
 
     /* Trim pour s'assurer d'enlever les espace avant et apres*/

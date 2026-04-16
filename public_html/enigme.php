@@ -171,7 +171,28 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 <button class="diff-btn diff-D" onclick="location.href='enigme.php?diff=D'">Difficile</button>
                 <button class="diff-btn diff-X" onclick="location.href='enigme.php?diff=X'">Aléatoire</button>
             </div>
-
+                <div>
+                    
+                <p><?switch ($difficulte) {
+                    case 'F':
+                        echo("Facile");
+                        break;
+                    case 'M':
+                        echo("Medium");
+                        break;
+                    case 'D':
+                        echo("Difficile");
+                        break;
+                    case 'A':
+                        echo("Mage");
+                        break;
+                      
+                    
+                    default:
+                        # code...
+                        break;
+                }?> Difficilte</p>
+                </div>
             <br>
 
             <div>

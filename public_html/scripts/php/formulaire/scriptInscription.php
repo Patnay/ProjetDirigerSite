@@ -40,33 +40,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $erreurs[] = "Cet alias existe déjà.";
     }
 
+    $stmt = $pdo->prepare("SELECT * FROM Joueurs WHERE courriel = ?");
+    $stmt->execute([$courriel]);
+    if ($stmt->fetch()) {
+        $erreurs[] = "Ce courriel est déjà utilisé.";
+    }
+
+
     if (!empty($erreurs)) {
-        echo "<h2>Erreurs :</h2><ul>";
-        foreach ($erreurs as $e)
-            echo "<li>$e</li>";
-        echo "</ul>";
+    $_SESSION['erreurs_inscription'] = $erreurs;
+
+
 
         $_POST['psw'] = "";
         $_POST['psw2'] = "";
-        $selection = $_POST['selection'];
+        $selection = $_POST['selection'] ?? '';
 
     } else {
-
         $stmt = $pdo->prepare("CALL creeCompte(?,?,?,?,?, @output)");
         $stmt->execute([$alias, $prenom, $nom, $courriel, $mp1]);
         $result = $pdo->query("SELECT @output as output");
         $output = $result->fetch()['output'];
-        echo $output;
+
         include("scripts/php/connect.php");
-        echo "<h2>Compte créé avec succès !</h2>";
     }
-    header("Location: boutique.php");
 }
 else{
-    
         //echo "<h2>Pas encore envoyer</h2>";
 }
-
+?>
+<!--
 //   if(!($erreurs)){
 //     //$hash = password_hash($mp1, PASSWORD_DEFAULT); -> Il est hasher dans la procedure
 
@@ -77,4 +80,4 @@ else{
 //     //  exit;
 //   }
 
-?>
+?> -->

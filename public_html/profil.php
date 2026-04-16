@@ -163,7 +163,7 @@ $effetsActifs = $stmtEffets->fetchAll(PDO::FETCH_ASSOC);
                 <p><strong>Or :</strong> <?= (int)($joueur["nbOr"] ?? 0) ?></p>
                 <p><strong>Argent :</strong> <?= (int)($joueur["nbArgent"] ?? 0) ?></p>
                 <p><strong>Bronze :</strong> <?= (int)($joueur["nbBronze"] ?? 0) ?></p>
-                <p><strong>Vie :</strong> <?= (int)($joueur["ptVie"] ?? 0) ?> / 50</p>
+                <p><strong>Vie :</strong> <?= (int)($joueur["ptVie"] ?? 0) ?></p>
 
                 <div class="profile-inventory-link">
                     <a href="inventaire.php" class="icon-link" title="Inventaire">📦</a>
