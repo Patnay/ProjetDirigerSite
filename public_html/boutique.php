@@ -387,6 +387,11 @@ if ($isAjax) {
 
 <?php include "header.php"; ?>
 
+<!-- Variable JS pour savoir si l'utilisateur est connecté -->
+<script>
+    const isLoggedIn = <?= isset($_SESSION["idJoueur"]) ? "true" : "false" ?>;
+</script>
+
 <main class="shop-page" id="shop-main">
     <?php
     renderShopContent($produits, $categories, $filtreActif, $totalPages, $page, $prixMin, $prixMax, $etoileMin, $etoileMax);
@@ -455,7 +460,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
-<!-- Script pour le cirss d'AJAX -->
+<!-- Script AJAX -->
 <script>
 document.addEventListener("DOMContentLoaded", () => {
     const mainContainer = document.getElementById("shop-main");
@@ -470,7 +475,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 attachFilterListener();
                 attachResetListener();
                 attachAddToCartListeners();
-                console.log(html);
             })
             .catch(err => console.error("Erreur AJAX :", err));
     }
@@ -504,12 +508,14 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
     }
+
     attachFilterListener();
     attachPaginationListeners();
 });
 </script>
+
 <script>
-// Fonction pour mettre à jour le badge du panier
+// Mise à jour du badge panier
 function updateCartBadge() {
     fetch("scripts/php/getPanierCount.php")
         .then(res => res.json())
@@ -528,37 +534,47 @@ function updateCartBadge() {
         });
 }
 
-// Pour animation du +1 fuck you si vous aimez pas
+// Animation +1 (corrigée avec scroll)
 function flyPlusAnimation(startElement) {
     const rect = startElement.getBoundingClientRect();
-    const cart = document.getElementById("cart-icon").getBoundingClientRect();
+    const cartRect = document.getElementById("cart-icon").getBoundingClientRect();
+
+    const cart = {
+        left: cartRect.left,
+        top: cartRect.top + window.scrollY
+    };
 
     const plus = document.createElement("div");
     plus.classList.add("fly-plus");
     plus.textContent = "+1";
 
     plus.style.left = rect.left + rect.width / 2 + "px";
-    plus.style.top = rect.top + rect.height / 2 + "px";
+    plus.style.top = rect.top + window.scrollY + rect.height / 2 + "px";
 
     document.body.appendChild(plus);
 
-    // Force reflow pour activer la transition
     void plus.offsetWidth;
 
-    plus.style.transform = `translate(${cart.left - rect.left}px, ${cart.top - rect.top}px) scale(0.5)`;
+    plus.style.transform = `translate(${cart.left - rect.left}px, ${cart.top - (rect.top + window.scrollY)}px) scale(0.5)`;
     plus.style.opacity = "0";
+
     setTimeout(() => plus.remove(), 1400);
 }
 
-// Fonction pour activer les boutons "Ajouter"
+// Boutons Ajouter
 function attachAddToCartListeners() {
     document.querySelectorAll(".add-to-cart-btn").forEach(btn => {
         btn.addEventListener("click", function(e) {
             e.preventDefault();
 
+            // Si pas connecté → redirection + pas d’animation
+            if (!isLoggedIn) {
+                window.location.href = "connexion.php";
+                return;
+            }
+
             const id = this.dataset.id;
 
-            // ici je rappelle le bhy d<animation de +1 pour que ca marche au clique d<ajouter
             flyPlusAnimation(this);
 
             fetch("scripts/php/ajouterPanier.php?id=" + id)
@@ -571,11 +587,10 @@ function attachAddToCartListeners() {
     });
 }
 
-// Réactiver les listeners après chaque chargement AJAX
+// Réactivation listeners après AJAX
 document.addEventListener("DOMContentLoaded", () => {
     attachAddToCartListeners();
 
-    // Hook dans ton AJAX existant
     const originalLoadAjax = loadAjax;
     loadAjax = function(url) {
         originalLoadAjax(url);
@@ -583,5 +598,6 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 });
 </script>
+
 </body>
 </html>
