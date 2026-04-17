@@ -218,6 +218,8 @@ CALL UtiliserItemSoin(
 /* Repondre enigme*/
 /* Fonctionne mais ne permet pas au joueurs de pouvoir refaire un enigme ...
     Doit modifier la table stats pour ajouter cette feature 
+
+    Touche pas si tu ca marche ;)
 */
 USE dbdarquest6;
 DROP PROCEDURE IF EXISTS RepondreEnigme;
@@ -255,19 +257,22 @@ END IF;
     IF p_estBonne = 1 THEN
         -- Or selon difficulté
         CASE v_difficulte
-            WHEN 'F' THEN SET v_or = 10;
-            WHEN 'M' THEN SET v_or = 25;
-            WHEN 'D' THEN SET v_or = 50;
-            WHEN 'A' THEN SET v_or = 50;
+            WHEN 'F' THEN 
+        CALL GainsOrEnigme(p_idJoueur, 0, 0, 10);
+           WHEN 'M' THEN 
+        CALL GainsOrEnigme(p_idJoueur, 0, 10, 0);
+        WHEN 'D' THEN 
+        CALL GainsOrEnigme(p_idJoueur, 10, 0, 0);
+        WHEN 'A' THEN 
+        CALL GainsOrEnigme(p_idJoueur, 10, 0, 0);
         END CASE;
 
-        CALL GainsOrEnigme(p_idJoueur, v_or, 0, 0);
 
         -- Incrémenter streak + nbEnigmesMage si question mage
         IF v_difficulte = 'A' THEN
             UPDATE Joueurs
             SET streak = streak + 1,
-                nbEnigmesMage = nbEnigmesMage + 1
+                nbEnigmeMage = nbEnigmeMage + 1
             WHERE idJoueur = p_idJoueur;
         ELSE
             UPDATE Joueurs
