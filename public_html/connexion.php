@@ -30,6 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['connecte'] = true;
                 $_SESSION['idJoueur'] = $user['idJoueur'];
                 $_SESSION['alias'] = $user['alias'];
+                $_SESSION['estMage'] = (int)$user['estMage'];
 
                 header('Location: boutique.php');
                 exit;
