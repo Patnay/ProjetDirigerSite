@@ -1,5 +1,18 @@
 <?php
 require_once "init.php";
+$isMage = false;
+
+if (isset($_SESSION["idJoueur"])) {
+    $sqlMage = "SELECT nbEnigmeMage FROM Joueurs WHERE idJoueur = ?";
+    $stmtMage = $pdo->prepare($sqlMage);
+    $stmtMage->execute([$_SESSION["idJoueur"]]);
+    $mageData = $stmtMage->fetch(PDO::FETCH_ASSOC);
+
+    if ($mageData && $mageData["nbEnigmeMage"] >= 3) {
+        $isMage = true;
+    }
+}
+
 
 /* Vérifier ID */
 if (!isset($_GET["id"])) {
@@ -120,10 +133,13 @@ if (!$produit) {
         <!-- ACTION -->
         <?php if ($produit['quantiteStock'] > 0): ?>
             <a class="add-link add-to-cart-btn"
-            href="scripts/php/ajouterPanier.php?id=<?= $produit['idItem'] ?>"
-            data-id="<?= $produit['idItem'] ?>">
+                href="#"
+                data-id="<?= $produit['idItem'] ?>"
+                data-type="<?= $type ?>"
+                data-ismage="<?= $isMage ? '1' : '0' ?>">
                 Ajouter au panier
             </a>
+
         <?php else: ?>
             <p style="color:red">Rupture de stock</p>
         <?php endif; ?>
@@ -163,7 +179,72 @@ toggleBtn.addEventListener("click", () => {
         toggleBtn.src = "image/sonOff.jpg";
     }
 });
-</script>     
+</script>    
+
+        <!-- Celui pour le criss de message ... zzzz -->
+<script>
+document.querySelector(".add-to-cart-btn")?.addEventListener("click", function(e) {
+    e.preventDefault();
+
+    const isMage = this.dataset.ismage === "1";
+    const type = this.dataset.type;
+    const id = this.dataset.id;
+
+    // Si c'est un sort et que le joueur n'est pas mage → popup Elden Ring
+    if (type === "sort" && !isMage) {
+        document.getElementById("sortMageAlert").style.display = "flex";
+        return;
+    }
+
+    // Sinon → ajouter au panier normalement
+    window.location.href = "scripts/php/ajouterPanier.php?id=" + id;
+});
+</script>
+
 </main>
+        <!-- Pour le message de non-mage RAAAAAAAAAAAAAH BIENTOT DORMIR MIMIMIMERNWNRKWQDEBEJWNDQKBEWQNRFEWQFKEWJDQWDBVFEKWJDQWBDJK-->
+<div id="sortMageAlert" style="
+    display:none;
+    position:fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    background:rgba(0,0,0,0.75);
+    backdrop-filter: blur(4px);
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+">
+    <div style="
+        background:#1a1a1a;
+        border:2px solid gold;
+        padding:30px;
+        border-radius:12px;
+        text-align:center;
+        width:360px;
+        color:white;
+        font-family: 'Agmena Pro', serif;
+    ">
+        <h2 style="margin-bottom:15px; color:#d4af37;">Attention</h2>
+
+        <p style="margin-bottom:25px;">
+            Seuls les mages peuvent acheter des sorts.<br>
+            Répondez à des énigmes de type mage pour le devenir.
+        </p>
+
+        <button onclick="document.getElementById('sortMageAlert').style.display='none'"
+            style="
+                padding:10px 20px;
+                margin-right:10px;
+                background:#444;
+                color:white;
+                border:none;
+                border-radius:8px;
+                cursor:pointer;
+            ">
+            Fermer
+        </button>
+        </button>
+    </div>
+</div>
 </body>
 </html>
