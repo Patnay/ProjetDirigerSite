@@ -27,6 +27,9 @@ if (isset($_SESSION["idJoueur"]) && isset($pdo)) {
     $joueurHeader = $stmtHeader->fetch(PDO::FETCH_ASSOC);
     
     $isAdmin = (int)($joueurHeader["estAdmin"] ?? 0) === 1;
+
+    $_SESSION["estMage"] = (int)($joueurHeader["estMage"] ?? 0);
+
 if ($joueurHeader) {
     $nbOrHeader = (int)($joueurHeader["nbOr"] ?? 0);
     $nbArgentHeader = (int)($joueurHeader["nbArgent"] ?? 0);
