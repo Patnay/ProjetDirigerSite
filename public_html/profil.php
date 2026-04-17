@@ -277,5 +277,56 @@ toggleBtn.addEventListener("click", () => {
     }
 });
 </script>
+<!-- Pour le criss de timer fluide d<effet -->
+<script>
+// === TIMER D'EFFETS EN TEMPS RÉEL + AUTO-SUPPRESSION ===
+function startEffectTimers() {
+    const effectList = document.querySelector(".effect-list");
+    const noEffectMsg = document.querySelector(".about-block p");
+
+    const timers = document.querySelectorAll(".effect-time");
+
+    timers.forEach(timer => {
+        let [min, sec] = timer.textContent.split(":").map(Number);
+        let total = min * 60 + sec;
+
+        const parentLine = timer.closest(".effect-line");
+
+        const interval = setInterval(() => {
+            total--;
+
+            if (total <= 0) {
+                clearInterval(interval);
+
+                // Supprimer la ligne de l'effet dès que le timer est à 0 à cause du if
+                parentLine.remove();
+
+                // Pour vérifier s'il reste des effets
+                const remaining = document.querySelectorAll(".effect-line").length;
+
+                if (remaining === 0) {
+                    if (noEffectMsg) {
+                        noEffectMsg.style.display = "block";
+                    } else {
+                        // Si le message n'existe pas (cas rare), on le crée
+                        const msg = document.createElement("p");
+                        msg.textContent = "Aucun effet actif.";
+                        document.querySelector(".about-block").appendChild(msg);
+                    }
+                }
+
+                return;
+            }
+
+            const newMin = Math.floor(total / 60);
+            const newSec = total % 60;
+
+            timer.textContent = `${newMin}:${newSec.toString().padStart(2, "0")}`;
+        }, 1000);
+    });
+}
+
+startEffectTimers();
+</script>
 </body>
 </html>
