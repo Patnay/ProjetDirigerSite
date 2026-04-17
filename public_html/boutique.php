@@ -4,6 +4,7 @@ try {
     ini_set('log_errors', 'On');
     error_reporting(E_ALL);
     session_start();
+    $estMage = isset($_SESSION["estMage"]) ? $_SESSION["estMage"] : 0;
 } catch (Exception) {
 }
 
@@ -207,6 +208,7 @@ $produits = $stmt->fetchAll(PDO::FETCH_ASSOC);
    FONCTION RENDU CONTENU MAIN
 ========================= */
 
+
 function renderShopContent($produits, $categories, $filtreActif, $totalPages, $page, $prixMin, $prixMax, $etoileMin, $etoileMax)
 {
     ?>
@@ -292,6 +294,17 @@ function renderShopContent($produits, $categories, $filtreActif, $totalPages, $p
         <section class="products-grid">
             <?php if (count($produits) > 0): ?>
                 <?php foreach ($produits as $produit): ?>
+
+                    <?php
+                    // Vérifier si l'item est un sort via la table Sorts
+                    $stmtSort = $GLOBALS["pdo"]->prepare("SELECT 1 FROM Sorts WHERE idItem = ?");
+                    $stmtSort->execute([$produit["idItem"]]);
+                    $isSort = $stmtSort->fetchColumn() ? true : false;
+
+                    // Vérifier si l'utilisateur est mage
+                    $isMage = ($GLOBALS["estMage"] == 1);
+                    ?>
+
                     <div class="product-card">
 
                         <div class="product-image">
@@ -322,11 +335,24 @@ function renderShopContent($produits, $categories, $filtreActif, $totalPages, $p
                             </a>
 
                             <?php if ($produit['quantiteStock'] > 0): ?>
-                                <a class="add-link add-to-cart-btn"
-                                   href="scripts/php/ajouterPanier.php?id=<?= $produit['idItem'] ?>"
-                                   data-id="<?= $produit['idItem'] ?>">
-                                    Ajouter
-                                </a>
+
+                                <?php if ($isSort && !$isMage): ?>
+                                    <!-- Bouton spécial non-mage -->
+                                    <a class="add-link not-mage-btn"
+                                       href="#"
+                                       data-id="<?= $produit['idItem'] ?>">
+                                        Ajouter
+                                    </a>
+
+                                <?php else: ?>
+                                    <!-- Bouton normal -->
+                                    <a class="add-link add-to-cart-btn"
+                                       href="scripts/php/ajouterPanier.php?id=<?= $produit['idItem'] ?>"
+                                       data-id="<?= $produit['idItem'] ?>">
+                                        Ajouter
+                                    </a>
+                                <?php endif; ?>
+
                             <?php else: ?>
                                 <span class="add-link" style="opacity:0.5">
                                     Ajouter
@@ -364,6 +390,7 @@ function renderShopContent($produits, $categories, $filtreActif, $totalPages, $p
     <?php endif;
 }
 
+
 /* Pour PRENDREJUSTE LE CRISS DE CALISSE DE MAIN */
 
 if ($isAjax) {
@@ -387,9 +414,10 @@ if ($isAjax) {
 
 <?php include "header.php"; ?>
 
-<!-- Variable JS pour savoir si l'utilisateur est connecté -->
+<!-- Variable JS pour savoir si l'utilisateur est connecté et s'il est mage -->
 <script>
     const isLoggedIn = <?= isset($_SESSION["idJoueur"]) ? "true" : "false" ?>;
+    const isMage = <?= isset($_SESSION["estMage"]) && $_SESSION["estMage"] == 1 ? "true" : "false" ?>;
 </script>
 
 <main class="shop-page" id="shop-main">
@@ -401,6 +429,61 @@ if ($isAjax) {
 <footer>
     <?php include "footer.php"; ?>
 </footer>
+
+<!-- Le message pour les non-mages -->
+<div id="mageAlert" style="
+    display:none;
+    position:fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    background:rgba(0,0,0,0.75);
+    backdrop-filter: blur(4px);
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+">
+    <div style="
+        background:#1a1a1a;
+        border:2px solid gold;
+        padding:30px;
+        border-radius:12px;
+        text-align:center;
+        width:360px;
+        color:white;
+        font-family: 'Agmena Pro', serif;
+    ">
+        <h2 style="margin-bottom:15px; color:#d4af37;">Attention</h2>
+        <p style="margin-bottom:25px;">
+            Seuls les mages peuvent acheter des sorts.<br>
+            Répondez à des énigmes de type mage pour le devenir.
+        </p>
+
+        <button onclick="document.getElementById('mageAlert').style.display='none'"
+            style="
+                padding:10px 20px;
+                background:#444;
+                color:white;
+                border:none;
+                border-radius:8px;
+                cursor:pointer;
+            ">
+            Fermer
+        </button>
+    </div>
+</div>
+
+<!-- Le script du truc plus haut fuck off guys -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll(".not-mage-btn").forEach(btn => {
+        btn.addEventListener("click", e => {
+            e.preventDefault();
+            document.getElementById("mageAlert").style.display = "flex";
+        });
+    });
+});
+</script>
+
 
 <!-- Bouton musique -->
 <img id="musicToggle"
@@ -475,6 +558,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 attachFilterListener();
                 attachResetListener();
                 attachAddToCartListeners();
+                attachNotMageListeners();
             })
             .catch(err => console.error("Erreur AJAX :", err));
     }
@@ -567,9 +651,13 @@ function attachAddToCartListeners() {
         btn.addEventListener("click", function(e) {
             e.preventDefault();
 
-            // Si pas connecté → redirection + pas d’animation
             if (!isLoggedIn) {
                 window.location.href = "connexion.php";
+                return;
+            }
+
+            if (this.classList.contains("not-mage-btn")) {
+                document.getElementById("mage-overlay").style.display = "flex";
                 return;
             }
 
@@ -587,14 +675,29 @@ function attachAddToCartListeners() {
     });
 }
 
+// Boutons non-mage
+function attachNotMageListeners() {
+    document.querySelectorAll(".not-mage-btn").forEach(btn => {
+        btn.addEventListener("click", function(e) {
+            e.preventDefault();
+            document.getElementById("mageAlert").style.display = "flex";
+        });
+    });
+}
+
+
 // Réactivation listeners après AJAX
 document.addEventListener("DOMContentLoaded", () => {
     attachAddToCartListeners();
+    attachNotMageListeners();
 
     const originalLoadAjax = loadAjax;
     loadAjax = function(url) {
         originalLoadAjax(url);
-        setTimeout(() => attachAddToCartListeners(), 50);
+        setTimeout(() => {
+            attachAddToCartListeners();
+            attachNotMageListeners();
+        }, 50);
     };
 });
 </script>
