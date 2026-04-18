@@ -7,39 +7,6 @@ if (!isset($_SESSION["idJoueur"])) {
 
 $idJoueur = (int) $_SESSION["idJoueur"];
 
-// --- lalalalalalal stats ---
-$sqlStats = "SELECT ptVie, streak, nbEnigmeMage FROM Joueurs WHERE idJoueur = ?";
-$stmtStats = $pdo->prepare($sqlStats);
-$stmtStats->execute([$idJoueur]);
-$stats = $stmtStats->fetch(PDO::FETCH_ASSOC);
-
-$ptVie = $stats["ptVie"];
-$streak = $stats["streak"];
-$mageProgress = $stats["nbEnigmeMage"];
-
-// --- si le connard a plus de vie (oui nous les joueurs) ---
-if ($ptVie <= 0) {
-    ?>
-    <section class="about-container">
-
-        <h1>Énigma</h1>
-
-        <div class="nohp-panel">
-            <h2>Vous n'avez plus de points de vie !</h2>
-            <p>Vous devez vous soigner avant de continuer à jouer.</p>
-
-            <div class="nohp-buttons">
-                <a href="boutique.php" class="nohp-btn">Aller à la boutique</a>
-                <a href="inventaire.php" class="nohp-btn">Aller à l’inventaire</a>
-            </div>
-        </div>
-
-    </section>
-    <?php
-    exit; // TRÈS IMPORTANT GUYS VOUS LE SUPPRIMEZ JE VOUS BATS: empêche l'affichage du reste
-}
-
-
 $diff = $_GET["diff"] ?? "F";
 
 function GetQuestionReponse($diff, $pdo)
@@ -75,12 +42,13 @@ function GetQuestionReponse($diff, $pdo)
     return [
         "question" => $enigme,
         "reponses" => $reponsesEnigme,
-        "difficulte" => $diff
+        "difficulte" => $enigme[0]["difficulte"]
     ];
 }
 
 $message = "";
 $repStatus = "";
+
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     $sql = "CALL RepondreEnigme(?,?,?,@output)";
@@ -97,7 +65,38 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $repStatus = ($result["estBonne"] == 1) ? "GOOD" : "BAD";
 }
 
-// --- RECHARGER QUESTION APRÈS RÉPONSE ---
+$sqlStats = "SELECT ptVie, streak, nbEnigmeMage FROM Joueurs WHERE idJoueur = ?";
+$stmtStats = $pdo->prepare($sqlStats);
+$stmtStats->execute([$idJoueur]);
+$stats = $stmtStats->fetch(PDO::FETCH_ASSOC);
+
+$ptVie = $stats["ptVie"];
+$streak = $stats["streak"];
+$mageProgress = $stats["nbEnigmeMage"];
+
+// Si plus de vie → on sort tout de suite
+if ($ptVie <= 0) {
+    ?>
+    <section class="about-container">
+
+        <h1>Énigma</h1>
+
+        <div class="nohp-panel">
+            <h2>Vous n'avez plus de points de vie !</h2>
+            <p>Vous devez vous soigner avant de continuer à jouer.</p>
+
+            <div class="nohp-buttons">
+                <a href="boutique.php" class="nohp-btn">Aller à la boutique</a>
+                <a href="inventaire.php" class="nohp-btn">Aller à l’inventaire</a>
+            </div>
+        </div>
+
+    </section>
+    <?php
+    exit;
+}
+
+// Recharger question après réponse (ou au premier chargement)
 $data = GetQuestionReponse($diff, $pdo);
 $question = $data["question"];
 $reponses = $data["reponses"];
