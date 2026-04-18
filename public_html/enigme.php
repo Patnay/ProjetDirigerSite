@@ -36,6 +36,7 @@ if (!isset($_SESSION["idJoueur"])) {
     </audio>
 
     <script>
+        // --- MUSIQUE ---
         const music = document.getElementById("bgMusic");
         const toggleBtn = document.getElementById("musicToggle");
         let musicOn = false;
@@ -58,6 +59,7 @@ if (!isset($_SESSION["idJoueur"])) {
                 .then(html => {
                     document.getElementById("enigme-container").innerHTML = html;
                     attachListeners();
+                    updateHeaderStats(); 
                 });
         }
 
@@ -85,7 +87,6 @@ if (!isset($_SESSION["idJoueur"])) {
                         .then(r => r.text())
                         .then(html => {
 
-                            // Détection AVANT injection
                             const temp = document.createElement("div");
                             temp.innerHTML = html;
 
@@ -94,24 +95,41 @@ if (!isset($_SESSION["idJoueur"])) {
                             if (statusDiv) {
                                 const isGood = statusDiv.dataset.status === "GOOD";
 
-                                // 1. Jouer l’animation AVANT de charger la nouvelle question
                                 showRepAnimation(isGood);
 
-                                // 2. Attendre la fin de l’animation avant d’injecter la nouvelle question
                                 setTimeout(() => {
                                     document.getElementById("enigme-container").innerHTML = html;
                                     attachListeners();
+                                    updateHeaderStats(); // 🔥 MAJ header après réponse
                                 }, 1800);
 
                             } else {
-                                // Pas de réponse → injection normale
                                 document.getElementById("enigme-container").innerHTML = html;
                                 attachListeners();
+                                updateHeaderStats(); // 🔥 MAJ header même sans repStatus
                             }
 
                         });
                 });
             });
+        }
+
+        // fonction pour refresh l'or
+        function updateHeaderStats() {
+            fetch("get_stats.php")
+                .then(r => r.json())
+                .then(stats => {
+                    if (!stats || stats.error) return;
+
+                    const goldSpan = document.querySelector(".currency.gold span");
+                    const silverSpan = document.querySelector(".currency.silver span");
+                    const copperSpan = document.querySelector(".currency.copper span");
+
+                    if (goldSpan) goldSpan.textContent = stats.nbOr;
+                    if (silverSpan) silverSpan.textContent = stats.nbArgent;
+                    if (copperSpan) copperSpan.textContent = stats.nbBronze;
+                })
+                .catch(() => { /* silencieux */ });
         }
 
         // Charger la première fois
