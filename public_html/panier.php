@@ -534,6 +534,12 @@ fetch("scripts/php/getPanierCount.php")
             badge.style.display = "none";
         } else {
             badge.style.display = "inline-block";
+                // Je reforce le style du badge car flemme et comprends par l'erreur
+                badge.style.minWidth = "18px";
+                badge.style.height = "18px";
+                badge.style.lineHeight = "18px";
+                badge.style.textAlign = "center";
+                badge.style.borderRadius = "50%";
             badge.textContent = (count > 99 ? "99+" : count);
         }
     });
