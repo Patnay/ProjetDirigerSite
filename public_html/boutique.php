@@ -648,29 +648,37 @@ function flyPlusAnimation(startElement) {
 // Boutons Ajouter
 function attachAddToCartListeners() {
     document.querySelectorAll(".add-to-cart-btn").forEach(btn => {
-        btn.addEventListener("click", function(e) {
-            e.preventDefault();
+    btn.addEventListener("click", function(e) {
+        e.preventDefault();
 
-            if (!isLoggedIn) {
-                window.location.href = "connexion.php";
-                return;
-            }
+        if (!isLoggedIn) {
+            window.location.href = "connexion.php";
+            return;
+        }
 
-            if (this.classList.contains("not-mage-btn")) {
-                document.getElementById("mage-overlay").style.display = "flex";
-                return;
-            }
+        if (this.classList.contains("not-mage-btn")) {
+            document.getElementById("mage-overlay").style.display = "flex";
+            return;
+        }
 
-            const id = this.dataset.id;
+        const id = this.dataset.id;
+        const button = this;
 
-            flyPlusAnimation(this);
+        fetch("scripts/php/ajouterPanier.php?id=" + id)
+            .then(res => res.text())
+            .then(data => {
 
-            fetch("scripts/php/ajouterPanier.php?id=" + id)
-                .then(res => res.text())
-                .then(() => {
+                if (data.includes("OK")) {
+                    flyPlusAnimation(button);
                     updateCartBadge();
-                })
-                .catch(err => console.error("Erreur ajout panier :", err));
+                }
+
+                // Si stock max, pas d'animation du +1
+                if (data.includes("MAX_STOCK")) {
+                    return;
+                }
+            })
+            .catch(err => console.error("Erreur ajout panier :", err));
         });
     });
 }
