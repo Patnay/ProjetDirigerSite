@@ -144,10 +144,10 @@ shuffle($reponses);
 
     <div class="rep_buttons">
         <?php foreach ($reponses as $rep): ?>
-            <button class="rep-btn rep-answer"
-                    data-idenigme="<?= $question[0]["idEnigme"] ?>"
-                    data-idrep="<?= $rep["idReponse"] ?>"
-                    data-diff="<?= $difficulte ?>">
+                <button class="rep-btn rep-answer"
+                data-idenigme="<?= $question[0]["idEnigme"] ?>"
+                data-idrep="<?= $rep["idReponse"] ?>"
+                data-diff="<?= $diff ?>">
                 <?= $rep["reponse"] ?>
             </button>
         <?php endforeach; ?>
