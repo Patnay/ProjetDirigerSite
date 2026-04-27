@@ -1,0 +1,221 @@
+/* ===== PAGE CONNEXION / INSCRIPTION ===== */
+
+.connect-page,
+body.shop-page {
+    min-height: 100vh;
+}
+
+.connect-container {
+    max-width: 680px;
+    margin: 40px auto 0 auto;
+    background: rgba(0, 44, 140, 0.78);
+    border: 3px solid #0c1f63;
+    border-radius: 18px;
+    padding: 32px;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+}
+
+.connect-container h1 {
+    font-size: 2.4rem;
+    margin-bottom: 24px;
+    color: white;
+    text-align: center;
+}
+
+/* ===== BLOCS FORMULAIRES ===== */
+
+.connect-block,
+.connect-container fieldset {
+    background-color: rgba(74, 74, 74, 0.95);
+    border: 2px solid gold;
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 20px;
+}
+
+.connect-container legend {
+    color: #ffd95a;
+    font-size: 1.15rem;
+    font-weight: bold;
+    padding: 0 8px;
+}
+
+/* ===== LABELS ===== */
+
+.connect-container label {
+    display: block;
+    margin-bottom: 8px;
+    color: white;
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+/* ===== INPUTS ===== */
+
+.connect-container input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 2px solid transparent;
+    border-radius: 12px;
+    background-color: #f4f4f4;
+    color: #111;
+    font-size: 1rem;
+    outline: none;
+    transition: 0.2s ease;
+}
+
+.connect-container input:focus {
+    border-color: gold;
+    box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.18);
+}
+
+/* ===== BOUTONS ===== */
+
+.connect,
+.connect-button,
+.connect-container button[type="submit"] {
+    display: inline-block;
+    width: 100%;
+    border: none;
+    border-radius: 18px;
+    padding: 14px 18px;
+    background: linear-gradient(to bottom left, gold, rgb(170, 145, 20));
+    color: black;
+    font-size: 1.1rem;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s ease;
+    text-align: center;
+    text-decoration: none;
+}
+
+.connect:hover,
+.connect-button:hover,
+.connect-container button[type="submit"]:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(to bottom left, #ffd700, #b89215);
+}
+
+/* ===== LIENS ===== */
+
+.connect-container p {
+    color: white;
+    font-size: 1rem;
+    text-align: center;
+}
+
+.connect-container a {
+    color: gold;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.connect-container a:hover {
+    text-decoration: underline;
+}
+
+/* ===== MESSAGES ===== */
+
+.message-erreur {
+    margin-bottom: 18px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: rgba(180, 30, 30, 0.18);
+    border: 1px solid rgba(255, 90, 90, 0.45);
+    color: #ffb3b3;
+    font-weight: bold;
+}
+
+.message-info {
+    margin-bottom: 18px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: rgba(255, 215, 0, 0.14);
+    border: 1px solid rgba(255, 215, 0, 0.35);
+    color: #ffe082;
+    font-weight: bold;
+}
+
+/* ===== BLOCS ERREURS INSCRIPTION ===== */
+
+.erreurs-inscription {
+    background-color: rgba(120, 20, 20, 0.85);
+    border: 2px solid #ff6b6b;
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin: 0 0 20px 0;
+    color: white;
+}
+
+.erreurs-inscription h2 {
+    margin-bottom: 10px;
+    font-size: 1.3rem;
+    color: #ffd5d5;
+}
+
+.erreurs-inscription ul {
+    margin-left: 18px;
+}
+
+.erreurs-inscription li {
+    margin-bottom: 6px;
+}
+
+/* ===== BOUTON SECONDAIRE ===== */
+
+.connect-secondary {
+    display: inline-block;
+    width: 100%;
+    border: 2px solid gold;
+    border-radius: 18px;
+    padding: 13px 18px;
+    background: rgba(74, 74, 74, 0.95);
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.connect-secondary:hover {
+    background: rgba(95, 95, 95, 0.95);
+    color: gold;
+}
+
+/* ===== ESPACEMENT ===== */
+
+.connect-container br {
+    display: none;
+}
+
+/* espace entre champs dans le fieldset */
+.connect-container fieldset > label:not(:first-of-type),
+.connect-block > label:not(:first-of-type) {
+    margin-top: 14px;
+}
+
+.connect-container fieldset > button,
+.connect-block > button {
+    margin-top: 18px;
+}
+
+/* ===== RESPONSIVE ===== */
+
+@media (max-width: 700px) {
+    .connect-container {
+        margin: 20px 12px 0 12px;
+        padding: 20px;
+    }
+
+    .connect-container h1 {
+        font-size: 2rem;
+    }
+
+    .connect-block,
+    .connect-container fieldset {
+        padding: 18px;
+    }
+}

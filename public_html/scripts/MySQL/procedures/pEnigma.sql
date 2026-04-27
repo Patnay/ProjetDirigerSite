@@ -251,8 +251,8 @@ END IF;
     FROM Enigmes WHERE idEnigme = p_idEnigme;
 
     -- Enregistrer dans Statistiques
-    INSERT INTO Statistiques (idJoueur, idEnigme, estReussi)
-    VALUES (p_idJoueur, p_idEnigme, p_estBonne);
+    INSERT INTO Statistiques (idJoueur, idEnigme, estReussi,difficulte)
+    VALUES (p_idJoueur, p_idEnigme, p_estBonne,v_difficulte);
 
     IF p_estBonne = 1 THEN
         -- Or selon difficulté
