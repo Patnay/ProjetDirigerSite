@@ -65,14 +65,23 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $repStatus = ($result["estBonne"] == 1) ? "GOOD" : "BAD";
 }
 
-$sqlStats = "SELECT ptVie, streak, nbEnigmeMage FROM Joueurs WHERE idJoueur = ?";
+$sqlStats = "SELECT COUNT(s.estReussi) AS enigmesReussi , j.ptVie, j.streak, j.nbEnigmeMage, e.difficulte
+FROM Joueurs j 
+INNER JOIN Statistiques s ON j.idJoueur = s.idJoueur
+INNER JOIN Enigmes e ON s.idEnigme = e.idEnigme
+WHERE j.idJoueur = ? && s.estReussi = 1 
+GROUP BY e.difficulte;";
 $stmtStats = $pdo->prepare($sqlStats);
 $stmtStats->execute([$idJoueur]);
-$stats = $stmtStats->fetch(PDO::FETCH_ASSOC);
+$stats = $stmtStats->fetchAll(PDO::FETCH_ASSOC);
 
-$ptVie = $stats["ptVie"];
-$streak = $stats["streak"];
-$mageProgress = $stats["nbEnigmeMage"];
+$ptVie = $stats[0]["ptVie"];
+$streak = $stats[0]["streak"];
+$mageProgress = $stats[0]["nbEnigmeMage"];
+$facileReussi = $stats[0]["estReussi" == "F"];
+$moyenneReussi = $stats[0]["enigmesReussi" == "M"];
+$difficileReussi = $stats[0]["enigmesReussi" == "D"];
+$magieReussi = $stats[0]["enigmesReussi" == "A"];
 
 // Si plus de vie → on sort tout de suite
 if ($ptVie <= 0) {
@@ -119,6 +128,10 @@ shuffle($reponses);
         <h2>Statistiques</h2>
         <p><strong>❤️ Points de vie :</strong> <?= $ptVie ?></p>
         <p><strong>🔥 Streak :</strong> <?= $streak ?></p>
+        <p><strong>Questions faciles réussis :</strong> <?= $facileReussi?></p>
+        <p><strong>Questions moyennes réussis :</strong> <?= $moyenneReussi?></p>
+        <p><strong>Questions difficiles réussis :</strong> <?= $difficileReussi?></p>
+        <p><strong>Questions magiques réussis :</strong> <?= $magieReussi?></p>
 
         <?php if ($mageProgress < 3): ?>
             <p><strong>✨ Progression mage :</strong> <?= $mageProgress ?>/3</p>
