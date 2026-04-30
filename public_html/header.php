@@ -55,7 +55,7 @@ if ($joueurHeader) {
     </div>
 
     <nav class="main-nav">
-        <a href="enigme.php">Énigme</a>
+        <a href="enigme.php">Énigma</a>
         <a href="apropos.php">À propos</a>
         <?php if ($isAdmin): ?>
     <a href="admin.php">Admin</a>

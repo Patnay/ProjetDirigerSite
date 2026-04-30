@@ -128,10 +128,6 @@ shuffle($reponses);
         <h2>Statistiques</h2>
         <p><strong>❤️ Points de vie :</strong> <?= $ptVie ?></p>
         <p><strong>🔥 Streak :</strong> <?= $streak ?></p>
-        <p><strong>Questions faciles réussis :</strong> <?= $facileReussi?></p>
-        <p><strong>Questions moyennes réussis :</strong> <?= $moyenneReussi?></p>
-        <p><strong>Questions difficiles réussis :</strong> <?= $difficileReussi?></p>
-        <p><strong>Questions magiques réussis :</strong> <?= $magieReussi?></p>
 
         <?php if ($mageProgress < 3): ?>
             <p><strong>✨ Progression mage :</strong> <?= $mageProgress ?>/3</p>

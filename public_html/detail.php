@@ -1,5 +1,6 @@
 <?php
 require_once "init.php";
+
 $isMage = false;
 
 if (isset($_SESSION["idJoueur"])) {
@@ -13,8 +14,6 @@ if (isset($_SESSION["idJoueur"])) {
     }
 }
 
-
-/* Vérifier ID */
 if (!isset($_GET["id"])) {
     header("Location: boutique.php");
     exit;
@@ -24,59 +23,90 @@ $idItem = (int)$_GET["id"];
 $produit = null;
 $type = "";
 
-/* ===== ARMURES ===== */
-$sql = "SELECT * FROM vDetailArmures WHERE idItem = ?";
-$stmt = $pdo->prepare($sql);
-$stmt->execute([$idItem]);
-$produit = $stmt->fetch(PDO::FETCH_ASSOC);
+$views = [
+    "armure" => "vDetailArmures",
+    "arme" => "vDetailArmes",
+    "potion" => "vDetailPotions",
+    "sort" => "vDetailSorts"
+];
 
-if ($produit) {
-    $type = "armure";
-}
-
-/* ===== ARMES ===== */
-if (!$produit) {
-    $sql = "SELECT * FROM vDetailArmes WHERE idItem = ?";
-    $stmt = $pdo->prepare($sql);
+foreach ($views as $typeTest => $view) {
+    $stmt = $pdo->prepare("SELECT * FROM $view WHERE idItem = ?");
     $stmt->execute([$idItem]);
     $produit = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($produit) {
-        $type = "arme";
+        $type = $typeTest;
+        break;
     }
 }
 
-/* ===== POTIONS ===== */
-if (!$produit) {
-    $sql = "SELECT * FROM vDetailPotions WHERE idItem = ?";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([$idItem]);
-    $produit = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if ($produit) {
-        $type = "potion";
-    }
-}
-
-/* ===== SORTS ===== */
-if (!$produit) {
-    $sql = "SELECT * FROM vDetailSorts WHERE idItem = ?";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([$idItem]);
-    $produit = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if ($produit) {
-        $type = "sort";
-    }
-}
-
-/* Si rien trouvé */
 if (!$produit) {
     echo "Produit introuvable";
     exit;
 }
-?>
 
+/* ===== COMMENTAIRES ===== */
+$messageCommentaire = "";
+$erreurCommentaire = "";
+$possedeItem = false;
+
+if (isset($_SESSION["idJoueur"])) {
+    $stmtPossede = $pdo->prepare("
+        SELECT 1
+        FROM Inventaires
+        WHERE idJoueur = ? AND idItem = ?
+        LIMIT 1
+    ");
+    $stmtPossede->execute([$_SESSION["idJoueur"], $idItem]);
+    $possedeItem = (bool)$stmtPossede->fetchColumn();
+}
+
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["ajouterCommentaire"])) {
+    if (!$possedeItem) {
+        $erreurCommentaire = "Vous devez posséder cet item pour commenter.";
+    } else {
+        $nbEtoiles = (int)($_POST["nbEtoiles"] ?? 0);
+        $commentaire = trim($_POST["commentaire"] ?? "");
+
+        if ($nbEtoiles < 1 || $nbEtoiles > 5) {
+            $erreurCommentaire = "La note doit être entre 1 et 5.";
+        } elseif ($commentaire === "") {
+            $erreurCommentaire = "Le commentaire ne peut pas être vide.";
+        } else {
+            $stmtCom = $pdo->prepare("
+                INSERT INTO Evaluations (idJoueur, idItem, nbEtoiles, commentaire)
+                VALUES (?, ?, ?, ?)
+                ON DUPLICATE KEY UPDATE
+                    nbEtoiles = VALUES(nbEtoiles),
+                    commentaire = VALUES(commentaire)
+            ");
+            $stmtCom->execute([
+                $_SESSION["idJoueur"],
+                $idItem,
+                $nbEtoiles,
+                $commentaire
+            ]);
+
+            $messageCommentaire = "Commentaire ajouté avec succès.";
+        }
+    }
+}
+
+$stmtCommentaires = $pdo->prepare("
+    SELECT 
+        e.idJoueur,
+        e.nbEtoiles,
+        e.commentaire,
+        j.alias
+    FROM Evaluations e
+    INNER JOIN Joueurs j ON e.idJoueur = j.idJoueur
+    WHERE e.idItem = ?
+    ORDER BY e.idJoueur DESC
+");
+$stmtCommentaires->execute([$idItem]);
+$commentaires = $stmtCommentaires->fetchAll(PDO::FETCH_ASSOC);
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -85,124 +115,152 @@ if (!$produit) {
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="stylesheet" href="css/styles.css">
 </head>
-<?php include "header.php"; ?>
 
 <body>
+
+<?php include "header.php"; ?>
+
 <main class="shop-page">
-<div class="shop-container">
+    <div class="shop-container" style="flex-direction:column; align-items:center;">
 
-    <div class="product-card" style="max-width:600px;margin:auto">
+        <div class="product-card" style="max-width:600px;margin:auto">
 
-        <div class="product-image">
-            <img src="images/<?= htmlspecialchars($produit['photo']) ?>" alt="">
+            <div class="product-image">
+                <img src="images/<?= htmlspecialchars($produit['photo']) ?>" alt="">
+            </div>
+
+            <h2><?= htmlspecialchars($produit['nom']) ?></h2>
+
+            <p class="price"><?= htmlspecialchars($produit['prix']) ?> 🪙</p>
+            <p class="stock">Stock : <?= (int)$produit['quantiteStock'] ?></p>
+
+            <hr style="margin:15px 0">
+
+            <?php if ($type === "armure"): ?>
+                <p><strong>Matière :</strong> <?= htmlspecialchars($produit['matiere']) ?></p>
+                <p><strong>Taille :</strong> <?= htmlspecialchars($produit['taille']) ?></p>
+
+            <?php elseif ($type === "arme"): ?>
+                <p><strong>Efficacité :</strong> <?= htmlspecialchars($produit['efficacite']) ?></p>
+                <p><strong>Genre :</strong> <?= htmlspecialchars($produit['genre']) ?></p>
+                <p><strong>Description :</strong> <?= htmlspecialchars($produit['description']) ?></p>
+
+            <?php elseif ($type === "potion"): ?>
+                <p><strong>Effet :</strong> <?= htmlspecialchars($produit['effet']) ?></p>
+                <p><strong>Durée :</strong> <?= htmlspecialchars($produit['duree']) ?></p>
+
+            <?php elseif ($type === "sort"): ?>
+                <p><strong>Rareté :</strong> <?= htmlspecialchars($produit['rarete']) ?></p>
+                <p><strong>Instantané :</strong> <?= $produit['estInstantane'] ? "Oui" : "Non" ?></p>
+                <p><strong>Type :</strong> <?= htmlspecialchars($produit['typeSort']) ?></p>
+                <p><strong>Description :</strong> <?= htmlspecialchars($produit['description']) ?></p>
+                <p><strong>Vie :</strong> <?= htmlspecialchars($produit['pVie']) ?></p>
+                <p><strong>Dégâts :</strong> <?= htmlspecialchars($produit['pDegat']) ?></p>
+            <?php endif; ?>
+
+            <hr style="margin:15px 0">
+
+            <?php if ((int)$produit['quantiteStock'] > 0): ?>
+                <a class="add-link add-to-cart-btn"
+                   href="#"
+                   data-id="<?= (int)$produit['idItem'] ?>"
+                   data-type="<?= $type ?>"
+                   data-ismage="<?= $isMage ? '1' : '0' ?>">
+                    Ajouter au panier
+                </a>
+            <?php else: ?>
+                <p style="color:red">Rupture de stock</p>
+            <?php endif; ?>
+
         </div>
 
-        <h2><?= htmlspecialchars($produit['nom']) ?></h2>
+        <div class="product-card comments-card" style="max-width:600px;margin:25px auto 0 auto;">
 
-        <p class="price"><?= $produit['prix'] ?> 🪙</p>
-        <p class="stock">Stock : <?= $produit['quantiteStock'] ?></p>
+            <h2>Commentaires</h2>
 
-        <hr style="margin:15px 0">
+            <?php if ($messageCommentaire !== ""): ?>
+                <p class="message-info"><?= htmlspecialchars($messageCommentaire) ?></p>
+            <?php endif; ?>
 
-        <!-- ===== DETAILS SELON TYPE ===== -->
+            <?php if ($erreurCommentaire !== ""): ?>
+                <p class="message-erreur"><?= htmlspecialchars($erreurCommentaire) ?></p>
+            <?php endif; ?>
 
-        <?php if ($type === "armure"): ?>
-            <p><strong>Matière :</strong> <?= $produit['matiere'] ?></p>
-            <p><strong>Taille :</strong> <?= $produit['taille'] ?></p>
+            <?php if ($possedeItem): ?>
+                <button type="button" class="filter-btn" id="toggleCommentForm">
+                    Ajouter un commentaire
+                </button>
 
-        <?php elseif ($type === "arme"): ?>
-            <p><strong>Efficacité :</strong> <?= $produit['efficacite'] ?></p>
-            <p><strong>Genre :</strong> <?= $produit['genre'] ?></p>
-            <p><strong>Description :</strong> <?= $produit['description'] ?></p>
+                <div id="commentFormContainer" style="display:none; margin-top:15px;">
+                    <form method="POST" action="detail.php?id=<?= (int)$idItem ?>" class="comment-form">
+                        <label for="nbEtoiles">Note :</label>
+                        <select name="nbEtoiles" id="nbEtoiles" required>
+                            <option value="5">5 étoiles</option>
+                            <option value="4">4 étoiles</option>
+                            <option value="3">3 étoiles</option>
+                            <option value="2">2 étoiles</option>
+                            <option value="1">1 étoile</option>
+                        </select>
 
-        <?php elseif ($type === "potion"): ?>
-            <p><strong>Effet :</strong> <?= $produit['effet'] ?></p>
-            <p><strong>Durée :</strong> <?= $produit['duree'] ?></p>
+                        <label for="commentaire">Commentaire :</label>
+                        <textarea name="commentaire" id="commentaire" required></textarea>
 
-        <?php elseif ($type === "sort"): ?>
-            <p><strong>Rareté :</strong> <?= $produit['rarete'] ?></p>
-            <p><strong>Instantané :</strong> <?= $produit['estInstantane'] ? "Oui" : "Non" ?></p>
-            <p><strong>Type :</strong> <?= $produit['typeSort'] ?></p>
-            <p><strong>Description :</strong> <?= $produit['description'] ?></p>
-            <p><strong>Vie :</strong> <?= $produit['pVie'] ?></p>
-            <p><strong>Dégâts :</strong> <?= $produit['pDegat'] ?></p>
-        <?php endif; ?>
+                        <button type="submit" name="ajouterCommentaire" class="filter-btn">
+                            Envoyer
+                        </button>
+                    </form>
+                </div>
+            <?php else: ?>
+                <p class="stock">Vous devez posséder cet item pour ajouter un commentaire.</p>
+            <?php endif; ?>
 
-        <hr style="margin:15px 0">
+            <hr style="margin:20px 0">
 
-        <!-- ACTION -->
-        <?php if ($produit['quantiteStock'] > 0): ?>
-            <a class="add-link add-to-cart-btn"
-                href="#"
-                data-id="<?= $produit['idItem'] ?>"
-                data-type="<?= $type ?>"
-                data-ismage="<?= $isMage ? '1' : '0' ?>">
-                Ajouter au panier
-            </a>
+            <div class="comments-scroll">
+                <?php if (!empty($commentaires)): ?>
+                    <?php foreach ($commentaires as $com): ?>
+                        <div class="comment-box">
+                            <p>
+                                <strong><?= htmlspecialchars($com["alias"]) ?></strong>
+                                — ⭐ <?= (int)$com["nbEtoiles"] ?>/5
+                            </p>
 
-        <?php else: ?>
-            <p style="color:red">Rupture de stock</p>
-        <?php endif; ?>
+                            <p><?= htmlspecialchars($com["commentaire"]) ?></p>
+
+                            <?php if (isset($_SESSION["idJoueur"]) && (int)$com["idJoueur"] === (int)$_SESSION["idJoueur"]): ?>
+                                <form method="POST" action="scripts/php/supprimerCommentaire.php" style="margin-top:8px;">
+                                    <input type="hidden" name="idItem" value="<?= (int)$idItem ?>">
+                                    <button type="submit" class="delete-btn">Supprimer</button>
+                                </form>
+                            <?php endif; ?>
+                        </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p>Aucun commentaire pour cet item.</p>
+                <?php endif; ?>
+            </div>
+
+        </div>
 
     </div>
 
-</div>
-<!-- Bouton musique -->
-<img id="musicToggle" 
-     src="image/sonOff.jpg" 
-     style="
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        width: 60px;
-        height: 60px;
-        cursor: pointer;
-        z-index: 9999;
-     ">
-<audio id="bgMusic" loop>
-    <source src="musique/academy.mp3" type="audio/mp3">
-</audio>
-<script>
-const music = document.getElementById("bgMusic");
-const toggleBtn = document.getElementById("musicToggle");
+    <img id="musicToggle"
+         src="image/sonOff.jpg"
+         style="
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            cursor: pointer;
+            z-index: 9999;
+         ">
 
-let musicOn = false;
-
-toggleBtn.addEventListener("click", () => {
-    musicOn = !musicOn;
-
-    if (musicOn) {
-        music.play();
-        toggleBtn.src = "image/sonOn.jpg";
-    } else {
-        music.pause();
-        toggleBtn.src = "image/sonOff.jpg";
-    }
-});
-</script>    
-
-        <!-- Celui pour le criss de message ... zzzz -->
-<script>
-document.querySelector(".add-to-cart-btn")?.addEventListener("click", function(e) {
-    e.preventDefault();
-
-    const isMage = this.dataset.ismage === "1";
-    const type = this.dataset.type;
-    const id = this.dataset.id;
-
-    // Si c'est un sort et que le joueur n'est pas mage → popup Elden Ring
-    if (type === "sort" && !isMage) {
-        document.getElementById("sortMageAlert").style.display = "flex";
-        return;
-    }
-
-    // Sinon → ajouter au panier normalement
-    window.location.href = "scripts/php/ajouterPanier.php?id=" + id;
-});
-</script>
-
+    <audio id="bgMusic" loop>
+        <source src="musique/academy.mp3" type="audio/mp3">
+    </audio>
 </main>
-        <!-- Pour le message de non-mage RAAAAAAAAAAAAAH BIENTOT DORMIR MIMIMIMERNWNRKWQDEBEJWNDQKBEWQNRFEWQFKEWJDQWDBVFEKWJDQWBDJK-->
+
 <div id="sortMageAlert" style="
     display:none;
     position:fixed;
@@ -222,7 +280,7 @@ document.querySelector(".add-to-cart-btn")?.addEventListener("click", function(e
         text-align:center;
         width:360px;
         color:white;
-        font-family: 'Agmena Pro', serif;
+        font-family: Arial, Helvetica, sans-serif;
     ">
         <h2 style="margin-bottom:15px; color:#d4af37;">Attention</h2>
 
@@ -234,7 +292,6 @@ document.querySelector(".add-to-cart-btn")?.addEventListener("click", function(e
         <button onclick="document.getElementById('sortMageAlert').style.display='none'"
             style="
                 padding:10px 20px;
-                margin-right:10px;
                 background:#444;
                 color:white;
                 border:none;
@@ -243,8 +300,49 @@ document.querySelector(".add-to-cart-btn")?.addEventListener("click", function(e
             ">
             Fermer
         </button>
-        </button>
     </div>
 </div>
+
+<script>
+const music = document.getElementById("bgMusic");
+const toggleBtn = document.getElementById("musicToggle");
+
+let musicOn = false;
+
+toggleBtn?.addEventListener("click", () => {
+    musicOn = !musicOn;
+
+    if (musicOn) {
+        music.play();
+        toggleBtn.src = "image/sonOn.jpg";
+    } else {
+        music.pause();
+        toggleBtn.src = "image/sonOff.jpg";
+    }
+});
+
+document.querySelector(".add-to-cart-btn")?.addEventListener("click", function(e) {
+    e.preventDefault();
+
+    const isMage = this.dataset.ismage === "1";
+    const type = this.dataset.type;
+    const id = this.dataset.id;
+
+    if (type === "sort" && !isMage) {
+        document.getElementById("sortMageAlert").style.display = "flex";
+        return;
+    }
+
+    window.location.href = "scripts/php/ajouterPanier.php?id=" + id;
+});
+
+const btn = document.getElementById("toggleCommentForm");
+const form = document.getElementById("commentFormContainer");
+
+btn?.addEventListener("click", () => {
+    form.style.display = form.style.display === "none" ? "block" : "none";
+});
+</script>
+
 </body>
 </html>
