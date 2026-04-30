@@ -128,16 +128,43 @@ shuffle($reponses);
         <h2>Statistiques</h2>
         <p><strong>❤️ Points de vie :</strong> <?= $ptVie ?></p>
         <p><strong>🔥 Streak :</strong> <?= $streak ?></p>
-        <p><strong>Questions faciles réussis :</strong> <?= $facileReussi?></p>
-        <p><strong>Questions moyennes réussis :</strong> <?= $moyenneReussi?></p>
-        <p><strong>Questions difficiles réussis :</strong> <?= $difficileReussi?></p>
-        <p><strong>Questions magiques réussi :</strong> <?= $magieReussi?></p>
 
         <?php if ($mageProgress < 3): ?>
             <p><strong>✨ Progression mage :</strong> <?= $mageProgress ?>/3</p>
         <?php else: ?>
             <p class="mage-complete">✨ Vous êtes un mage !</p>
         <?php endif; ?>
+
+    <section id="reponses">
+    <h4>Nombre de bonnes réponses selon la difficulté:</h4>
+
+    <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="100" cy="100" r="80" fill="none" stroke="#ddd" stroke-width="5" />
+
+        <path data-legende="liRouge" class="getClass"
+              d="M100,100 L100,20 A80,80 0 0,1 180,100 Z"
+              fill="#FF5733" />
+
+        <path data-legende="liJaune" class="getClass"
+              d="M100,100 L130,25.7 A80,80 0 0,1 100,180 Z"
+              fill="#FFC300" />
+
+        <path data-legende="liBleu" class="getClass"
+              d="M100,100 L180,100 A80,80 0 0,1 20,100 Z"
+              fill="#3498DB" />
+
+        <path data-legende="liVert" class="getClass"
+              d="M100,100 L100,180 A80,80 0 0,1 100,20 Z"
+              fill="#27AE60" />
+    </svg>
+
+    <ul>
+        <li id="liVert"><span id="vert"></span> Facile</li>
+        <li id="liBleu"><span id="bleu"></span> Moyenne</li>
+        <li id="liJaune"><span id="jaune"></span> Difficile</li>
+        <li id="liRouge"><span id="rouge"></span> Magie</li>
+    </ul>
+    </section>
     </div>
 
     <p>
