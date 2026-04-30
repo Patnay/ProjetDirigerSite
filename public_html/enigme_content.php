@@ -65,7 +65,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $repStatus = ($result["estBonne"] == 1) ? "GOOD" : "BAD";
 }
 
-$sqlStats = "SELECT COUNT(s.estReussi) AS enigmesReussi , j.ptVie, j.streak, j.nbEnigmeMage, e.difficulte
+$sqlStats = "SELECT COUNT(s.estReussi) AS enigmesReussi, j.ptVie, j.streak, j.nbEnigmeMage, e.difficulte
 FROM Joueurs j 
 INNER JOIN Statistiques s ON j.idJoueur = s.idJoueur
 INNER JOIN Enigmes e ON s.idEnigme = e.idEnigme
@@ -78,10 +78,10 @@ $stats = $stmtStats->fetchAll(PDO::FETCH_ASSOC);
 $ptVie = $stats[0]["ptVie"];
 $streak = $stats[0]["streak"];
 $mageProgress = $stats[0]["nbEnigmeMage"];
-$facileReussi = $stats[0]["enigmesReussi" == "F"];
-$moyenneReussi = $stats[0]["enigmesReussi" == "M"];
-$difficileReussi = $stats[0]["enigmesReussi" == "D"];
-$magieReussi = $stats[0]["enigmesReussi" == "A"];
+$facileReussi = $stats[2]["enigmesReussi"];
+$moyenneReussi = $stats[3]["enigmesReussi"];
+$difficileReussi = $stats[1]["enigmesReussi"];
+$magieReussi = $stats[0]["enigmesReussi"];
 
 // Si plus de vie → on sort tout de suite
 if ($ptVie <= 0) {
@@ -139,11 +139,12 @@ shuffle($reponses);
             <p class="mage-complete">✨ Vous êtes un mage !</p>
         <?php endif; ?>
 
+        <br>
     <section id="reponses">
     <h4>Nombre de bonnes réponses selon la difficulté:</h4>
 
     <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="100" cy="100" r="80" fill="none" stroke="#ddd" stroke-width="5" />
+        <circle cx="100" cy="100" r="80" fill="none" stroke="#ddd" stroke-width="3" />
 
         <path data-legende="liRouge" class="getClass"
               d="M100,100 L100,20 A80,80 0 0,1 180,100 Z"
