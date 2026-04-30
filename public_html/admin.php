@@ -84,7 +84,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
             <div class="filter-block">
                 <p><strong>Section :</strong></p>
-                <p>Création d'énigmes</p>
+                <select>
+                    <option value="AddEnigme">Création d'énigmes</option>
+                    <option value="AddItem">Ajouter item</option>
+                    <option value="CheckUser">Surveillance Utilisateurs</option>
+                </select>
             </div>
 
             <div class="filter-block">
@@ -95,7 +99,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <section class="products-grid" style="grid-template-columns:1fr; max-width:700px;">
             <div class="product-card">
 
-                <h3>Ajouter une énigme</h3>
+                
 
                 <?php if ($message !== ""): ?>
                     <p class="message-info"><?= htmlspecialchars($message) ?></p>
@@ -105,64 +109,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     <p class="message-erreur"><?= htmlspecialchars($erreur) ?></p>
                 <?php endif; ?>
 
-                <form action="admin.php" method="POST" class="profile-form">
-
-                    <label for="question">Question :</label>
-                    <input
-                        type="text"
-                        id="question"
-                        name="question"
-                        required
-                        value="<?= htmlspecialchars($_POST["question"] ?? "") ?>"
-                    >
-                    <label for="valeurD">Difficulter Lettre (F,M,D,A) :</label>
-                    <input
-                     type="text"
-                    id="valeurD"
-                    name="valeurD"
-                    required
-                    value="<?= htmlspecialchars($_POST["valeurD"] ?? "") ?>"
-                    >
-                    <label for="bonneReponse">Mauvaise réponse 1 :</label>
-                    <input
-                        type="text"
-                        id="bonneReponse"
-                        name="bonneReponse"
-                        required
-                        value="<?= htmlspecialchars($_POST["bonneReponse"] ?? "") ?>"
-                    >
-
-                    <label for="mauvaise1">Mauvaise réponse 2 :</label>
-                    <input
-                        type="text"
-                        id="mauvaise1"
-                        name="mauvaise1"
-                        required
-                        value="<?= htmlspecialchars($_POST["mauvaise1"] ?? "") ?>"
-                    >
-
-                    <label for="mauvaise2">Mauvaise réponse 3 :</label>
-                    <input
-                        type="text"
-                        id="mauvaise2"
-                        name="mauvaise2"
-                        required
-                        value="<?= htmlspecialchars($_POST["mauvaise2"] ?? "") ?>"
-                    >
-
-                    <label for="mauvaise3">Bonne réponse :</label>
-                    <input
-                        type="text"
-                        id="mauvaise3"
-                        name="mauvaise3"
-                        required
-                        value="<?= htmlspecialchars($_POST["mauvaise3"] ?? "") ?>"
-                    >
-
-                    <button type="submit" class="filter-btn" style="width:100%;">
-                        Ajouter l'énigme
-                    </button>
-                </form>
+                <?php 
+                include("scripts/php/formulaire/addEnigmeForm.php");
+                include("scripts/php/formulaire/addItemBoutiqueA.php");
+                include("scripts/php/formulaire/addItemBoutiqueS.php");
+                include("scripts/php/formulaire/addItemBoutiqueP.php");
+                include("scripts/php/formulaire/addItemBoutiqueR.php");
+                ?>
 
             </div>
         </section>
