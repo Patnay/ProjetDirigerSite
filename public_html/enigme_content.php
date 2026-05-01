@@ -78,10 +78,68 @@ $stats = $stmtStats->fetchAll(PDO::FETCH_ASSOC);
 $ptVie = $stats[0]["ptVie"];
 $streak = $stats[0]["streak"];
 $mageProgress = $stats[0]["nbEnigmeMage"];
-$facileReussi = $stats[2]["enigmesReussi"];
-$moyenneReussi = $stats[3]["enigmesReussi"];
-$difficileReussi = $stats[1]["enigmesReussi"];
-$magieReussi = $stats[0]["enigmesReussi"];
+$facileReussi = 0;
+$moyenneReussi = 0;
+$difficileReussi = 0;
+$magieReussi = 0;
+
+foreach($stats as $row){
+    switch($row["difficulte"]){
+        case "F": $facileReussi = $row["enigmesReussi"]; break;
+        case "M": $moyenneReussi = $row["enigmesReussi"]; break;
+        case "D": $difficileReussi = $row["enigmesReussi"]; break;
+        case "A": $magieReussi = $row["enigmesReussi"]; break;
+    }
+}
+
+$data = [
+    "Facile" => $facileReussi,
+    "Moyenne" => $moyenneReussi,
+    "Difficile" => $difficileReussi,
+    "Magie" => $magieReussi
+];
+
+$total = array_sum($data);
+
+$colors = [
+    "Facile" => "#27AE60",
+    "Moyenne" => "#3498DB",
+    "Difficile" => "#FFC300",
+    "Magie" => "#FF5733"
+];
+
+function arcPath($cx, $cy, $r, $startAngle, $endAngle){
+    $sweep = $endAngle - $startAngle;
+    if($sweep < 0){
+        $sweep += 360;
+    }
+
+    $startX = $cx + $r * cos(deg2rad($startAngle));
+    $startY = $cy + $r * sin(deg2rad($startAngle));
+    $endX = $cx + $r * cos(deg2rad($endAngle));
+    $endY = $cy + $r * sin(deg2rad($endAngle));
+
+    $largeArc = ($sweep > 180) ? 1 : 0;
+    return "M$cx,$cy L$startX,$startY A$r,$r 0 $largeArc,1 $endX,$endY Z";
+}
+
+$cx = 100;
+$cy = 100;
+$r = 80;
+
+$start = 0;
+$paths = "";
+
+foreach($data as $label => $value){
+    if($value == 0) continue;
+
+    $angle = ($value/$total) * 360;
+    $end = $start + $angle;
+
+    $d = arcPath($cx, $cy, $r, $start, $end);
+    $paths .= "<path fill='{$colors[$label]}' d='$d' data-legende='$label'></path>";
+    $start = $end;
+}
 
 // Si plus de vie → on sort tout de suite
 if ($ptVie <= 0) {
@@ -139,31 +197,18 @@ shuffle($reponses);
     <section id="reponses">
     <h4>Nombre de bonnes réponses selon la difficulté:</h4>
 
-    <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="100" cy="100" r="80" fill="none" stroke="#ddd" stroke-width="3" />
-
-        <path data-legende="liRouge" class="getClass"
-              d="M100,100 L100,20 A80,80 0 0,1 180,100 Z"
-              fill="#FF5733" />
-
-        <path data-legende="liJaune" class="getClass"
-              d="M100,100 L130,25.7 A80,80 0 0,1 100,180 Z"
-              fill="#FFC300" />
-
-        <path data-legende="liBleu" class="getClass"
-              d="M100,100 L180,100 A80,80 0 0,1 20,100 Z"
-              fill="#3498DB" />
-
-        <path data-legende="liVert" class="getClass"
-              d="M100,100 L100,180 A80,80 0 0,1 100,20 Z"
-              fill="#27AE60" />
+    <svg width="200" height="200" viewBox="0 0 200 200"  xmlns="http://www.w3.org/2000/svg">
+        <?= $paths?>
     </svg>
 
+
+    <br>
+    <br>
     <ul>
-        <li id="liVert"><span id="vert"></span> Facile</li>
-        <li id="liBleu"><span id="bleu"></span> Moyenne</li>
-        <li id="liJaune"><span id="jaune"></span> Difficile</li>
-        <li id="liRouge"><span id="rouge"></span> Magie</li>
+        <li id="liVert"><span id="vert"></span> Facile: <?= $facileReussi?></li>
+        <li id="liBleu"><span id="bleu"></span> Moyenne: <?= $moyenneReussi?></li>
+        <li id="liJaune"><span id="jaune"></span> Difficile: <?= $difficileReussi?></li>
+        <li id="liRouge"><span id="rouge"></span> Magie: <?= $magieReussi?></li>
     </ul>
     </section>
     </div>
