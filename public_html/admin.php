@@ -207,7 +207,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 }
 
 // Charger la liste des joueurs pour la section CheckUser
-$joueurs = $pdo->query("SELECT idJoueur, alias, prenom, nom, points, nbOr, nbArgent, nbBronze, estAdmin FROM Joueurs ORDER BY alias ASC")->fetchAll(PDO::FETCH_ASSOC);
+$joueurs = $pdo->query("SELECT idJoueur, alias, prenom, nom, ptVie, nbOr, nbArgent, nbBronze, estAdmin FROM Joueurs ORDER BY alias ASC")->fetchAll(PDO::FETCH_ASSOC);
 
 if (($_POST["_ajax"] ?? "") === "1") {
     header('Content-Type: application/json');
@@ -313,19 +313,25 @@ if (($_POST["_ajax"] ?? "") === "1") {
                         <tr style="border-bottom:1px solid #444;">
                             <td style="padding:10px;"><?= htmlspecialchars($j['alias']) ?></td>
                             <td style="padding:10px;"><?= htmlspecialchars($j['prenom'] . ' ' . $j['nom']) ?></td>
-                            <td style="padding:10px;"><?= (int)$j['points'] ?></td>
+                            <td style="padding:10px;"><?= (int)$j['ptVie'] ?></td>
                             <td style="padding:10px;">
                                 🟡 <?= (int)$j['nbOr'] ?> &nbsp;
                                 ⚪ <?= (int)$j['nbArgent'] ?> &nbsp;
                                 🟤 <?= (int)$j['nbBronze'] ?>
                             </td>
                             <td style="padding:10px;">
-                                <?= (int)$j['estAdmin'] === 1 ? ' Admin' : 'Joueur' ?>
+                                <?= (int)$j['estAdmin'] === 1 ? ' 🛡️Admin' : 'Joueur' ?>
                             </td>
                             <td style="padding:10px;">
                                 <a href="inventaire.php?joueur=<?= (int)$j['idJoueur'] ?>"
                                    class="filter-btn" style="padding:6px 14px; white-space:nowrap;">
                                     Voir inventaire
+                                </a>
+                            </td>
+                            <td>
+                                  <a href="deleteJoueurAdmin.php?joueur=<?= (int)$j['idJoueur'] ?>"
+                                   class="filter-btn" style="padding:6px 14px; white-space:nowrap;">
+                                    Supprimier Compte
                                 </a>
                             </td>
                         </tr>
@@ -467,7 +473,7 @@ if (($_POST["_ajax"] ?? "") === "1") {
                         afficherMessage(json.message, true);
                         this.reset();
                     } else {
-                        afficherMessage(json.error || "Erreur inconnue — voir console (F12).", false);
+                        afficherMessage(json.error || "Erreur inconnue.", false);
                     }
                 } catch (err) {
                     afficherMessage("Erreur réseau : " + err.message, false);

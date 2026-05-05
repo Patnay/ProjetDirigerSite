@@ -88,7 +88,7 @@ $inventaire = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <div class="filter-block">
                 <p>Joueur :<br><strong><?= htmlspecialchars($aliasVu) ?></strong></p>
                 <?php if ($vueAdmin): ?>
-                    <p style="color:#f0c040; font-size:0.85em;">👑 Vue admin</p>
+                    <p style="color:#f0c040; font-size:0.85em;">🛡️ Vue admin</p>
                 <?php endif; ?>
             </div>
 

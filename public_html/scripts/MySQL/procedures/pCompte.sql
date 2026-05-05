@@ -1,3 +1,4 @@
+USE dbdarquest6;
 /*
  Auteur Patrice Paul
  Derniere modification : 17 mars 2026
@@ -98,7 +99,24 @@ DELIMITER ;
 SELECT * FROM Joueurs ;
 
 
+DROP PROCEDURE IF EXISTS suppCompte;
+DELIMITER |
 
-
-
-
+CREATE PROCEDURE suppCompte(
+    IN  pIdJoueur  INT
+)
+BEGIN
+	
+DELETE FROM Evaluations WHERE idJoueur = pIdJoueur;
+DELETE FROM Paniers WHERE idJoueur = pIdJoueur;
+DELETE FROM EffetsJoueurs WHERE idJoueur = pIdJoueur;
+DELETE FROM DemandesArgent WHERE idJoueur = pIdJoueur;
+DELETE FROM Inventaires WHERE idJoueur = pIdJoueur;
+DELETE FROM Statistiques WHERE idJoueur = pIdJoueur;
+DELETE FROM Joueurs WHERE idJoueur = pIdJoueur;
+    COMMIT;
+END
+|
+DELIMITER ;
+CALL suppCompte(56);
+SELECT * FROM Joueurs ;

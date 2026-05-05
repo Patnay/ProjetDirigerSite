@@ -65,7 +65,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $repStatus = ($result["estBonne"] == 1) ? "GOOD" : "BAD";
 }
 
-$sqlStats = "SELECT COUNT(s.estReussi) AS enigmesReussi, j.ptVie, j.streak, j.nbEnigmeMage, e.difficulte
+$sqlStats = "SELECT COUNT(s.estReussi) AS enigmesReussi, j.streak, j.nbEnigmeMage, e.difficulte
 FROM Joueurs j 
 INNER JOIN Statistiques s ON j.idJoueur = s.idJoueur
 INNER JOIN Enigmes e ON s.idEnigme = e.idEnigme
@@ -75,13 +75,19 @@ $stmtStats = $pdo->prepare($sqlStats);
 $stmtStats->execute([$idJoueur]);
 $stats = $stmtStats->fetchAll(PDO::FETCH_ASSOC);
 
-$ptVie = $stats[0]["ptVie"];
+// $ptVie = $stats[0]["ptVie"];
 $streak = $stats[0]["streak"];
 $mageProgress = $stats[0]["nbEnigmeMage"];
 $facileReussi = 0;
 $moyenneReussi = 0;
 $difficileReussi = 0;
 $magieReussi = 0;
+
+$sql="SELECT ptVie FROM Joueurs WHERE idJoueur = ?;";
+$stmt = $pdo->prepare($sql);
+$stmt->execute([$idJoueur]);
+$ptVie_ = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$ptVie = $ptVie_[0]["ptVie"];
 
 foreach($stats as $row){
     switch($row["difficulte"]){
