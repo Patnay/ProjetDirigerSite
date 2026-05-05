@@ -308,7 +308,7 @@ function renderShopContent($produits, $categories, $filtreActif, $totalPages, $p
                     <div class="product-card">
 
                         <div class="product-image">
-                            <img src="images/<?= htmlspecialchars($produit['photo']) ?>" alt="">
+                            <img src="image/<?= htmlspecialchars($produit['photo']) ?>" alt="">
                         </div>
 
                         <h3><?= htmlspecialchars($produit['nom']) ?></h3>

@@ -1,5 +1,6 @@
 <h3>Ajouter un Sort</h3>
-<form action="admin.php" method="POST" class="profile-form">
+<form action="admin.php" method="POST" enctype="multipart/form-data" class="profile-form">
+    <input type="hidden" name="typeForm" value="sort">
 
     <label for="nom">Nom</label>
     <input type="text" id="nom" name="nom" required value="<?= htmlspecialchars($_POST["name"] ?? "") ?>">
@@ -31,3 +32,4 @@
     <button type="submit" class="filter-btn" style="width:100%;">
         Publier le Sort
     </button>
+</form>

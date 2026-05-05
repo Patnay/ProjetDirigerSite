@@ -1,16 +1,18 @@
 <?php
 require_once "init.php";
 
-$isMage = false;
+$isMage   = false;
+$isAdmin  = false;
 
 if (isset($_SESSION["idJoueur"])) {
-    $sqlMage = "SELECT nbEnigmeMage FROM Joueurs WHERE idJoueur = ?";
+    $sqlMage = "SELECT nbEnigmeMage, estAdmin FROM Joueurs WHERE idJoueur = ?";
     $stmtMage = $pdo->prepare($sqlMage);
     $stmtMage->execute([$_SESSION["idJoueur"]]);
     $mageData = $stmtMage->fetch(PDO::FETCH_ASSOC);
 
-    if ($mageData && $mageData["nbEnigmeMage"] >= 3) {
-        $isMage = true;
+    if ($mageData) {
+        if ($mageData["nbEnigmeMage"] >= 3) $isMage  = true;
+        if ((int)$mageData["estAdmin"] === 1) $isAdmin = true;
     }
 }
 
@@ -126,7 +128,7 @@ $commentaires = $stmtCommentaires->fetchAll(PDO::FETCH_ASSOC);
         <div class="product-card" style="max-width:600px;margin:auto">
 
             <div class="product-image">
-                <img src="images/<?= htmlspecialchars($produit['photo']) ?>" alt="">
+                <img src="image/<?= htmlspecialchars($produit['photo']) ?>" alt="">
             </div>
 
             <h2><?= htmlspecialchars($produit['nom']) ?></h2>
@@ -227,10 +229,16 @@ $commentaires = $stmtCommentaires->fetchAll(PDO::FETCH_ASSOC);
 
                             <p><?= htmlspecialchars($com["commentaire"]) ?></p>
 
-                            <?php if (isset($_SESSION["idJoueur"]) && (int)$com["idJoueur"] === (int)$_SESSION["idJoueur"]): ?>
+                            <?php
+                            $estSonCommentaire = isset($_SESSION["idJoueur"]) && (int)$com["idJoueur"] === (int)$_SESSION["idJoueur"];
+                            if ($estSonCommentaire || $isAdmin):
+                            ?>
                                 <form method="POST" action="scripts/php/supprimerCommentaire.php" style="margin-top:8px;">
-                                    <input type="hidden" name="idItem" value="<?= (int)$idItem ?>">
-                                    <button type="submit" class="delete-btn">Supprimer</button>
+                                    <input type="hidden" name="idItem"         value="<?= (int)$idItem ?>">
+                                    <input type="hidden" name="idJoueurCible"  value="<?= (int)$com["idJoueur"] ?>">
+                                    <button type="submit" class="delete-btn">
+                                        <?= $isAdmin && !$estSonCommentaire ? "🗑 Supprimer (admin)" : "Supprimer" ?>
+                                    </button>
                                 </form>
                             <?php endif; ?>
                         </div>

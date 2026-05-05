@@ -17,13 +17,37 @@ if (empty($_SESSION["idJoueur"])) {
     exit;
 }
 
-$idJoueur = (int)$_SESSION["idJoueur"];
+$idJoueurSession = (int)$_SESSION["idJoueur"];
+
+// Vérifier si admin
+$stmtA = $pdo->prepare("SELECT estAdmin, alias FROM Joueurs WHERE idJoueur = ?");
+$stmtA->execute([$idJoueurSession]);
+$sessionData = $stmtA->fetch(PDO::FETCH_ASSOC);
+$isAdminInv  = (int)($sessionData["estAdmin"] ?? 0) === 1;
+
+// L'admin peut voir l'inventaire d'un autre joueur via ?joueur=ID
+$idJoueur  = $idJoueurSession;
+$aliasVu   = $sessionData["alias"] ?? "";
+$vueAdmin  = false;
+
+if ($isAdminInv && isset($_GET["joueur"])) {
+    $idJoueur = (int)$_GET["joueur"];
+    $stmtAlias = $pdo->prepare("SELECT alias, prenom, nom FROM Joueurs WHERE idJoueur = ?");
+    $stmtAlias->execute([$idJoueur]);
+    $joueurVu = $stmtAlias->fetch(PDO::FETCH_ASSOC);
+    if ($joueurVu) {
+        $aliasVu  = $joueurVu["alias"] . " (" . $joueurVu["prenom"] . " " . $joueurVu["nom"] . ")";
+        $vueAdmin = true;
+    } else {
+        $idJoueur = $idJoueurSession; // Joueur introuvable, retour à soi-même
+    }
+}
 
 /* =========================
    RÉCUPÉRER INVENTAIRE
 ========================= */
 $sql = "
-SELECT 
+SELECT
     Items.idItem,
     Items.nom,
     Items.prix,
@@ -62,14 +86,18 @@ $inventaire = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <h2>Inventaire</h2>
 
             <div class="filter-block">
-                <p>
-                    Joueur :
-                    <strong><?= htmlspecialchars($_SESSION["alias"] ?? "") ?></strong>
-                </p>
+                <p>Joueur :<br><strong><?= htmlspecialchars($aliasVu) ?></strong></p>
+                <?php if ($vueAdmin): ?>
+                    <p style="color:#f0c040; font-size:0.85em;">👑 Vue admin</p>
+                <?php endif; ?>
             </div>
 
             <div class="filter-block">
-                <a href="boutique.php" class="reset-btn">Retour boutique</a>
+                <?php if ($vueAdmin): ?>
+                    <a href="admin.php" class="reset-btn">Retour admin</a>
+                <?php else: ?>
+                    <a href="boutique.php" class="reset-btn">Retour boutique</a>
+                <?php endif; ?>
             </div>
         </aside>
 
@@ -98,24 +126,20 @@ $inventaire = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         </p>
 
                         <div class="product-actions" style="flex-wrap:wrap; gap:10px;">
-    <a href="detail.php?id=<?= (int)$item['idItem'] ?>">Detail</a>
+                            <a href="detail.php?id=<?= (int)$item['idItem'] ?>">Detail</a>
 
-    <a href="vendre.php?id=<?= (int)$item['idItem'] ?>" class="add-link">
-        Vendre
-    </a>
+                            <?php if (!$vueAdmin): ?>
+                                <a href="vendre.php?id=<?= (int)$item['idItem'] ?>" class="add-link">Vendre</a>
 
-    <?php if (!empty($item["effet"])): ?>
-        <a href="scripts/php/utiliserPotion.php?idItem=<?= (int)$item['idItem'] ?>" class="add-link">
-            Utiliser
-        </a>
-    <?php endif; ?>
+                                <?php if (!empty($item["effet"])): ?>
+                                    <a href="scripts/php/utiliserPotion.php?idItem=<?= (int)$item['idItem'] ?>" class="add-link">Utiliser</a>
+                                <?php endif; ?>
 
-    <?php if (($item["typeItem"] ?? "") === "S"): ?>
-        <a href="scripts/php/utiliserSort.php?idItem=<?= (int)$item['idItem'] ?>" class="add-link">
-            Utiliser
-        </a>
-    <?php endif; ?>
-</div>
+                                <?php if (($item["typeItem"] ?? "") === "S"): ?>
+                                    <a href="scripts/php/utiliserSort.php?idItem=<?= (int)$item['idItem'] ?>" class="add-link">Utiliser</a>
+                                <?php endif; ?>
+                            <?php endif; ?>
+                        </div>
 
                     </div>
                 <?php endforeach; ?>

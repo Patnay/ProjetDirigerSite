@@ -1,5 +1,6 @@
 <h3>Ajouter une énigme</h3>
 <form action="admin.php" method="POST" class="profile-form">
+    <input type="hidden" name="typeForm" value="enigme">
 
     <label for="question">Question :</label>
     <input type="text" id="question" name="question" required value="<?= htmlspecialchars($_POST["question"] ?? "") ?>">
