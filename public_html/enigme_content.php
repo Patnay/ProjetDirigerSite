@@ -135,8 +135,14 @@ $r = 80;
 
 $start = 0;
 $paths = "";
+$nonZero = array_filter($data, fn($v) => $v > 0);
 
-foreach($data as $label => $value){
+if(count($nonZero) === 1){
+    $label = array_key_first($nonZero);
+    $color = $colors[$label];
+    $paths = "<circle cx='$cx' cy='$cy' r='$r' fill='$color'></circle>";
+}else{
+    foreach($data as $label => $value){
     if($value == 0) continue;
 
     $angle = ($value/$total) * 360;
@@ -145,6 +151,7 @@ foreach($data as $label => $value){
     $d = arcPath($cx, $cy, $r, $start, $end);
     $paths .= "<path fill='{$colors[$label]}' d='$d' data-legende='$label'></path>";
     $start = $end;
+   }
 }
 
 // Si plus de vie → on sort tout de suite
