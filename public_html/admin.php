@@ -207,7 +207,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 }
 
 // Charger la liste des joueurs pour la section CheckUser
-$joueurs = $pdo->query("SELECT idJoueur, alias, prenom, nom, ptVie, nbOr, nbArgent, nbBronze, estAdmin FROM Joueurs ORDER BY alias ASC")->fetchAll(PDO::FETCH_ASSOC);
+$joueurs = $pdo->query("SELECT idJoueur, alias, prenom, nom, ptVie, nbOr, nbArgent, nbBronze, estAdmin, estMage FROM Joueurs ORDER BY alias ASC")->fetchAll(PDO::FETCH_ASSOC);
 
 if (($_POST["_ajax"] ?? "") === "1") {
     header('Content-Type: application/json');
@@ -258,12 +258,21 @@ if (($_POST["_ajax"] ?? "") === "1") {
                     </select>
                 </div>
 
+                <div class="filter-block" id="filtreUserBlock" style="display:none;">
+                    <p><strong>Filtrer par rôle :</strong></p>
+                    <select id="filtreUser" onchange="filtrerJoueurs()">
+                        <option value="tous">Tous</option>
+                        <option value="joueur">Joueurs</option>
+                        <option value="admin">Admins</option>
+                    </select>
+                </div>
+
                 <div class="filter-block">
                     <a href="boutique.php" class="reset-btn">Retour boutique</a>
                 </div>
             </aside>
 
-            <section class="products-grid" style="grid-template-columns:1fr; max-width:700px;">
+            <section id="mainProductGrid" class="products-grid" style="grid-template-columns:1fr; max-width:700px;">
                 <div class="product-card">
 
                     <p id="adminMessage" style="display:none; padding:10px; border-radius:6px; font-weight:bold;"></p>
@@ -291,55 +300,59 @@ if (($_POST["_ajax"] ?? "") === "1") {
                 </div>
             </section>
 
-        </div>
-
-        <!-- Section CheckUser — pleine largeur sous le conteneur principal -->
-        <div id="formCheckUser" style="display:none; padding:20px;">
-            <h3 style="margin-bottom:15px;">Joueurs inscrits</h3>
-            <div style="overflow-x:auto;">
-                <table style="width:100%; border-collapse:collapse;">
+            <!-- Section CheckUser — à droite de la sidebar, dans le shop-container -->
+            <div id="formCheckUser" style="display:none; flex:1; padding:10px; min-width:0;">
+            <h3 style="margin-bottom:10px;">Joueurs inscrits</h3>
+                <table id="tableJoueurs" style="width:100%; border-collapse:collapse; font-size:0.85em;">
                     <thead>
                         <tr style="border-bottom:2px solid #f0c040; text-align:left; background:rgba(0,0,0,0.3);">
-                            <th style="padding:10px;">Alias</th>
-                            <th style="padding:10px;">Nom complet</th>
-                            <th style="padding:10px;">Points</th>
-                            <th style="padding:10px;">Or / Argent / Bronze</th>
-                            <th style="padding:10px;">Rôle</th>
-                            <th style="padding:10px;"></th>
+                            <th style="padding:6px 8px;">#</th>
+                            <th style="padding:6px 8px;">Alias</th>
+                            <th style="padding:6px 8px;">Nom complet</th>
+                            <th style="padding:6px 8px;">Points</th>
+                            <th style="padding:6px 8px;">🟡⚪🟤</th>
+                            <th style="padding:6px 8px;">Rôle</th>
+                            <th style="padding:6px 8px;">Classe</th>
+                            <th style="padding:6px 8px;">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                     <?php foreach ($joueurs as $j): ?>
-                        <tr style="border-bottom:1px solid #444;">
-                            <td style="padding:10px;"><?= htmlspecialchars($j['alias']) ?></td>
-                            <td style="padding:10px;"><?= htmlspecialchars($j['prenom'] . ' ' . $j['nom']) ?></td>
-                            <td style="padding:10px;"><?= (int)$j['ptVie'] ?></td>
-                            <td style="padding:10px;">
-                                🟡 <?= (int)$j['nbOr'] ?> &nbsp;
-                                ⚪ <?= (int)$j['nbArgent'] ?> &nbsp;
-                                🟤 <?= (int)$j['nbBronze'] ?>
+                        <tr style="border-bottom:1px solid #444;" data-role="<?= (int)$j['estAdmin'] === 1 ? 'admin' : 'joueur' ?>">
+                            <td style="padding:6px 8px;"><?= (int)$j['idJoueur'] ?></td>
+                            <td style="padding:6px 8px;"><?= htmlspecialchars($j['alias']) ?></td>
+                            <td style="padding:6px 8px; white-space:nowrap;"><?= htmlspecialchars($j['prenom'] . ' ' . $j['nom']) ?></td>
+                            <td style="padding:6px 8px; text-align:center;"><?= (int)$j['ptVie'] ?></td>
+                            <td style="padding:6px 8px; white-space:nowrap;">
+                                🟡<?= (int)$j['nbOr'] ?> ⚪<?= (int)$j['nbArgent'] ?> 🟤<?= (int)$j['nbBronze'] ?>
                             </td>
-                            <td style="padding:10px;">
-                                <?= (int)$j['estAdmin'] === 1 ? ' 🛡️Admin' : 'Joueur' ?>
+                            <td style="padding:6px 8px; white-space:nowrap;">
+                                <?= (int)$j['estAdmin'] === 1 ? '🛡️ Admin' : 'Joueur' ?>
                             </td>
-                            <td style="padding:10px;">
-                                <a href="inventaire.php?joueur=<?= (int)$j['idJoueur'] ?>"
-                                   class="filter-btn" style="padding:6px 14px; white-space:nowrap;">
-                                    Voir inventaire
-                                </a>
+                            <td style="padding:6px 8px; white-space:nowrap;">
+                                <?= (int)$j['estMage'] === 1 ? '🧙 Mage' : 'Guerrier' ?>
                             </td>
-                            <td>
-                                  <a href="deleteJoueurAdmin.php?joueur=<?= (int)$j['idJoueur'] ?>"
-                                   class="filter-btn" style="padding:6px 14px; white-space:nowrap;">
-                                    Supprimier Compte
-                                </a>
+                            <td style="padding:6px 4px;">
+                                <div style="display:flex; flex-direction:column; gap:4px; align-items:flex-start;">
+                                    <a href="inventaire.php?joueur=<?= (int)$j['idJoueur'] ?>"
+                                       class="filter-btn" style="padding:4px 10px; font-size:0.85em; white-space:nowrap;">
+                                        Inventaire
+                                    </a>
+                                    <?php if((int)$j['estAdmin'] === 0): ?>
+                                    <a href="deleteJoueurAdmin.php?joueur=<?= (int)$j['idJoueur'] ?>"
+                                       class="filter-btn" style="padding:4px 10px; font-size:0.85em; white-space:nowrap; background:#7a1a1a;">
+                                        Supprimer
+                                    </a>
+                                    <?php endif; ?>
+                                </div>
                             </td>
                         </tr>
                     <?php endforeach; ?>
                     </tbody>
                 </table>
-            </div>
         </div>
+
+        </div><!-- fin shop-container -->
 
     </main>
     <!-- Bouton musique -->
@@ -378,34 +391,45 @@ if (($_POST["_ajax"] ?? "") === "1") {
         const allForms = ["formAddEnigme", "formAddItemA", "formAddItemS", "formAddItemP", "formAddItemR", "formCheckUser"];
 
         function changerSection() {
-            const section        = document.getElementById("adminSection").value;
-            const typeItemBlock  = document.getElementById("typeItemBlock");
-            const shopContainer  = document.querySelector(".shop-container");
-            const checkUserBlock = document.getElementById("formCheckUser");
+            const section          = document.getElementById("adminSection").value;
+            const typeItemBlock    = document.getElementById("typeItemBlock");
+            const filtreUserBlock  = document.getElementById("filtreUserBlock");
+            const mainGrid         = document.getElementById("mainProductGrid");
+            const checkUserBlock   = document.getElementById("formCheckUser");
 
             // Cacher tous les formulaires et le bloc CheckUser
             allForms.filter(id => id !== "formCheckUser")
                     .forEach(id => document.getElementById(id).style.display = "none");
-            checkUserBlock.style.display = "none";
+            checkUserBlock.style.display  = "none";
+            typeItemBlock.style.display   = "none";
+            filtreUserBlock.style.display = "none";
 
             if (section === "AddEnigme") {
-                shopContainer.style.display = "";
+                mainGrid.style.display = "";
                 document.getElementById("formAddEnigme").style.display = "";
-                typeItemBlock.style.display = "none";
             } else if (section === "AddItem") {
-                shopContainer.style.display = "";
+                mainGrid.style.display      = "";
                 typeItemBlock.style.display = "";
                 changerTypeItem();
             } else if (section === "CheckUser") {
-                shopContainer.style.display = "none";
-                checkUserBlock.style.display = "";
-                typeItemBlock.style.display  = "none";
+                mainGrid.style.display        = "none";
+                checkUserBlock.style.display  = "";
+                filtreUserBlock.style.display = "";
+                document.getElementById("filtreUser").value = "tous";
+                filtrerJoueurs();
             } else {
-                shopContainer.style.display = "";
-                typeItemBlock.style.display = "none";
+                mainGrid.style.display = "";
             }
             document.getElementById("adminMessage").textContent = "";
             document.getElementById("adminMessage").className = "";
+        }
+
+        function filtrerJoueurs() {
+            const filtre = document.getElementById("filtreUser").value;
+            document.querySelectorAll("#tableJoueurs tbody tr").forEach(row => {
+                const role = row.dataset.role; // "admin" ou "joueur"
+                row.style.display = (filtre === "tous" || filtre === role) ? "" : "none";
+            });
         }
 
         function changerTypeItem() {
